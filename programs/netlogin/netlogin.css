@@ -1,0 +1,80 @@
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+img {
+    float: left;
+}
+
+.container {
+    display: flex;
+    align-items: top;
+    justify-content: left;
+	margin-left: 30px;
+	margin-top: 28px;
+	overflow: none !important;
+}
+.input-container {
+	transition: transform 0.2s;
+	text-align: right;
+	overflow: none !important;
+	padding-top: 25px;
+	padding-right: 25px;
+	padding-left: 8px;
+}
+label {
+    margin-top: 10px;
+    margin-bottom: 5px;
+    text-align: right;
+	font-size: 13px;
+	padding-right: 4px;
+	overflow: none !important;
+}
+input {
+    width: 75%;
+    margin-bottom: 13px;
+    box-sizing: border-box; 
+}
+.nettext {
+    font-size: 13px;
+    padding-left: 20px;
+    padding-right: 4px;
+    float: left;
+}
+/* button {
+	width: 80%;
+} */
+
+html {
+	font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif,
+		"Segoe MDL2 Assets", "Calculator MDL2 Assets";
+	height: 100%;
+	width: 100%;
+	font-size: 15px;
+	overflow: none !important;
+}
+body {
+	height: 100%;
+	width: 100%;
+	margin: 0;
+	background-color: var(--ButtonFace);
+	color: var(--ButtonText);
+	display: flex;
+	flex-direction: column;
+	overflow: none !important;
+}
+
+#os-window {
+	height: 1000px;
+	overflow: none !important;
+}
+
+#display {
+	word-wrap: break-word;
+	text-align: right;
+	width: 1000px;
+	height: 1000px;
+	margin-bottom: 11px;
+}

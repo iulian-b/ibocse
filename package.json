@@ -1,0 +1,62 @@
+{
+	"name": "ccc-crlab2-h032",
+	"description": "Web-OS",
+	"version": "0.0.9",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/iulian-b/ccc-crlab2-h032.git"
+	},
+	"bugs": {
+		"url": "https://github.com/iulian-b/ccc-crlab2-h032/issues"
+	},
+	"license": "UNLICENSED",
+	"private": true,
+	"keywords": [
+		"web-based",
+		"recreation",
+		"clone",
+		"simulator",
+		"retro",
+		"classic",
+		"desktop",
+		"web-desktop",
+		"web",
+		"browser",
+		"windows",
+		"98",
+		"98.js",
+		"windows-98",
+		"operating-system",
+		"os",
+		"js",
+		"javascript"
+	],
+	"engines": {
+		"node": ">=22.12"
+	},
+	"scripts": {
+		"start": "vite",
+		"build": "node scripts/build.js",
+		"preview": "vite preview",
+		"test": "playwright test",
+		"lint": "cspell-cli lint .",
+		"make-fs-index": "node scripts/filesystem-index.js . filesystem-index.json",
+		"pull-libs": "node pull-libs.js"
+	},
+	"devDependencies": {
+		"@playwright/test": "^1.64.1",
+		"@types/node": "^24.19.2",
+		"@zenfs/core": "2.8.3",
+		"@zenfs/dom": "1.2.14",
+		"butterchurn": "2.6.7",
+		"butterchurn-presets": "2.4.7",
+		"cspell-cli": "^10.4.0",
+		"file-saver": "2.0.5",
+		"jquery": "4.0.0",
+		"jquery-ui": "1.14.2",
+		"markdown-it": "15.0.3",
+		"os-gui": "0.7.3",
+		"vite": "^8.3.5",
+		"webamp": "2.3.1"
+	}
+}

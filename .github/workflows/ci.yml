@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Build and test
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check dependencies for known vulnerabilities
+        run: npm audit --audit-level=high
+
+      # The site ships copies of some npm packages (see pull-libs.js); a version bump
+      # in package.json alone wouldn't change what visitors get.
+      - name: Check vendored libraries match package.json
+        run: |
+          npm run pull-libs
+          if [ -n "$(git status --porcelain)" ]; then
+            git status --short
+            echo "::error::Vendored libraries are out of date. Run 'npm run pull-libs' and commit the result."
+            exit 1
+          fi
+
+      - name: Install browsers
+        run: npx playwright install --with-deps chromium firefox webkit
+
+      # Builds the site into dist/ and tests it there (see playwright.config.ts)
+      - name: Build and test
+        run: npm test
+
+      - uses: actions/upload-artifact@v7
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30

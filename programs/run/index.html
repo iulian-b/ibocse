@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' data: blob:; media-src 'self' data: blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'">
+		<title>Run</title>
+		<style>
+			html,
+			body {
+				width: 100% !important;
+				height: 100%;
+				margin: 0;
+				padding: 0;
+			}
+		</style>
+		<link href="../../lib/os-gui/layout.css" rel="stylesheet" type="text/css">
+		<link href="../../lib/os-gui/windows-98.css" rel="stylesheet" type="text/css">
+		<link href="./rundiag.css" rel="stylesheet" type="text/css">
+		<link rel="icon" href="../../images/icons/network-16x16.png" sizes="16x16" type="image/png">
+		<link rel="icon" href="../../images/icons/network-32x32.png" sizes="32x32" type="image/png">
+		<link rel="icon" href="../../images/icons/network-48x48.png" sizes="48x48" type="image/png">
+		<meta name="viewport" content="width=device-width, user-scalable=no">
+	</head>
+	
+	<body>
+		<div id="app" style="left: 20%;">
+			<div class="container">
+				<div class="runimg">
+					<img src="/images/icons/run-48x48.png">
+				</div>
+				<div class="runtext">
+					Type the name of a program, folder, document or Internet resource, and Sinclaire will open it for you. 
+				</div>
+			</div>
+			<div class="input-container">
+				<form id="runform" action="">
+					<label for="open">
+                        Open:
+					</label>
+					<input type="text" id="target">
+					<div class="button-container">
+						<button type="submit">OK</button>
+						<button type="button" value="Cancel" id="cancel-button">Cancel</button>
+					</div>
+				</form>
+			</div>
+		</div>
+        
+		<script src="../../lib/jquery.min.js"></script>
+		<script src="../../lib/zenfs.js"></script>
+		<script src="../../src/filesystem-setup.js"></script>
+		<script src="../../src/helpers.js"></script>
+		<script src="../../lib/os-gui/MenuBar.js"></script>
+		<script src="../../lib/os-gui/$Window.js"></script>
+		<script src="../../src/msgbox.js"></script>
+		<script src="src/app.js"></script>
+        <style>
+			#app {
+				background: var(--ButtonFace);
+                height: 10px;
+				display: flex;
+				flex-direction: column;
+			}
+			html,
+			body,
+			#app,
+			#document {
+				box-sizing: border-box;
+				padding: 0;
+				margin: 0;
+			}
+		</style>
+	</body>
+</html>

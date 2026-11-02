@@ -1,0 +1,23 @@
+{
+	"name": "SOS 9.8.3",
+	"short_name": "SOS",
+	"version": "0.0.1",
+	"description": "SINCLAIR OS 9",
+	"icons": [
+		{
+            "src": "/android-chrome-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/android-chrome-256x256.png",
+            "sizes": "256x256",
+            "type": "image/png"
+		}
+	],
+	"lang": "en-US",
+	"start_url": ".",
+	"theme_color": "#008080",
+	"background_color": "#008080",
+	"display": "fullscreen"
+}

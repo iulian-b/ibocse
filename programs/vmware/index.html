@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Vware</title>
+		<link href="../../layout.css" rel="stylesheet" type="text/css">
+		<link href="../../classic.css" rel="stylesheet" type="text/css">
+		<link href="../../lib/os-gui/layout.css" rel="stylesheet" type="text/css">
+		<link href="../../lib/os-gui/windows-98.css" rel="stylesheet" type="text/css">
+		<link rel="icon" href="../../images/icons/explorer-16x16.png" sizes="16x16" type="image/png">
+		<link rel="icon" href="../../images/icons/explorer-32x32.png" sizes="32x32" type="image/png">
+		<meta name="viewport" content="width=device-width, user-scalable=no">
+		<script src="../../lib/jquery.min.js"></script>
+		<script src="../../lib/zenfs.js"></script>
+		<script src="../../src/filesystem-setup.js"></script>
+		<script src="../../lib/os-gui/MenuBar.js"></script>
+		<script src="../../lib/os-gui/$Window.js"></script>
+		<script src="../../src/msgbox.js"></script>
+		<script src="../../src/iframe-windows.js"></script>
+		<script>defaultMessageBoxTitle = "Explorer";</script>
+		<script src="../../src/helpers.js"></script>
+		<script src="../../src/FolderView.js"></script>
+		<script src="../../src/FolderViewItem.js"></script>
+		<script src="menus.js"></script>
+		<script src="vmware.js"></script>
+		<link href="vmware.css" rel="stylesheet" type="text/css">
+	</head>
+	<body>
+		<script>0</script>
+		<div class="toolbars">
+			<div class="toolbar" id="menu-bar-toolbar">
+				<div class="toolbar-drag-handle"></div>
+			</div>
+		</div>
+		<div id="content" class="inset-deep"></div>
+		<div id="status-bar">
+			<div id="status-bar-left" class="inset-shallow">
+				<img id="status-bar-left-icon" style="display: none;" width="16" height="16" src="../../images/icons/folder-16x16.png" alt="">
+				<span id="status-bar-left-text" style="margin-left: 4px;"></span>
+			</div>
+			<div id="status-bar-middle" class="inset-shallow">
+				<span id="status-bar-middle-text"></span>
+			</div>
+			<div id="status-bar-right" class="inset-shallow">
+				<img id="status-bar-right-icon" style="display: none;" width="16" height="16" src="../../images/icons/my-computer-16x16.png" alt="">
+				<span id="status-bar-right-text"></span>
+			</div>
+			<!-- for menu descriptions, replace left/middle/right layout with non-inset, singular area -->
+			<div id="status-bar-simple" style="display: none;">
+				<img id="status-bar-simple-icon" width="16" height="16" src="../../images/icons/my-computer-16x16.png" alt="">
+				<span id="status-bar-simple-text"></span>
+			</div>
+		</div>
+
+		<!-- TODO: DRY -->
+		<svg style="position: absolute; pointer-events: none; bottom: 100%;">
+			<defs>
+				<filter id="disabled-inset-filter" x="0" y="0" width="1px" height="1px">
+					<feColorMatrix
+						in="SourceGraphic"
+						type="matrix"
+						values="
+							1 0 0 0 0
+							0 1 0 0 0
+							0 0 1 0 0
+							-2 -2 -2 4 0
+						"
+						result="dark-parts-isolated"
+					/>
+					<feFlood result="shadow-color" flood-color="var(--ButtonShadow)"/>
+					<feFlood result="hilight-color" flood-color="var(--ButtonHilight)"/>
+					<feOffset in="dark-parts-isolated" dx="1" dy="1" result="offset"/>
+					<feComposite in="hilight-color" in2="offset" operator="in" result="hilight-colored-offset"/>
+					<feComposite in="shadow-color" in2="dark-parts-isolated" operator="in" result="shadow-colored"/>
+					<feMerge>
+						<feMergeNode in="hilight-colored-offset"/>
+						<feMergeNode in="shadow-colored"/>
+					</feMerge>
+				</filter>
+			</defs>
+		</svg>
+		<script>
+			window.addEventListener("resize", ()=> {
+				// work around a browser bug in Chrome where
+				// the SVG filter behaves differently based on the INITIAL zoom level
+				// (if you zoom in, the icons get cut off, if you zoom out, the effect is too thick)
+				document.getElementById("disabled-inset-filter").setAttribute("x", "0");
+			});
+		</script>
+	</body>
+</html>

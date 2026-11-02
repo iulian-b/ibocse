@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' data: blob:; media-src 'self' data: blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'">
+		<title>PicView</title>
+		<link href="../../lib/os-gui/layout.css" rel="stylesheet" type="text/css">
+		<link href="../../lib/os-gui/windows-98.css" rel="stylesheet" type="text/css">
+		<link rel="icon" href="../../images/icons/kodak-imaging-16x16.png" sizes="16x16" type="image/png">
+		<link rel="icon" href="../../images/icons/kodak-imaging-32x32.png" sizes="32x32" type="image/png">
+		<meta name="viewport" content="width=device-width, user-scalable=no">
+		<style>
+			html,
+			body,
+			#app {
+				width: 100%;
+				height: 100%;
+				margin: 0;
+				padding: 0;
+				overflow: hidden;
+			}
+			#app {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				background: var(--ButtonFace);
+			}
+			/* Shrinks big pictures to fit, but doesn't blow up small ones */
+			#pic {
+				display: block;
+				max-width: 100%;
+				max-height: 100%;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="app">
+		</div>
+		<script src="../../lib/jquery.min.js"></script>
+		<script src="../../lib/zenfs.js"></script>
+		<script src="../../src/filesystem-setup.js"></script>
+		<script src="../../src/helpers.js"></script>
+		<script src="../../lib/os-gui/$Window.js"></script>
+		<script src="../../src/msgbox.js"></script>
+		<script src="src/app.js"></script>
+	</body>
+</html>

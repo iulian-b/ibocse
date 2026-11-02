@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>POWER-ON SELF TEST</title>
+    <link href="css/post.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<main>
+    <div id="dpc">
+        <section contenteditable="false" id="pc">
+            <section class="crt">
+                <div id="text-top">
+                    <br />
+                    <span class="epa"></span>
+                    <span class="award"></span>
+                    Award Modular BIOS v6.40PG, An Energy Star Ally<br />
+                    Copyright (C) 1984-2020, Award Software, Inc.<br />
+                    <br />
+                    Cornell Computing Center IntDev BIOS REV.2<br />
+                    <br />
+                    Main Processor : C^3(R) SSPU Lynx Gen.II @ 4.30GHz<br />
+                    &lt;CPUID:0729 Patch ID:6561&gt;<br />
+                    <span>Memory Testing : &nbsp;<span id="memory_counter" class="unselectable">67108864</span>&nbsp;&nbsp;&nbsp;DRAM CLK : 2600MHz (36-40-40-96)</span><br />
+                    <br />
+                    <span id="mounted_disks"><br><br><br><br></span>
+                    <br/>
+                </div>
+                <div id="spacer"></div>
+                <div id="text-bottom">
+                    <kbd>DEL</kbd>:BIOS Setup <kbd>F5</kbd>:TEP Switch <kbd>F12</kbd>:Boot Menu <kbd>End</kbd>:Qflash<br />
+                    07/23/2020-CP03-098F-R76K1X3PC-02<br />
+                </div>
+            </section>
+        </section>
+    </div>
+    <script src="lib/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $.wait = function( callback, seconds){
+                return window.setTimeout( callback, seconds * 1000 );
+            }
+        })
+        let memoryCounter = $("#memory_counter");
+        let mountedDisks = $("#mounted_disks");
+
+        memoryCounter.each(function () {
+            $(this).prop('memory_counter',0).animate({
+                Counter: $(this).text()
+            }, {
+                duration: 1500,
+                easing: 'swing',
+                step: function (now) {
+                    $(this).text(Math.ceil(now));
+                }
+            });
+        });
+        memoryCounter.promise().done(function () {
+            memoryCounter.append(' OK');
+            mountedDisks.html("&nbsp;&nbsp;&nbsp;Primary Master : Lexar LNM620X256G-RNNNG 256GB<br />" +
+                "&nbsp;&nbsp;&nbsp;&nbsp;Primary Slave : WDC WD8005FFBX 8TB <br />" +
+                "&nbsp;Secondary Master : WDC WD161KFGX 16TB<br />" +
+                "&nbsp;&nbsp;Secondary Slave : None<br/>"
+            );
+        });
+        $(function () {
+            setTimeout(function() {
+                localStorage.setItem('POST',"1");
+                window.location.replace("index.html");
+            }, 3000);
+        });
+    </script>
+    <script type="text/javascript">
+        const Action = {
+            biosSetup() { location.replace("BIOS/SETUP.html"); },
+            // tepSwitch() { console.log("tepSwitch"); }, big troll
+            bootMenu() { location.replace("BIOS/BOOTMENU.html"); },
+            qFlash() { console.log("qFlash"); }
+        }
+        const keyAction = {
+            Delete: { keydown: Action.biosSetup },
+            // F5: { keydown: Action.tepSwitch },
+            F12: { keydown: Action.bootMenu },
+            End: { keydown: Action.qFlash },
+        }
+        const keyHandler = (ev) => {
+            if (ev.repeat) return; // Key-held, prevent repeated Actions (Does not work in IE11-)
+            if (!(ev.key in keyAction) || !(ev.type in keyAction[ev.key])) return; // No such Action
+            keyAction[ev.key][ev.type]();  // Trigger an Action
+        };
+
+        ['keydown'].forEach((evType) => {
+            document.body.addEventListener(evType, keyHandler);
+        });
+    </script>
+</main>
+</body>
+</html>

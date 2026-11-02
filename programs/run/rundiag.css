@@ -1,0 +1,80 @@
+@font-face {
+	font-family: MSW98UI;
+	src: url(../../font/ms-w98-ui/MSW98UI-Regular.woff);
+}
+
+img {
+    float: left;
+}
+
+.container {
+    display: flex;
+    align-items: top;
+    justify-content: left;
+	margin-left: 5px;
+	margin-top: 13px;
+}
+.input-container {
+	transition: transform 0.2s;
+	text-align: left;
+	padding-right: 25px;
+	padding-left: 15px;
+
+}
+.button-container {
+	text-align: right;
+}
+button:enabled {
+	font-size: 11px;
+	font-family: "MSW98UI";
+	width: 70px;
+}
+label {
+	font-size: 11px;
+	font-family: "MSW98UI";
+    margin-top: 10px;
+    margin-bottom: 5px;
+    text-align: right;
+	padding-right: 4px;
+}
+input {
+    width: 89%;
+    margin-bottom: 13px;
+    box-sizing: border-box; 
+	height: 19px;
+}
+.runtext {
+    font-size: 11px;
+	font-family: "MSW98UI";
+    padding-left: 10px;
+    padding-right: 4px;
+	margin-top: 7px;
+    float: left;
+}
+
+html {
+	height: 100%;
+	width: 100%;
+
+}
+body {
+	height: 100%;
+	width: 100%;
+	margin: 0;
+	background-color: var(--ButtonFace);
+	color: var(--ButtonText);
+	display: flex;
+	flex-direction: column;
+}
+
+#os-window {
+	height: 1000px;
+}
+
+#display {
+	word-wrap: break-word;
+	text-align: right;
+	width: 1000px;
+	height: 1000px;
+	margin-bottom: 11px;
+}
