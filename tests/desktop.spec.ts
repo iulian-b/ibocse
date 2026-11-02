@@ -42,6 +42,7 @@ test.describe('desktop icons', () => {
 		['Tomb Raider', 'Tomb Raider'],
 		['Quake III', 'Quake III'],
 		['Minecraft', 'Minecraft'],
+		['Commander Keen', 'Commander Keen'],
 		['CV (EN).pdf', 'CV (EN).pdf - PDF Viewer'],
 		['CV (RO).pdf', 'CV (RO).pdf - PDF Viewer'],
 	];

@@ -130,7 +130,8 @@ var exe_extension_icon = {
 	tombraider: "tomb-raider",
 	quake3: "quake3",
 	minecraft: "minecraft",
-	skifree: "skifree"
+	skifree: "skifree",
+	keen: "keen"
 }
 
 // @TODO: maintain less fake naming abstraction

@@ -376,6 +376,22 @@ function SkiFree() {
 }
 SkiFree.acceptsFilePaths = false;
 
+function CommanderKeen() {
+	let $win = make_iframe_window({
+		src: "https://www.jamesfmackenzie.com/chocolatekeen/",
+		sandbox: external_game_sandbox,
+		allow: external_game_allow,
+		icons: iconsAtTwoSizes("keen"),
+		title: "Commander Keen",
+		innerWidth: 640,
+		innerHeight: 480,
+		resizable: true
+	});
+	console.log("[USR] ibocse@crlab2-h032: keen.exe()");
+	return new Task($win);
+}
+CommanderKeen.acceptsFilePaths = false;
+
 function PDFViewer(file_path) {
 	// There is no normal way to determine the height of a pdf that has yet to be loaded into the DOM.
 	// This is a hackjob, but the show must go on.
@@ -465,9 +481,10 @@ var exe_programs_by_file_name = {
 	"minecraft.exe": Minecraft,
 	"skifree.exe": SkiFree,
 	"quake3.exe": Quake3,
+	"keen.exe": CommanderKeen,
 };
 var exe_programs_by_name = {
-	Calculator, CommandPrompt, Diablo, Explorer, FlowerBox, Minecraft, Minesweeper, Notepad, Paint, Pinball,
+	Calculator, CommandPrompt, CommanderKeen, Diablo, Explorer, FlowerBox, Minecraft, Minesweeper, Notepad, Paint, Pinball,
 	Pipes, Quake3, SkiFree, Solitaire, SoundRecorder, TombRaider, VirtualMachine, Wolf3d, openWinamp,
 };
 
@@ -1656,6 +1673,12 @@ add_icon_not_via_filesystem({
 	title: "Minecraft",
 	iconID: "minecraft",
 	open: function () { Minecraft(); },
+	shortcut: true
+});
+add_icon_not_via_filesystem({
+	title: "Commander Keen",
+	iconID: "keen",
+	open: function () { CommanderKeen(); },
 	shortcut: true
 });
 add_icon_not_via_filesystem({
