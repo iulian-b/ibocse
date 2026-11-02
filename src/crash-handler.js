@@ -27,7 +27,7 @@ function timeToPanic() {
 		Bailing out, you are on your own. Good luck.
 		</p>`;
 
-    $desktop.css({backgroundImage: `url("../images/glitch.jpg")`});
+    $desktop.css({backgroundImage: `url("../images/themes/classic/glitch.png")`});
     console.log("[USR] ibocse@crlab2-h032: Connection lost. Retrying...");
 
     sleep(1000).then(() => {

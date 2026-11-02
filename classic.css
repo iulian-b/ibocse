@@ -18,12 +18,12 @@
 	font-size: 12px;
 }
 .start-menu-titlebar {
-	background-image: url("images/start-menu-side.png");
+	background-image: url("images/themes/classic/start-menu-side.png");
 	/* background-image: url("images/start-menu-side-98-js.png"); */
 	/* background-image: url("images/start-menu-side-98-js-alt.png"); */
 	background-repeat: no-repeat;
 	background-position: bottom left;
-	background-color: rgb(72, 80, 72);
+	background-color: var(--ButtonShadow); /* the banner picture's background color */
 }
 .start-menu li a,
 .start-menu .back-link {

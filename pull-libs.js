@@ -28,12 +28,14 @@ const copy = (from, toDir) => {
 
 // These vendored files carry local changes, so they are NOT copied over here;
 // diff against node_modules and re-apply the changes by hand when updating them:
-// - lib/os-gui/windows-98.css: this site's color theme
 // - lib/os-gui/$Window.js: titlebar icon margin, null check, draggable="false" for jQuery 4,
 //   no error when a window is closed before its iframe finishes loading,
 //   sandboxed iframes treated as cross-origin for focus integration
+// (The site's old green color scheme, which used to be in windows-98.css, is in css/themes/green.css.)
 copy("node_modules/os-gui/build/layout.css", "lib/os-gui/");
 copy("node_modules/os-gui/build/layout.css.map", "lib/os-gui/");
+copy("node_modules/os-gui/build/windows-98.css", "lib/os-gui/");
+copy("node_modules/os-gui/build/windows-98.css.map", "lib/os-gui/");
 copy("node_modules/os-gui/build/windows-default.css", "lib/os-gui/");
 copy("node_modules/os-gui/build/windows-default.css.map", "lib/os-gui/");
 copy("node_modules/os-gui/build/peggys-pastels.css", "lib/os-gui/");
