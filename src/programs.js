@@ -1797,14 +1797,20 @@ function systemExecuteFile(file_path) {
 // Note: `C:\Windows\Desktop` doesn't contain My Computer, My Documents, Network Neighborhood, Recycle Bin, or Internet Explorer,
 // or Connect to the Internet, or Setup MSN Internet Access,
 // whereas `Desktop` does (that's the full address it shows; it's one of them "special locations")
+// All of them, in order, including the shortcuts of programs removed with Add/Remove Programs (src/control-panel.js)
+var desktop_icons = [];
 var add_icon_not_via_filesystem = function (options) {
-	folder_view.add_item(new FolderViewItem({
+	const item = new FolderViewItem({
 		icons: {
 			// @TODO: know what sizes are available
 			[DESKTOP_ICON_SIZE]: getIconPath(options.iconID, DESKTOP_ICON_SIZE),
 		},
 		...options,
-	}));
+	});
+	desktop_icons.push({ title: options.title, item });
+	if (!is_shortcut_of_removed_program(options.title)) {
+		folder_view.add_item(item);
+	}
 };
 add_icon_not_via_filesystem({
 	title: "My Computer",

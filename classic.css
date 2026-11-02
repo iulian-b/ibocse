@@ -23,7 +23,7 @@
 	/* background-image: url("images/start-menu-side-98-js-alt.png"); */
 	background-repeat: no-repeat;
 	background-position: bottom left;
-	background-color: var(--ButtonShadow); /* the banner picture's background color */
+	background-color: var(--ButtonShadow); /* behind the banner picture's text, in the color scheme's colors */
 }
 .start-menu li a,
 .start-menu .back-link {

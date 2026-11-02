@@ -1,6 +1,23 @@
 
 var programs_being_loaded = 0;
 
+// The page whose theme (color scheme, or .theme file) the windows get:
+// the desktop, also for the windows of a program in a window (Explorer's view of a folder)
+function find_theme_host() {
+	for (let frame = window; ; frame = frame.parent) {
+		try {
+			if (frame.themeCSSProperties && frame.applyCSSProperties) {
+				return frame;
+			}
+		} catch (error) {
+			return null; // a page from another site
+		}
+		if (frame === frame.parent) {
+			return null;
+		}
+	}
+}
+
 function enhance_iframe(iframe) {
 	var $iframe = $(iframe);
 
@@ -20,8 +37,9 @@ function enhance_iframe(iframe) {
 			return;
 		}
 
-		if (window.themeCSSProperties) {
-			applyTheme(themeCSSProperties, iframe.contentDocument.documentElement);
+		const theme_host = find_theme_host();
+		if (theme_host) {
+			theme_host.applyCSSProperties(theme_host.themeCSSProperties, { element: iframe.contentDocument.documentElement, recurseIntoIframes: true });
 		}
 
 		// Let the iframe to handle mouseup events outside itself

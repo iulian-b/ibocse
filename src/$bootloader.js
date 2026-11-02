@@ -176,7 +176,7 @@ function toggleDeskop(switcher) {
         buildText.style.color = "white";
 
         sleep(2300).then(() => { localStorage.setItem("boot", "true");});
-        sleep(2300).then(() => { PDFViewer("/My Documents/CV (EN).pdf");});
+        sleep(2300).then(() => { if (desktop_settings.cv_at_startup) PDFViewer("/My Documents/CV (EN).pdf");});
         // sleep(2300).then(() => { systemExecuteFile("/My Documents/CV (EN).pdf"); });
     }
 }

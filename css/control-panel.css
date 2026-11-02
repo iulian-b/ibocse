@@ -1,0 +1,548 @@
+/* Settings, in the Start menu: the Control Panel, Printers, and the dialogs in them (src/control-panel.js).
+   Like everything else, they're drawn in the colors of the color scheme. */
+
+/* The Settings submenu of the Start menu */
+.start-btn.has-submenu {
+	position: relative;
+}
+.start-btn.has-submenu::after {
+	content: "";
+	position: absolute;
+	right: 8px;
+	top: 50%;
+	margin-top: -4px;
+	border: 4px solid transparent;
+	border-left-color: currentColor;
+	border-right-width: 0;
+}
+.start-btn.submenu-open {
+	background: var(--Hilight);
+	color: var(--HilightText);
+}
+.start-submenu {
+	position: fixed;
+	display: flex;
+	flex-direction: column;
+	padding: 2px;
+	min-width: 150px;
+	background: var(--Menu);
+}
+.start-submenu[hidden] {
+	display: none;
+}
+.start-submenu-item {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	width: 100%;
+	min-width: 0;
+	height: 24px;
+	padding: 0 20px 0 6px;
+	text-align: left;
+	color: var(--MenuText);
+	background: transparent;
+	border-width: 0 !important;
+	--button-normal-border-image: none !important;
+	--button-active-border-image: none !important;
+}
+.start-submenu-item:hover,
+.start-submenu-item:focus-visible {
+	background: var(--Hilight);
+	color: var(--HilightText);
+	outline: none;
+}
+
+/* Dialog boxes and property sheets */
+.settings-window .window-content {
+	font-family: "MS Sans Serif", "Segoe UI", sans-serif;
+	font-size: 12px;
+}
+.property-sheet {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	padding: 6px;
+}
+.property-sheet p,
+.wizard p {
+	margin: 0 0 8px;
+}
+.dialog-buttons,
+.buttons-right {
+	display: flex;
+	justify-content: flex-end;
+	gap: 6px;
+}
+.buttons-right {
+	margin: 6px 0;
+}
+.buttons-row {
+	display: flex;
+	gap: 6px;
+	margin-top: 6px;
+}
+.dialog-buttons button,
+.buttons-right button,
+.buttons-row button {
+	min-width: 75px;
+	height: 23px;
+	padding: 0 8px;
+}
+.separator {
+	border: none;
+	border-top: 1px solid var(--ButtonShadow);
+	border-bottom: 1px solid var(--ButtonHilight);
+	margin: 8px 0;
+}
+
+/* Tabs */
+.tabs {
+	display: flex;
+	flex-direction: column;
+}
+.tab-strip {
+	display: flex;
+	align-items: flex-end;
+	height: 21px;
+	padding-left: 2px;
+	position: relative;
+	z-index: 1;
+}
+.tab {
+	box-sizing: border-box;
+	height: 18px;
+	padding: 1px 8px 0;
+	margin-right: -1px;
+	color: var(--ButtonText);
+	background: var(--ButtonFace);
+	border: 1px solid;
+	border-color: var(--ButtonHilight) var(--ButtonDkShadow) transparent var(--ButtonHilight);
+	border-radius: 3px 3px 0 0;
+	box-shadow: inset -1px 0 var(--ButtonShadow);
+	cursor: default;
+	user-select: none;
+	white-space: nowrap;
+	outline: none;
+}
+.tab.selected {
+	position: relative;
+	height: 21px;
+	margin: 0 -1px -1px -2px;
+	padding: 2px 10px 0;
+}
+.tab.selected:focus-visible {
+	outline: 1px dotted var(--ButtonText);
+	outline-offset: -5px;
+}
+.tab-panel {
+	box-sizing: border-box;
+	padding: 10px 12px;
+	color: var(--ButtonText);
+	background: var(--ButtonFace);
+	border: 1px solid;
+	border-color: var(--ButtonHilight) var(--ButtonDkShadow) var(--ButtonDkShadow) var(--ButtonHilight);
+	box-shadow: inset -1px -1px var(--ButtonShadow), inset 1px 1px var(--ButtonLight);
+	overflow: hidden;
+}
+.tab-panel[hidden] {
+	display: none !important; /* (panels can be flex boxes) */
+}
+
+/* Group boxes, check boxes, option buttons, drop-down lists, list boxes */
+.settings-window fieldset {
+	margin: 0 0 8px;
+	padding: 4px 10px 8px;
+	border: 1px solid var(--ButtonShadow);
+	box-shadow: 1px 1px 0 var(--ButtonHilight), inset 1px 1px 0 var(--ButtonHilight);
+}
+.settings-window legend {
+	padding: 0 3px;
+}
+.checkbox-field,
+.radio-field {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 2px 0;
+}
+.radio-field:has(input:disabled) span {
+	color: var(--GrayText);
+	text-shadow: 1px 1px var(--ButtonHilight);
+}
+.settings-window input[type="checkbox"],
+.settings-window input[type="radio"] {
+	appearance: none;
+	box-sizing: border-box;
+	flex: none;
+	width: 13px;
+	height: 13px;
+	margin: 0;
+	background: var(--Window) no-repeat center;
+	border: 1px solid;
+	border-color: var(--ButtonShadow) var(--ButtonHilight) var(--ButtonHilight) var(--ButtonShadow);
+	box-shadow: inset 1px 1px var(--ButtonDkShadow), inset -1px -1px var(--ButtonLight);
+}
+.settings-window input[type="radio"] {
+	width: 12px;
+	height: 12px;
+	border-radius: 50%;
+}
+.settings-window input[type="checkbox"]:checked {
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='7' shape-rendering='crispEdges'%3E%3Cpath d='M6 0h1v1h-1zM5 1h2v1h-2zM0 2h1v1h-1zM4 2h3v1h-3zM0 3h2v1h-2zM3 3h3v1h-3zM0 4h5v1h-5zM1 5h3v1h-3zM2 6h1v1h-1z'/%3E%3C/svg%3E");
+}
+.settings-window input[type="radio"]:checked {
+	background-image: radial-gradient(circle, var(--WindowText) 2px, transparent 2.5px);
+}
+.settings-window input:disabled {
+	background-color: var(--ButtonFace);
+}
+.settings-window input[type="text"] {
+	box-sizing: border-box;
+	height: 21px;
+	padding: 2px 3px;
+	font: inherit;
+	color: var(--WindowText);
+	background: var(--Window);
+	border: 1px solid;
+	border-color: var(--ButtonShadow) var(--ButtonHilight) var(--ButtonHilight) var(--ButtonShadow);
+	box-shadow: inset 1px 1px var(--ButtonDkShadow), inset -1px -1px var(--ButtonLight);
+}
+.settings-window select {
+	appearance: none;
+	box-sizing: border-box;
+	height: 21px;
+	padding: 2px 22px 2px 3px;
+	font: inherit;
+	color: var(--WindowText);
+	border-radius: 0;
+	border: 1px solid;
+	border-color: var(--ButtonShadow) var(--ButtonHilight) var(--ButtonHilight) var(--ButtonShadow);
+	box-shadow: inset 1px 1px var(--ButtonDkShadow), inset -1px -1px var(--ButtonLight);
+	/* the button with the arrow, over the box */
+	background:
+		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='4' shape-rendering='crispEdges'%3E%3Cpath d='M0 0h7v1h-7zM1 1h5v1h-5zM2 2h3v1h-3zM3 3h1v1h-1z'/%3E%3C/svg%3E") no-repeat right 6px center,
+		linear-gradient(var(--ButtonFace), var(--ButtonFace)) no-repeat right 2px center / 16px 15px,
+		var(--Window);
+}
+.field-label {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	margin: 2px 0 4px;
+}
+.field-label select,
+.field-label input {
+	flex: 1;
+}
+.list-box {
+	box-sizing: border-box;
+	height: 100px;
+	padding: 1px;
+	overflow: auto;
+	color: var(--WindowText);
+	background: var(--Window);
+	outline: none;
+}
+.list-item {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	padding: 1px 2px;
+	white-space: nowrap;
+	cursor: default;
+}
+.list-item.selected {
+	color: var(--HilightText);
+	background: var(--Hilight);
+}
+
+/* Folders: the Control Panel and Printers */
+.settings-folder {
+	display: flex;
+	flex-direction: column;
+}
+.settings-icons {
+	flex: 1;
+	display: flex;
+	flex-wrap: wrap;
+	align-content: flex-start;
+	gap: 6px 2px;
+	padding: 8px;
+	overflow: auto;
+	color: var(--WindowText);
+	background: var(--Window);
+	outline: none;
+}
+.settings-icon {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 78px;
+	text-align: center;
+	cursor: default;
+	user-select: none;
+}
+.settings-icon span {
+	margin-top: 3px;
+	padding: 0 2px;
+}
+.settings-icon.selected span {
+	color: var(--HilightText);
+	background: var(--Hilight);
+}
+.status-bar {
+	height: 18px;
+	margin-top: 2px;
+	padding: 0 4px;
+	line-height: 18px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* Display Properties */
+.display-properties {
+	width: 400px;
+}
+.display-properties .tab-panel {
+	height: 330px;
+}
+.monitor {
+	position: relative;
+	box-sizing: border-box;
+	width: 184px;
+	height: 140px;
+	margin: 0 auto 22px;
+	background: #c0c0c0;
+	border: 1px solid #000;
+	border-radius: 6px 6px 3px 3px;
+	box-shadow: inset 1px 1px #fff, inset -1px -1px #808080, inset 2px 2px #dfdfdf;
+}
+.monitor::after {
+	content: "";
+	position: absolute;
+	left: 61px;
+	bottom: -15px;
+	width: 60px;
+	height: 13px;
+	background: #c0c0c0;
+	border: 1px solid #000;
+	border-top: none;
+	box-shadow: inset 1px 0 #fff, inset -1px -1px #808080;
+}
+.monitor-screen {
+	position: absolute;
+	left: 15px;
+	top: 12px;
+	box-sizing: border-box;
+	width: 154px; /* (152px inside, as monitor_screen_width says) */
+	height: 116px;
+	border: 1px solid;
+	border-color: #808080 #fff #fff #808080;
+}
+.wallpaper-chooser {
+	display: flex;
+	gap: 10px;
+}
+.wallpaper-chooser .list-box {
+	flex: 1;
+	height: 112px;
+}
+.display-options {
+	display: flex;
+	flex-direction: column;
+}
+.appearance-preview {
+	position: relative;
+	height: 200px;
+	margin-bottom: 10px;
+	overflow: hidden;
+	background: var(--Background);
+}
+.preview-window {
+	position: absolute;
+	padding: 2px;
+	color: var(--ButtonText);
+	background: var(--ButtonFace);
+	border: 1px solid;
+	border-color: var(--ButtonLight) var(--ButtonDkShadow) var(--ButtonDkShadow) var(--ButtonLight);
+	box-shadow: inset 1px 1px var(--ButtonHilight), inset -1px -1px var(--ButtonShadow);
+}
+.preview-titlebar {
+	height: 18px;
+	padding: 0 4px;
+	line-height: 18px;
+	font-weight: bold;
+	color: var(--TitleText);
+	background: linear-gradient(to right, var(--ActiveTitle), var(--GradientActiveTitle));
+}
+.preview-inactive {
+	left: 10px;
+	top: 10px;
+	width: 230px;
+}
+.preview-inactive .preview-titlebar {
+	color: var(--InactiveTitleText);
+	background: linear-gradient(to right, var(--InactiveTitle), var(--GradientInactiveTitle));
+}
+.preview-active {
+	left: 22px;
+	top: 36px;
+	width: 250px;
+}
+.preview-menubar {
+	display: flex;
+	color: var(--MenuText);
+	background: var(--Menu);
+}
+.preview-menubar span {
+	padding: 1px 6px;
+}
+.preview-disabled {
+	color: var(--GrayText);
+	text-shadow: 1px 1px var(--ButtonHilight);
+}
+.preview-selected {
+	color: var(--HilightText);
+	background: var(--Hilight);
+}
+.preview-client {
+	height: 52px;
+	margin-top: 2px;
+	padding: 2px 4px;
+	color: var(--WindowText);
+	background: var(--Window);
+}
+.preview-message {
+	left: 150px;
+	top: 118px;
+	width: 160px;
+	text-align: center;
+}
+.preview-message-text {
+	padding: 6px 4px;
+	text-align: left;
+}
+.preview-message button {
+	min-width: 60px;
+	height: 20px;
+	margin-bottom: 4px;
+}
+
+/* Add/Remove Programs */
+.add-remove-programs {
+	width: 400px;
+}
+.add-remove-programs .tab-panel {
+	height: 360px;
+}
+.explanation {
+	display: flex;
+	gap: 12px;
+	align-items: flex-start;
+}
+.add-remove-programs .list-box {
+	height: 150px;
+}
+
+/* System Properties */
+.system-properties {
+	width: 420px;
+}
+.system-properties .tab-panel {
+	height: 330px;
+}
+.system-general {
+	display: flex;
+	gap: 24px;
+	align-items: flex-start;
+}
+.system-picture {
+	margin: 16px 0 0 8px;
+	image-rendering: pixelated;
+}
+.system-info dt {
+	margin-top: 10px;
+}
+.system-info dd {
+	margin-left: 18px;
+	line-height: 1.4;
+}
+.device-list {
+	height: 270px;
+}
+.device-list .device {
+	padding-left: 26px;
+}
+.no-icon {
+	display: inline-block;
+	width: 16px;
+}
+.performance-status {
+	display: grid;
+	grid-template-columns: max-content 1fr;
+	gap: 4px 16px;
+	margin: 4px 0 10px;
+}
+.performance-status dd {
+	margin: 0;
+}
+.startup-list {
+	height: 150px;
+}
+.startup-list .list-item {
+	gap: 16px;
+}
+
+/* The Add Printer Wizard */
+.wizard {
+	padding: 10px;
+}
+.wizard-body {
+	display: flex;
+	gap: 14px;
+	width: 470px;
+	min-height: 230px;
+}
+.wizard-picture {
+	display: flex;
+	flex: none;
+	align-items: center;
+	justify-content: center;
+	width: 120px;
+	background: var(--Background);
+}
+.wizard-picture img {
+	image-rendering: pixelated;
+}
+.wizard-page {
+	flex: 1;
+}
+.printer-lists {
+	display: flex;
+	gap: 8px;
+}
+.printer-lists > div {
+	flex: 1;
+	min-width: 0;
+}
+.printer-lists .list-box {
+	height: 120px;
+}
+.copying-files {
+	width: 300px;
+	padding: 10px 14px 14px;
+}
+.copying-files p {
+	margin: 0 0 6px;
+}
+.progress-bar {
+	height: 18px;
+	padding: 2px;
+	background: var(--ButtonFace);
+}
+.progress-bar-fill {
+	width: 0;
+	height: 100%;
+	background: var(--Hilight);
+}

@@ -22,6 +22,7 @@
 		<link href="classic.css" rel="stylesheet" type="text/css">
 		<link href="css/boot.css" rel="stylesheet" type="text/css">
 		<link href="css/crt.css" rel="stylesheet" type="text/css">
+		<link href="css/control-panel.css" rel="stylesheet" type="text/css">
 		<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 		<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 		<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
@@ -98,7 +99,7 @@
 							</button>
 						</li>
 						<li>
-							<button id="start_btn_settings" class="start-btn">
+							<button id="start_btn_settings" class="start-btn has-submenu" aria-haspopup="menu" aria-controls="start_menu_settings">
 								<img draggable="false" src="images/icons/settings-32x32.png" width="32" height="32" style="vertical-align: middle;" />
 								Settings
 							</button>
@@ -138,6 +139,16 @@
 				</div>
 			</div>
 		</div>
+		<div id="start_menu_settings" class="start-submenu outset-deep" role="menu" hidden>
+			<button id="start_btn_control_panel" class="start-submenu-item" role="menuitem">
+				<img draggable="false" src="images/icons/settings-16x16.png" width="16" height="16" />
+				Control Panel
+			</button>
+			<button id="start_btn_printers" class="start-submenu-item" role="menuitem">
+				<img draggable="false" src="images/icons/printers-folder-16x16.png" width="16" height="16" />
+				Printers
+			</button>
+		</div>
 
 		<script src="lib/jquery.min.js"></script>
 		<script src="lib/zenfs.js"></script>
@@ -151,6 +162,8 @@
 		<script src="src/filesystem-setup.js"></script>
 		<script src="src/iframe-windows.js"></script>
 		<script src="src/Task.js"></script>
+		<script src="src/color-schemes.js"></script>
+		<script src="src/settings.js"></script>
 		<script src="src/$taskbar-time.js"></script>
 		<script src="src/$start-menu.js"></script>
 		<script src="src/FolderView.js"></script>
@@ -160,6 +173,7 @@
 		<script src="src/window-switcher.js"></script>
 		<script src="src/visualizer-overlay.js"></script>
 		<script src="src/programs.js"></script>
+		<script src="src/control-panel.js"></script>
 		<script src="src/$bootloader.js"></script>
 		<script src="src/audio.js"></script>
 		<svg style="position: absolute; pointer-events: none; bottom: 100%;">

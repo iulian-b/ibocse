@@ -7,11 +7,13 @@ shutdownAudio.preload = "none"; // big, and only needed at the very end
 shutdownAudio.volume = 0.2;
 
 function ClearStorage() {
-	// Files on the C: drive stay (they're in IndexedDB), and so does its record of deleted files
-	const deleted_files = localStorage.getItem(journal_storage_key);
+	// Files on the C: drive stay (they're in IndexedDB), and so does its record of deleted files, and the Control Panel's settings
+	const kept = [journal_storage_key, settings_storage_key].map((key) => [key, localStorage.getItem(key)]);
 	localStorage.clear();
-	if (deleted_files) {
-		localStorage.setItem(journal_storage_key, deleted_files);
+	for (const [key, value] of kept) {
+		if (value !== null) {
+			localStorage.setItem(key, value);
+		}
 	}
 	let Cookies = document.cookie.split(';');
 	for (let i = 0; i < Cookies.length; i++) {
@@ -29,7 +31,40 @@ var close_start_menu = function () {
 	$start_button.removeClass("selected");
 	$start_menu.attr("hidden", "hidden");
 	$start_menu.hide();
+	close_start_submenu();
 };
+
+// Settings' submenu, beside it (outside of the Start menu, which would cut it off)
+var $start_submenu = $("#start_menu_settings");
+var $start_settings_button = $("#start_btn_settings");
+var start_submenu_timer;
+var open_start_submenu = function () {
+	clearTimeout(start_submenu_timer);
+	$start_submenu.prop("hidden", false);
+	const item_rect = $start_settings_button[0].getBoundingClientRect();
+	$start_submenu.css({
+		left: $start_menu[0].getBoundingClientRect().right - 3,
+		top: Math.max(0, Math.min(item_rect.top - 3, innerHeight - $start_submenu.outerHeight())),
+		zIndex: Number($start_menu.css("zIndex")) + 1,
+	});
+	$start_settings_button.addClass("submenu-open").attr("aria-expanded", true);
+};
+var close_start_submenu = function () {
+	clearTimeout(start_submenu_timer);
+	$start_submenu.prop("hidden", true);
+	$start_settings_button.removeClass("submenu-open").attr("aria-expanded", false);
+};
+// It opens when pointed at for a moment, like Windows' menus, and closes when another item is
+$start_settings_button.on("pointerenter", () => {
+	clearTimeout(start_submenu_timer);
+	start_submenu_timer = setTimeout(open_start_submenu, 300);
+});
+$start_settings_button.on("pointerleave", () => {
+	if ($start_submenu.prop("hidden")) {
+		clearTimeout(start_submenu_timer);
+	}
+});
+$(".start-btn").not($start_settings_button).on("pointerenter", close_start_submenu);
 var toggle_start_menu = function () {
 	if ($start_menu.is(":hidden")) {
 		open_start_menu();
@@ -61,7 +96,7 @@ $start_button.on("pointerdown", function () {
 });
 
 $("body").on("pointerdown", function (e) {
-	if ($(e.target).closest(".start-menu, .start-button").length === 0) {
+	if ($(e.target).closest(".start-menu, .start-submenu, .start-button").length === 0) {
 		close_start_menu();
 	}
 });
@@ -96,7 +131,17 @@ document.getElementById('start_btn_documents').addEventListener("click", functio
 	Explorer("/My Documents/");
 });
 document.getElementById('start_btn_settings').addEventListener("click", function () {
-	showMessageBox({iconID: 'error', title:'Error', message: 'Cannot open settings-panel in user mode. \n[Cause: 401 Unauthorized Access]'});
+	open_start_submenu();
+});
+document.getElementById('start_btn_control_panel').addEventListener("click", function () {
+	close_start_menu();
+	console.log("[USR] ibocse@crlab2-h032: control.exe()");
+	ControlPanel();
+});
+document.getElementById('start_btn_printers').addEventListener("click", function () {
+	close_start_menu();
+	console.log("[USR] ibocse@crlab2-h032: control.exe printers");
+	Printers();
 });
 
 document.getElementById('start_btn_find').addEventListener("click", function () {

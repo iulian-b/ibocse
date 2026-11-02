@@ -100,7 +100,7 @@ $("html").on("drop", function (event) {
 
 // Listeners
 window.addEventListener('DOMContentLoaded', function() {
-	if (localStorage.getItem("boot") === "true") {
+	if (localStorage.getItem("boot") === "true" && desktop_settings.cv_at_startup) {
 		PDFViewer("/My Documents/CV (EN).pdf");
 		// localStorage.setItem("init", "true");
 	}
@@ -120,6 +120,7 @@ function runCommand(target) {
 		"calc": Calculator,
 		"cmd": CommandPrompt,
 		"command": CommandPrompt,
+		"control": ControlPanel,
 		"explorer": Explorer,
 		"solitaire": Solitaire,
 		"sol": Solitaire,
