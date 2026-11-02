@@ -141,6 +141,7 @@ function runCommand(target) {
 		"minecraft": Minecraft,
 		"skifree": SkiFree,
 		"keen": CommanderKeen,
+		"doom": Doom,
 		"digitalis": () => { audioPanic(); timeToPanic(); },
 	};
 	var program_name = target.toLowerCase().replace(/\.exe$/, "");

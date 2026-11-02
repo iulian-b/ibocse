@@ -392,6 +392,22 @@ function CommanderKeen() {
 }
 CommanderKeen.acceptsFilePaths = false;
 
+function Doom() {
+	let $win = make_iframe_window({
+		src: "https://raz0red.github.io/webprboom/",
+		sandbox: external_game_sandbox,
+		allow: external_game_allow,
+		icons: iconsAtTwoSizes("doom"),
+		title: "Doom",
+		innerWidth: 640,
+		innerHeight: 480,
+		resizable: true
+	});
+	console.log("[USR] ibocse@crlab2-h032: doom.exe()");
+	return new Task($win);
+}
+Doom.acceptsFilePaths = false;
+
 function PDFViewer(file_path) {
 	// There is no normal way to determine the height of a pdf that has yet to be loaded into the DOM.
 	// This is a hackjob, but the show must go on.
@@ -482,9 +498,10 @@ var exe_programs_by_file_name = {
 	"skifree.exe": SkiFree,
 	"quake3.exe": Quake3,
 	"keen.exe": CommanderKeen,
+	"doom.exe": Doom,
 };
 var exe_programs_by_name = {
-	Calculator, CommandPrompt, CommanderKeen, Diablo, Explorer, FlowerBox, Minecraft, Minesweeper, Notepad, Paint, Pinball,
+	Calculator, CommandPrompt, CommanderKeen, Diablo, Doom, Explorer, FlowerBox, Minecraft, Minesweeper, Notepad, Paint, Pinball,
 	Pipes, Quake3, SkiFree, Solitaire, SoundRecorder, TombRaider, VirtualMachine, Wolf3d, openWinamp,
 };
 
@@ -1679,6 +1696,12 @@ add_icon_not_via_filesystem({
 	title: "Commander Keen",
 	iconID: "keen",
 	open: function () { CommanderKeen(); },
+	shortcut: true
+});
+add_icon_not_via_filesystem({
+	title: "Doom",
+	iconID: "doom",
+	open: function () { Doom(); },
 	shortcut: true
 });
 add_icon_not_via_filesystem({

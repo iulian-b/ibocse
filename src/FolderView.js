@@ -131,7 +131,8 @@ var exe_extension_icon = {
 	quake3: "quake3",
 	minecraft: "minecraft",
 	skifree: "skifree",
-	keen: "keen"
+	keen: "keen",
+	doom: "doom"
 }
 
 // @TODO: maintain less fake naming abstraction
