@@ -148,6 +148,15 @@ function runCommand(target) {
 		"counterstrike": CounterStrike,
 		"daggerfall": Daggerfall,
 		"duke3d": DukeNukem3D,
+		"heroes2": Heroes2,
+		"nfsmw": NeedForSpeedMostWanted,
+		"nfsu2": NeedForSpeedUnderground2,
+		"prince": PrinceOfPersia,
+		"sonic": Sonic,
+		"mario64": SuperMario64,
+		"wipeout": Wipeout,
+		"gtavc": GTAViceCity,
+		"cyberpunk": Cyberpunk2077,
 		"digitalis": () => { audioPanic(); timeToPanic(); },
 	};
 	var program_name = target.toLowerCase().replace(/\.exe$/, "");

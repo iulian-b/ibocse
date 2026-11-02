@@ -346,17 +346,36 @@ function TombRaider() {
 }
 TombRaider.acceptsFilePaths = false;
 
-// quakejs.com, which hosted this, is gone
 function Quake3() {
+	let $win = make_iframe_window({
+		src: "https://q3.pieter.com/",
+		sandbox: external_game_sandbox,
+		allow: external_game_allow,
+		icons: iconsAtTwoSizes("quake3"),
+		title: "Quake III Arena",
+		innerWidth: 960,
+		innerHeight: 600,
+		resizable: true
+	});
 	console.log("[USR] ibocse@crlab2-h032: quake3.exe()");
-	showMessageBox({ iconID: "error", title: "Quake III", message: "quake3.exe: Could not connect to the game server. \n[Cause: 503 Service Unavailable]" });
+	return new Task($win);
 }
 Quake3.acceptsFilePaths = false;
 
-// eaglercraft.com no longer allows being embedded in other sites
+// Eaglercraft 1.8.8 (eaglercraft.com no longer allows being embedded in other sites)
 function Minecraft() {
+	let $win = make_iframe_window({
+		src: "https://rgc.zone/ports/eaglecarftg/launch.html?v=188js.html",
+		sandbox: external_game_sandbox,
+		allow: external_game_allow,
+		icons: iconsAtTwoSizes("minecraft"),
+		title: "Minecraft",
+		innerWidth: 854,
+		innerHeight: 480,
+		resizable: true
+	});
 	console.log("[USR] ibocse@crlab2-h032: minecraft.exe()");
-	showMessageBox({ iconID: "error", title: "Minecraft", message: "minecraft.exe: The server refused the connection. \n[Cause: 403 Forbidden]" });
+	return new Task($win);
 }
 Minecraft.acceptsFilePaths = false;
 
@@ -508,6 +527,106 @@ function DukeNukem3D() {
 }
 DukeNukem3D.acceptsFilePaths = false;
 
+function PrinceOfPersia() {
+	let $win = make_iframe_window({
+		src: "https://princejs.com/",
+		sandbox: external_game_sandbox,
+		allow: external_game_allow,
+		icons: iconsAtTwoSizes("prince-of-persia"),
+		title: "Prince of Persia",
+		innerWidth: 640,
+		innerHeight: 400,
+		resizable: true
+	});
+	console.log("[USR] ibocse@crlab2-h032: prince.exe()");
+	return new Task($win);
+}
+PrinceOfPersia.acceptsFilePaths = false;
+
+function Sonic() {
+	let $win = make_iframe_window({
+		src: "https://vinmannie.github.io/Sonic-1-WASM/",
+		sandbox: external_game_sandbox,
+		allow: external_game_allow,
+		icons: iconsAtTwoSizes("sonic"),
+		title: "Sonic the Hedgehog",
+		innerWidth: 848,
+		innerHeight: 480,
+		resizable: true
+	});
+	console.log("[USR] ibocse@crlab2-h032: sonic.exe()");
+	return new Task($win);
+}
+Sonic.acceptsFilePaths = false;
+
+// olivers.tools/play doesn't allow being embedded in other sites
+function SuperMario64() {
+	let $win = make_iframe_window({
+		src: "https://rgc.zone/ports/sm64-main/index.html",
+		sandbox: external_game_sandbox,
+		allow: external_game_allow,
+		icons: iconsAtTwoSizes("super-mario-64"),
+		title: "Super Mario 64",
+		innerWidth: 640,
+		innerHeight: 480,
+		resizable: true
+	});
+	console.log("[USR] ibocse@crlab2-h032: mario64.exe()");
+	return new Task($win);
+}
+SuperMario64.acceptsFilePaths = false;
+
+function Wipeout() {
+	let $win = make_iframe_window({
+		src: "https://phoboslab.org/wipegame/",
+		sandbox: external_game_sandbox,
+		allow: external_game_allow,
+		icons: iconsAtTwoSizes("wipeout"),
+		title: "Wipeout",
+		innerWidth: 960,
+		innerHeight: 600,
+		resizable: true
+	});
+	console.log("[USR] ibocse@crlab2-h032: wipeout.exe()");
+	return new Task($win);
+}
+Wipeout.acceptsFilePaths = false;
+
+// These can't run in a window here, so they open in a tab of their own:
+// midzer.de and nfsu2.xyz don't allow being embedded in other sites (and rgc.zone's Heroes II stops loading halfway),
+// web.nfsmwo.com refuses to start when embedded, and the other two need shared memory (SharedArrayBuffer),
+// which a page only gets when it's cross-origin isolated, and a page embedded in this one isn't.
+function Heroes2() {
+	console.log("[USR] ibocse@crlab2-h032: heroes2.exe()");
+	open("https://midzer.de/wasm/heroes2/", "_blank", "noopener");
+}
+Heroes2.acceptsFilePaths = false;
+
+function NeedForSpeedMostWanted() {
+	console.log("[USR] ibocse@crlab2-h032: nfsmw.exe()");
+	open("https://web.nfsmwo.com/", "_blank", "noopener");
+}
+NeedForSpeedMostWanted.acceptsFilePaths = false;
+
+function NeedForSpeedUnderground2() {
+	console.log("[USR] ibocse@crlab2-h032: nfsu2.exe()");
+	open("https://nfsu2.xyz/", "_blank", "noopener");
+}
+NeedForSpeedUnderground2.acceptsFilePaths = false;
+
+function GTAViceCity() {
+	console.log("[USR] ibocse@crlab2-h032: gtavc.exe()");
+	open("https://gta.rabisco.net/", "_blank", "noopener");
+}
+GTAViceCity.acceptsFilePaths = false;
+
+// (a joke: it never finishes loading)
+function Cyberpunk2077() {
+	console.log("[USR] ibocse@crlab2-h032: cyberpunk.exe()");
+	open("https://cyberpunk2077.lol/", "_blank", "noopener");
+}
+Cyberpunk2077.acceptsFilePaths = false;
+
 function PDFViewer(file_path) {
 	// There is no normal way to determine the height of a pdf that has yet to be loaded into the DOM.
 	// This is a hackjob, but the show must go on.
@@ -605,11 +724,21 @@ var exe_programs_by_file_name = {
 	"counterstrike.exe": CounterStrike,
 	"daggerfall.exe": Daggerfall,
 	"duke3d.exe": DukeNukem3D,
+	"heroes2.exe": Heroes2,
+	"nfsmw.exe": NeedForSpeedMostWanted,
+	"nfsu2.exe": NeedForSpeedUnderground2,
+	"prince.exe": PrinceOfPersia,
+	"sonic.exe": Sonic,
+	"mario64.exe": SuperMario64,
+	"wipeout.exe": Wipeout,
+	"gtavc.exe": GTAViceCity,
+	"cyberpunk.exe": Cyberpunk2077,
 };
 var exe_programs_by_name = {
-	ArxFatalis, BattleCity, Calculator, CaveStory, CommandPrompt, CommanderKeen, CounterStrike, Daggerfall, Diablo, Doom,
-	DukeNukem3D, Explorer, FlowerBox, Minecraft, Minesweeper, Notepad, Paint, Pinball, Pipes, Quake3, SkiFree, Solitaire,
-	SoundRecorder, TombRaider, VirtualMachine, Wolf3d, openWinamp,
+	ArxFatalis, BattleCity, Calculator, CaveStory, CommandPrompt, CommanderKeen, CounterStrike, Cyberpunk2077, Daggerfall,
+	Diablo, Doom, DukeNukem3D, Explorer, FlowerBox, GTAViceCity, Heroes2, Minecraft, Minesweeper, NeedForSpeedMostWanted,
+	NeedForSpeedUnderground2, Notepad, Paint, Pinball, Pipes, PrinceOfPersia, Quake3, SkiFree, Solitaire, Sonic,
+	SoundRecorder, SuperMario64, TombRaider, VirtualMachine, Wipeout, Wolf3d, openWinamp,
 };
 
 function openWithProgram(file_path) {
@@ -1839,6 +1968,42 @@ add_icon_not_via_filesystem({
 	title: "Duke Nukem 3D",
 	iconID: "duke3d",
 	open: function () { DukeNukem3D(); },
+	shortcut: true
+});
+add_icon_not_via_filesystem({
+	title: "Heroes of Might and Magic II",
+	iconID: "heroes2",
+	open: function () { Heroes2(); },
+	shortcut: true
+});
+add_icon_not_via_filesystem({
+	title: "Need for Speed: Most Wanted",
+	iconID: "nfs-mw",
+	open: function () { NeedForSpeedMostWanted(); },
+	shortcut: true
+});
+add_icon_not_via_filesystem({
+	title: "Need for Speed: Underground 2",
+	iconID: "nfs-ug2",
+	open: function () { NeedForSpeedUnderground2(); },
+	shortcut: true
+});
+add_icon_not_via_filesystem({
+	title: "Wipeout",
+	iconID: "wipeout",
+	open: function () { Wipeout(); },
+	shortcut: true
+});
+add_icon_not_via_filesystem({
+	title: "Grand Theft Auto: Vice City",
+	iconID: "gta-vc",
+	open: function () { GTAViceCity(); },
+	shortcut: true
+});
+add_icon_not_via_filesystem({
+	title: "Cyberpunk 2077",
+	iconID: "cyberpunk",
+	open: function () { Cyberpunk2077(); },
 	shortcut: true
 });
 add_icon_not_via_filesystem({

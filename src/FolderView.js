@@ -138,7 +138,16 @@ var exe_extension_icon = {
 	battlecity: "battle-city",
 	counterstrike: "counter-strike",
 	daggerfall: "daggerfall",
-	duke3d: "duke3d"
+	duke3d: "duke3d",
+	heroes2: "heroes2",
+	nfsmw: "nfs-mw",
+	nfsu2: "nfs-ug2",
+	prince: "prince-of-persia",
+	sonic: "sonic",
+	mario64: "super-mario-64",
+	wipeout: "wipeout",
+	gtavc: "gta-vc",
+	cyberpunk: "cyberpunk"
 }
 
 // @TODO: maintain less fake naming abstraction

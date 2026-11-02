@@ -106,12 +106,13 @@ test('external games are sandboxed', async ({ page }) => {
 	await openDesktop(page);
 	await page.evaluate(() => {
 		for (const game of ['Diablo', 'Wolf3d', 'SkiFree', 'TombRaider', 'CommanderKeen', 'Doom', 'CaveStory', 'ArxFatalis',
-			'BattleCity', 'CounterStrike', 'Daggerfall', 'DukeNukem3D']) {
+			'BattleCity', 'CounterStrike', 'Daggerfall', 'DukeNukem3D', 'PrinceOfPersia', 'Sonic', 'SuperMario64', 'Wipeout', 'Quake3',
+			'Minecraft']) {
 			(window as any)[game]();
 		}
 	});
 	const iframes = page.locator('.os-window iframe');
-	await expect(iframes).toHaveCount(12);
+	await expect(iframes).toHaveCount(18);
 	for (const iframe of await iframes.all()) {
 		const sandbox = await iframe.getAttribute('sandbox');
 		expect(sandbox).toContain('allow-scripts');

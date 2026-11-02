@@ -49,6 +49,7 @@ test.describe('desktop icons', () => {
 		['Counter Strike 1.6', 'Counter Strike 1.6'],
 		['The Elder Scrolls II: Daggerfall', 'The Elder Scrolls II: Daggerfall'],
 		['Duke Nukem 3D', 'Duke Nukem 3D'],
+		['Wipeout', 'Wipeout'],
 		['CV (EN).pdf', 'CV (EN).pdf - PDF Viewer'],
 		['CV (RO).pdf', 'CV (RO).pdf - PDF Viewer'],
 	];
@@ -79,14 +80,39 @@ test.describe('desktop icons', () => {
 		});
 	}
 
-	test('Battle City is in C:\\Games, but not on the desktop', async ({ page }) => {
-		await openDesktop(page);
-		await expect(desktopIcon(page, 'Battle City')).toHaveCount(0);
-		await page.evaluate(() => (window as any).Explorer('/Games/'));
-		const folder = page.frameLocator('iframe[src*="programs/explorer"]').frameLocator('iframe');
-		await folder.locator('.desktop-icon', { hasText: 'battlecity.exe' }).dblclick();
-		await expect(windowTitled(page, 'Battle City')).toBeVisible({ timeout: 15_000 });
-	});
+	// (games that can't run in a window here)
+	const tabs: [icon: string, url: string][] = [
+		['Heroes of Might and Magic II', 'https://midzer.de/wasm/heroes2/'],
+		['Need for Speed: Most Wanted', 'https://web.nfsmwo.com/'],
+		['Need for Speed: Underground 2', 'https://nfsu2.xyz/'],
+		['Grand Theft Auto: Vice City', 'https://gta.rabisco.net/'],
+		['Cyberpunk 2077', 'https://cyberpunk2077.lol/'],
+	];
+	for (const [icon, url] of tabs) {
+		test(`${icon} opens in a new tab`, async ({ page, context }) => {
+			await openDesktop(page);
+			const [tab] = await Promise.all([context.waitForEvent('page'), desktopIcon(page, icon).dblclick()]);
+			await expect(tab).toHaveURL(url);
+			await expect(page.locator('.os-window')).toHaveCount(0);
+		});
+	}
+
+	const games_only_in_folder: [title: string, exe: string][] = [
+		['Battle City', 'battlecity.exe'],
+		['Prince of Persia', 'prince.exe'],
+		['Sonic the Hedgehog', 'sonic.exe'],
+		['Super Mario 64', 'mario64.exe'],
+	];
+	for (const [title, exe] of games_only_in_folder) {
+		test(`${title} is in C:\\Games, but not on the desktop`, async ({ page }) => {
+			await openDesktop(page);
+			await expect(desktopIcon(page, title)).toHaveCount(0);
+			await page.evaluate(() => (window as any).Explorer('/Games/'));
+			const folder = page.frameLocator('iframe[src*="programs/explorer"]').frameLocator('iframe');
+			await folder.locator('.desktop-icon', { hasText: exe }).dblclick();
+			await expect(windowTitled(page, title)).toBeVisible({ timeout: 15_000 });
+		});
+	}
 });
 
 test.describe('Start menu', () => {
