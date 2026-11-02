@@ -105,12 +105,13 @@ test('third-party code is never loaded by the site\'s own pages', async ({ page,
 test('external games are sandboxed', async ({ page }) => {
 	await openDesktop(page);
 	await page.evaluate(() => {
-		for (const game of ['Diablo', 'Wolf3d', 'SkiFree', 'TombRaider', 'CommanderKeen', 'Doom']) {
+		for (const game of ['Diablo', 'Wolf3d', 'SkiFree', 'TombRaider', 'CommanderKeen', 'Doom', 'CaveStory', 'ArxFatalis',
+			'BattleCity', 'CounterStrike', 'Daggerfall', 'DukeNukem3D']) {
 			(window as any)[game]();
 		}
 	});
 	const iframes = page.locator('.os-window iframe');
-	await expect(iframes).toHaveCount(6);
+	await expect(iframes).toHaveCount(12);
 	for (const iframe of await iframes.all()) {
 		const sandbox = await iframe.getAttribute('sandbox');
 		expect(sandbox).toContain('allow-scripts');

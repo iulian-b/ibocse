@@ -132,7 +132,13 @@ var exe_extension_icon = {
 	minecraft: "minecraft",
 	skifree: "skifree",
 	keen: "keen",
-	doom: "doom"
+	doom: "doom",
+	cavestory: "cave-story",
+	arxfatalis: "arx-fatalis",
+	battlecity: "battle-city",
+	counterstrike: "counter-strike",
+	daggerfall: "daggerfall",
+	duke3d: "duke3d"
 }
 
 // @TODO: maintain less fake naming abstraction

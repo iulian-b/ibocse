@@ -142,6 +142,12 @@ const bootText = [
         <span style="color: rgb(150, 150, 150)">[</span>  <span style="color: rgb(0, 255, 0)">OK</span> <span style="color: rgb(150, 150, 150)">] Loaded </span>SKiFree.<br>
         <span style="color: rgb(150, 150, 150)">[</span>  <span style="color: rgb(0, 255, 0)">OK</span> <span style="color: rgb(150, 150, 150)">] Loaded </span>Commander Keen.<br>
         <span style="color: rgb(150, 150, 150)">[</span>  <span style="color: rgb(0, 255, 0)">OK</span> <span style="color: rgb(150, 150, 150)">] Loaded </span>Doom.<br>
+        <span style="color: rgb(150, 150, 150)">[</span>  <span style="color: rgb(0, 255, 0)">OK</span> <span style="color: rgb(150, 150, 150)">] Loaded </span>Cave Story.<br>
+        <span style="color: rgb(150, 150, 150)">[</span>  <span style="color: rgb(0, 255, 0)">OK</span> <span style="color: rgb(150, 150, 150)">] Loaded </span>Arx Fatalis.<br>
+        <span style="color: rgb(150, 150, 150)">[</span>  <span style="color: rgb(0, 255, 0)">OK</span> <span style="color: rgb(150, 150, 150)">] Loaded </span>Battle City.<br>
+        <span style="color: rgb(150, 150, 150)">[</span>  <span style="color: rgb(0, 255, 0)">OK</span> <span style="color: rgb(150, 150, 150)">] Loaded </span>Counter Strike 1.6.<br>
+        <span style="color: rgb(150, 150, 150)">[</span>  <span style="color: rgb(0, 255, 0)">OK</span> <span style="color: rgb(150, 150, 150)">] Loaded </span>Daggerfall.<br>
+        <span style="color: rgb(150, 150, 150)">[</span>  <span style="color: rgb(0, 255, 0)">OK</span> <span style="color: rgb(150, 150, 150)">] Loaded </span>Duke Nukem 3D.<br>
     </div>`,
 	`<div class="fade"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(150, 150, 150)">Starting Desktop Environment...</span><br></div>`
 ];

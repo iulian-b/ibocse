@@ -142,6 +142,12 @@ function runCommand(target) {
 		"skifree": SkiFree,
 		"keen": CommanderKeen,
 		"doom": Doom,
+		"cavestory": CaveStory,
+		"arxfatalis": ArxFatalis,
+		"battlecity": BattleCity,
+		"counterstrike": CounterStrike,
+		"daggerfall": Daggerfall,
+		"duke3d": DukeNukem3D,
 		"digitalis": () => { audioPanic(); timeToPanic(); },
 	};
 	var program_name = target.toLowerCase().replace(/\.exe$/, "");

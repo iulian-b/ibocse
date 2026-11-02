@@ -44,6 +44,11 @@ test.describe('desktop icons', () => {
 		['Minecraft', 'Minecraft'],
 		['Commander Keen', 'Commander Keen'],
 		['Doom', 'Doom'],
+		['Cave Story', 'Cave Story'],
+		['Arx Fatalis', 'Arx Fatalis'],
+		['Counter Strike 1.6', 'Counter Strike 1.6'],
+		['The Elder Scrolls II: Daggerfall', 'The Elder Scrolls II: Daggerfall'],
+		['Duke Nukem 3D', 'Duke Nukem 3D'],
 		['CV (EN).pdf', 'CV (EN).pdf - PDF Viewer'],
 		['CV (RO).pdf', 'CV (RO).pdf - PDF Viewer'],
 	];
@@ -73,6 +78,15 @@ test.describe('desktop icons', () => {
 			await expect(page.locator('body > iframe')).toBeVisible();
 		});
 	}
+
+	test('Battle City is in C:\\Games, but not on the desktop', async ({ page }) => {
+		await openDesktop(page);
+		await expect(desktopIcon(page, 'Battle City')).toHaveCount(0);
+		await page.evaluate(() => (window as any).Explorer('/Games/'));
+		const folder = page.frameLocator('iframe[src*="programs/explorer"]').frameLocator('iframe');
+		await folder.locator('.desktop-icon', { hasText: 'battlecity.exe' }).dblclick();
+		await expect(windowTitled(page, 'Battle City')).toBeVisible({ timeout: 15_000 });
+	});
 });
 
 test.describe('Start menu', () => {

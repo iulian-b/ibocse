@@ -408,6 +408,106 @@ function Doom() {
 }
 Doom.acceptsFilePaths = false;
 
+function CaveStory() {
+	let $win = make_iframe_window({
+		src: "https://rgc.zone/ports/cavestory/index.html",
+		sandbox: external_game_sandbox,
+		allow: external_game_allow,
+		icons: iconsAtTwoSizes("cave-story"),
+		title: "Cave Story",
+		innerWidth: 640,
+		innerHeight: 480,
+		resizable: true
+	});
+	console.log("[USR] ibocse@crlab2-h032: cavestory.exe()");
+	return new Task($win);
+}
+CaveStory.acceptsFilePaths = false;
+
+function ArxFatalis() {
+	let $win = make_iframe_window({
+		src: "https://rgc.zone/ports/arxweb/index.html",
+		sandbox: external_game_sandbox,
+		allow: external_game_allow,
+		icons: iconsAtTwoSizes("arx-fatalis"),
+		title: "Arx Fatalis",
+		innerWidth: 800,
+		innerHeight: 600,
+		resizable: true
+	});
+	console.log("[USR] ibocse@crlab2-h032: arxfatalis.exe()");
+	return new Task($win);
+}
+ArxFatalis.acceptsFilePaths = false;
+
+function BattleCity() {
+	let $win = make_iframe_window({
+		src: "https://battle-city.berrry.app/",
+		sandbox: external_game_sandbox,
+		allow: external_game_allow,
+		icons: iconsAtTwoSizes("battle-city"),
+		title: "Battle City",
+		// At most 500px high, the game fits itself to the height (otherwise it's 3x size, too tall for most screens),
+		// with its key hints and a gamepad beside it, which need ~1000px wide
+		// (at 800px wide or less it puts touch controls over the playfield instead)
+		innerWidth: 1000,
+		innerHeight: 500,
+		resizable: true
+	});
+	console.log("[USR] ibocse@crlab2-h032: battlecity.exe()");
+	return new Task($win);
+}
+BattleCity.acceptsFilePaths = false;
+
+function CounterStrike() {
+	let $win = make_iframe_window({
+		src: "https://csjs.live/play",
+		sandbox: external_game_sandbox,
+		allow: external_game_allow,
+		icons: iconsAtTwoSizes("counter-strike"),
+		title: "Counter Strike 1.6",
+		innerWidth: 800,
+		innerHeight: 600,
+		resizable: true
+	});
+	console.log("[USR] ibocse@crlab2-h032: counterstrike.exe()");
+	return new Task($win);
+}
+CounterStrike.acceptsFilePaths = false;
+
+function Daggerfall() {
+	let $win = make_iframe_window({
+		src: "https://daggerfalljs.dev/play/",
+		sandbox: external_game_sandbox,
+		allow: external_game_allow,
+		icons: iconsAtTwoSizes("daggerfall"),
+		title: "The Elder Scrolls II: Daggerfall",
+		innerWidth: 800,
+		innerHeight: 600,
+		resizable: true
+	});
+	console.log("[USR] ibocse@crlab2-h032: daggerfall.exe()");
+	return new Task($win);
+}
+Daggerfall.acceptsFilePaths = false;
+
+// midzer.de/wasm/duke3d doesn't allow being embedded in other sites
+function DukeNukem3D() {
+	let $win = make_iframe_window({
+		src: "https://rgc.zone/ports/duke3dtg/index.html",
+		sandbox: external_game_sandbox,
+		allow: external_game_allow,
+		icons: iconsAtTwoSizes("duke3d"),
+		title: "Duke Nukem 3D",
+		innerWidth: 800,
+		innerHeight: 600,
+		resizable: true
+	});
+	console.log("[USR] ibocse@crlab2-h032: duke3d.exe()");
+	return new Task($win);
+}
+DukeNukem3D.acceptsFilePaths = false;
+
 function PDFViewer(file_path) {
 	// There is no normal way to determine the height of a pdf that has yet to be loaded into the DOM.
 	// This is a hackjob, but the show must go on.
@@ -499,10 +599,17 @@ var exe_programs_by_file_name = {
 	"quake3.exe": Quake3,
 	"keen.exe": CommanderKeen,
 	"doom.exe": Doom,
+	"cavestory.exe": CaveStory,
+	"arxfatalis.exe": ArxFatalis,
+	"battlecity.exe": BattleCity,
+	"counterstrike.exe": CounterStrike,
+	"daggerfall.exe": Daggerfall,
+	"duke3d.exe": DukeNukem3D,
 };
 var exe_programs_by_name = {
-	Calculator, CommandPrompt, CommanderKeen, Diablo, Doom, Explorer, FlowerBox, Minecraft, Minesweeper, Notepad, Paint, Pinball,
-	Pipes, Quake3, SkiFree, Solitaire, SoundRecorder, TombRaider, VirtualMachine, Wolf3d, openWinamp,
+	ArxFatalis, BattleCity, Calculator, CaveStory, CommandPrompt, CommanderKeen, CounterStrike, Daggerfall, Diablo, Doom,
+	DukeNukem3D, Explorer, FlowerBox, Minecraft, Minesweeper, Notepad, Paint, Pinball, Pipes, Quake3, SkiFree, Solitaire,
+	SoundRecorder, TombRaider, VirtualMachine, Wolf3d, openWinamp,
 };
 
 function openWithProgram(file_path) {
@@ -1702,6 +1809,36 @@ add_icon_not_via_filesystem({
 	title: "Doom",
 	iconID: "doom",
 	open: function () { Doom(); },
+	shortcut: true
+});
+add_icon_not_via_filesystem({
+	title: "Cave Story",
+	iconID: "cave-story",
+	open: function () { CaveStory(); },
+	shortcut: true
+});
+add_icon_not_via_filesystem({
+	title: "Arx Fatalis",
+	iconID: "arx-fatalis",
+	open: function () { ArxFatalis(); },
+	shortcut: true
+});
+add_icon_not_via_filesystem({
+	title: "Counter Strike 1.6",
+	iconID: "counter-strike",
+	open: function () { CounterStrike(); },
+	shortcut: true
+});
+add_icon_not_via_filesystem({
+	title: "The Elder Scrolls II: Daggerfall",
+	iconID: "daggerfall",
+	open: function () { Daggerfall(); },
+	shortcut: true
+});
+add_icon_not_via_filesystem({
+	title: "Duke Nukem 3D",
+	iconID: "duke3d",
+	open: function () { DukeNukem3D(); },
 	shortcut: true
 });
 add_icon_not_via_filesystem({
