@@ -156,7 +156,7 @@ test('Windows\' own files can be looked at, but not opened or downloaded', async
 	expect(downloads.filter((url) => /\/C\/(Program Files|Windows)\//.test(url))).toEqual([]);
 });
 
-test('the programs in C:\\Windows run', async ({ page }) => {
+test('Windows\' programs run from where Windows 95 kept them', async ({ page }) => {
 	await openDesktop(page);
 	const programs: [path: string, title: string | RegExp][] = [
 		['/Windows/Notepad.exe', 'Untitled - Notepad'],
@@ -164,14 +164,16 @@ test('the programs in C:\\Windows run', async ({ page }) => {
 		['/Windows/Winmine.exe', 'Minesweeper'],
 		['/Windows/Sol.exe', 'Solitaire'],
 		['/Windows/Pbrush.exe', 'untitled - Paint'],
+		['/Program Files/Accessories/Mspaint.exe', 'untitled - Paint'],
 		['/Windows/Command.com', 'MS-DOS Prompt'],
-		['/Windows/Iexplore.exe', /google\.com/],
+		['/Program Files/Internet Explorer/Iexplore.exe', /google\.com/],
 		['/Windows/Netwatch.exe', /^Network$/],
-		['/Windows/Pinball.exe', /Space Cadet$/],
+		['/Program Files/Plus!/Pinball/Pinball.exe', /Space Cadet$/],
 	];
 	for (const [file_path, title] of programs) {
+		const open = await windowTitled(page, title).count(); // (Paint is in there twice)
 		await page.evaluate((file_path) => (window as any).systemExecuteFile(file_path), file_path);
-		await expect(windowTitled(page, title)).toBeVisible({ timeout: 15_000 });
+		await expect(windowTitled(page, title)).toHaveCount(open + 1, { timeout: 15_000 });
 	}
 	for (const screensaver of ['/Windows/System/3D Pipes (OpenGL).scr', '/Windows/System/3D Flower Box (OpenGL).scr']) {
 		await page.evaluate((file_path) => (window as any).systemExecuteFile(file_path), screensaver);

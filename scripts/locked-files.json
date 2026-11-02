@@ -15,7 +15,6 @@
 				"Backup.exe": 516096,
 				"Backup.hlp": 41356,
 				"Full System Backup.Set": 1536,
-				"Mspaint.exe": 344064,
 				"Wordpad.exe": 182784,
 				"HyperTerminal": {
 					"AT&T Mail.ht": 1104,
@@ -37,7 +36,6 @@
 			"Internet Explorer": {
 				"@modified": "1996-08-13T03:01:00Z",
 				"Iexplore.cnt": 1874,
-				"Iexplore.exe": 192512,
 				"Iexplore.hlp": 32133,
 				"Readme.txt": 25211,
 				"Connection Wizard": {
@@ -77,7 +75,6 @@
 				"Pinball": {
 					"Font.dat": 10294,
 					"Pinball.dat": 928700,
-					"Pinball.exe": 351744,
 					"Pinball.hlp": 23514,
 					"Pinball.mid": 47076,
 					"Sound1.wav": 7228,
