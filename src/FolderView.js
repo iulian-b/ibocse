@@ -99,6 +99,20 @@ var file_extension_icons = {
 	avi: "video-file",
 	// "doc": "doc"?
 	"exe": "task",
+	com: "msdos",
+	bat: "msdos",
+	pif: "msdos",
+	scr: "computer3",
+	lnk: "start-menu-programs",
+	dll: "file-settings",
+	sys: "file-settings",
+	vxd: "file-settings",
+	pdr: "file-settings",
+	inf: "file-settings",
+	hlp: "help",
+	cnt: "help",
+	log: "notepad-file",
+	mid: "sound",
 	htm: "html",
 	html: "html",
 	shtml: "html",
@@ -107,15 +121,25 @@ var file_extension_icons = {
 	themepack: "themes",
 };
 
+// Programs (.exe, .com and .scr files) by name, in lowercase
 var exe_extension_icon = {
 	calc: "calculator",
 	cmd: "console",
+	command: "msdos",
 	explorer: "task",
 	paint: "paint",
+	pbrush: "paint",
+	mspaint: "paint",
 	solitaire: "solitaire",
-	WINMINE: "minesweeper",
+	sol: "solitaire",
+	winmine: "minesweeper",
 	minesweeper: "minesweeper",
 	notepad: "notepad",
+	iexplore: "internet-explorer",
+	netwatch: "network",
+	sndrec32: "speaker",
+	"3d pipes (opengl)": "pipes",
+	"3d flower box (opengl)": "pipes",
 	pdfviewer: "doc",
 	picview: "kodak-imaging",
 	pinball: "pinball",
@@ -859,11 +883,11 @@ function FolderView(folder_path, { asDesktop = false, onStatus, openFolder, open
 		// TODO: look inside exe for icons
 		var icon_name;
 
-		if (file_extension.toLocaleLowerCase() == "exe" ) {
-			icon_name = exe_extension_icon[file_path.substring(file_path.lastIndexOf('/')+1,file_path.indexOf('.'))];
-		} else {
-			icon_name = file_extension_icons[file_extension.toLowerCase()];
+		if (["exe", "com", "scr"].includes(file_extension.toLowerCase())) {
+			var file_name = file_name_from_path(file_path);
+			icon_name = exe_extension_icon[file_name.slice(0, file_name.lastIndexOf(".")).toLowerCase()];
 		}
+		icon_name = icon_name || file_extension_icons[file_extension.toLowerCase()];
 
 		// Exception if in /Network
 		if (file_path.includes("/Network/")) return icon_name || "network";

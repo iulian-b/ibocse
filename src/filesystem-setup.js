@@ -153,6 +153,12 @@ function withFilesystem(callback) {
 // TODO: never use alert(); use thematic, non-blocking dialog windows, preferably with warning and error icons
 // I have a show_error_message in jspaint, but with no warning or error icons - as of writing; see https://github.com/1j01/jspaint/issues/84
 
+// Windows' own files (scripts/locked-files.json) are on the drive for show: there's nothing to download,
+// and they have no permissions, so they can't be opened
+function is_locked_file(stats) {
+	return stats.isFile() && (stats.mode & 0o777) === 0;
+}
+
 function file_name_from_path(file_path) {
 	return file_path.split("\\").pop().split("/").pop();
 }
@@ -199,9 +205,12 @@ function file_path_to_viewable_url(file_path, allowed_extensions, callback) {
 	}
 	withFilesystem(function () {
 		var fs = ZenFS.fs;
-		fs.exists(file_path, function (exists) {
-			if (!exists) {
+		fs.stat(file_path, function (error, stats) {
+			if (error) {
 				return callback(new Error("file not found"));
+			}
+			if (is_locked_file(stats)) {
+				return callback(new Error("access denied"));
 			}
 			(filesystem_host || window).is_file_from_site(file_path).then(function (from_site) {
 				if (from_site) {

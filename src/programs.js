@@ -736,9 +736,9 @@ var exe_programs_by_file_name = {
 };
 var exe_programs_by_name = {
 	ArxFatalis, BattleCity, Calculator, CaveStory, CommandPrompt, CommanderKeen, CounterStrike, Cyberpunk2077, Daggerfall,
-	Diablo, Doom, DukeNukem3D, Explorer, FlowerBox, GTAViceCity, Heroes2, Minecraft, Minesweeper, NeedForSpeedMostWanted,
-	NeedForSpeedUnderground2, Notepad, Paint, Pinball, Pipes, PrinceOfPersia, Quake3, SkiFree, Solitaire, Sonic,
-	SoundRecorder, SuperMario64, TombRaider, VirtualMachine, Wipeout, Wolf3d, openWinamp,
+	Diablo, Doom, DukeNukem3D, Explorer, FlowerBox, GTAViceCity, Heroes2, InternetExplorer, Minecraft, Minesweeper,
+	NeedForSpeedMostWanted, NeedForSpeedUnderground2, NetworkNeighborhood, Notepad, Paint, Pinball, Pipes, PrinceOfPersia,
+	Quake3, SkiFree, Solitaire, Sonic, SoundRecorder, SuperMario64, TombRaider, VirtualMachine, Wipeout, Wolf3d, openWinamp,
 };
 
 function openWithProgram(file_path) {
@@ -1130,6 +1130,16 @@ function Explorer(address) {
 	return new Task($win);
 }
 Explorer.acceptsFilePaths = true;
+
+function InternetExplorer() {
+	return Explorer("https://www.google.com/");
+}
+InternetExplorer.acceptsFilePaths = false;
+
+function NetworkNeighborhood() {
+	return Explorer("/Network");
+}
+NetworkNeighborhood.acceptsFilePaths = false;
 
 function VirtualMachine() {
 	// The "guest OS" is this site's own desktop
@@ -1734,6 +1744,8 @@ var file_extension_associations = {
 
 	// Programs:
 	exe: openWithProgram,
+	com: openWithProgram,
+	scr: openWithProgram, // screensavers
 
 	// Misc:
 	htm: Explorer,
@@ -1761,6 +1773,9 @@ function systemExecuteFile(file_path) {
 			}
 			if (stats.isDirectory()) {
 				Explorer(file_path);
+			} else if (is_locked_file(stats)) {
+				var file_name = file_name_from_path(file_path);
+				showMessageBox({ iconID: "error", title: file_name, message: "Cannot open '" + file_name + "'.\nInsufficient permissions: access is denied." });
 			} else {
 				var file_extension = file_extension_from_path(file_path);
 				var program = file_extension_associations[file_extension.toLowerCase()];
@@ -1837,7 +1852,7 @@ add_icon_not_via_filesystem({
 add_icon_not_via_filesystem({
 	title: "Internet Explorer",
 	iconID: "internet-explorer",
-	open: function () { Explorer("https://www.google.com/"); }
+	open: InternetExplorer
 });
 add_icon_not_via_filesystem({
 	title: "Paint",

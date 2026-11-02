@@ -87,7 +87,7 @@ test.describe('the drive index', () => {
 			const warn = console.warn;
 			const warnings: string[] = [];
 			console.warn = (message) => warnings.push(message);
-			const index = make_filesystem_index(site);
+			const index = make_filesystem_index(site, { files: {} });
 			console.warn = warn;
 
 			expect(index.version).toBe(1);
@@ -100,4 +100,83 @@ test.describe('the drive index', () => {
 			fs.rmSync(site, { recursive: true, force: true });
 		}
 	});
+
+	test('lists Windows\' own files, which have nothing behind them, with no permissions', () => {
+		const { make_filesystem_index } = require('../scripts/filesystem-index.js');
+		const site = fs.mkdtempSync(path.join(os.tmpdir(), 'drive-'));
+		try {
+			fs.mkdirSync(path.join(site, 'C', 'Windows'), { recursive: true });
+			fs.mkdirSync(path.join(site, 'C', 'My Documents'));
+			fs.writeFileSync(path.join(site, 'C', 'Windows', 'Notepad.exe'), 'Notepad();\n');
+			fs.writeFileSync(path.join(site, 'C', 'My Documents', 'notes.txt'), 'notes');
+			const index = make_filesystem_index(site, {
+				modified: '1995-07-11T09:50:00Z',
+				files: {
+					'Io.sys': 214416,
+					'Windows': {
+						'Notepad.exe': 34304, // (the real file is used)
+						'Explorer.exe': 204288,
+						'Plus!': { '@modified': '1995-07-31T12:00:00Z', 'Pinball': { 'Pinball.exe': 351744 } },
+					},
+				},
+			});
+			const win95 = Date.parse('1995-07-11T09:50:00Z');
+			expect(index.entries['/Io.sys']).toMatchObject({ size: 214416, mode: 0o100000, mtimeMs: win95 });
+			expect(index.entries['/Windows/Explorer.exe']).toMatchObject({ size: 204288, mode: 0o100000, mtimeMs: win95 });
+			expect(index.entries['/Windows/Plus!']).toMatchObject({ mode: 0o40755, mtimeMs: Date.parse('1995-07-31T12:00:00Z') });
+			expect(index.entries['/Windows/Plus!/Pinball/Pinball.exe']).toMatchObject({ mode: 0o100000, mtimeMs: Date.parse('1995-07-31T12:00:00Z') });
+			// real files in Windows' folders are dated like them, and can be opened
+			expect(index.entries['/Windows/Notepad.exe']).toMatchObject({ size: 11, mode: 0o100644, mtimeMs: win95 });
+			expect(index.entries['/Windows']).toMatchObject({ mode: 0o40755, mtimeMs: win95 });
+			// and the rest of the drive keeps its own dates
+			expect(index.entries['/My Documents/notes.txt'].mtimeMs).toBe(Math.round(fs.statSync(path.join(site, 'C', 'My Documents', 'notes.txt')).mtimeMs));
+			expect(new Set(Object.values(index.entries).map((entry: any) => entry.ino)).size).toBe(Object.keys(index.entries).length);
+		} finally {
+			fs.rmSync(site, { recursive: true, force: true });
+		}
+	});
+});
+
+test('Windows\' own files can be looked at, but not opened or downloaded', async ({ page }) => {
+	await openDesktop(page);
+	const downloads: string[] = [];
+	page.on('request', (request) => downloads.push(decodeURIComponent(request.url())));
+	await page.evaluate(() => (window as any).Explorer('/Program Files/Accessories/'));
+	const folder = page.frameLocator('iframe[src*="programs/explorer"]').frameLocator('iframe');
+	await folder.locator('.desktop-icon', { hasText: 'Wordpad.exe' }).dblclick();
+	await expect(windowTitled(page, 'Wordpad.exe')).toContainText('Insufficient permissions');
+	await windowTitled(page, 'Wordpad.exe').getByRole('button', { name: 'OK' }).click();
+
+	// (a picture would be shown when it's selected)
+	await page.evaluate(() => (window as any).Explorer('/Windows/'));
+	const windows = page.frameLocator('iframe[src*="Windows"]').frameLocator('iframe');
+	await windows.locator('.desktop-icon', { hasText: 'Clouds.bmp' }).click();
+	await page.evaluate(() => (window as any).systemExecuteFile('/Windows/Win.ini'));
+	await expect(windowTitled(page, 'Win.ini')).toContainText('Insufficient permissions');
+	expect(downloads.filter((url) => /\/C\/(Program Files|Windows)\//.test(url))).toEqual([]);
+});
+
+test('the programs in C:\\Windows run', async ({ page }) => {
+	await openDesktop(page);
+	const programs: [path: string, title: string | RegExp][] = [
+		['/Windows/Notepad.exe', 'Untitled - Notepad'],
+		['/Windows/Calc.exe', 'Calculator'],
+		['/Windows/Winmine.exe', 'Minesweeper'],
+		['/Windows/Sol.exe', 'Solitaire'],
+		['/Windows/Pbrush.exe', 'untitled - Paint'],
+		['/Windows/Command.com', 'MS-DOS Prompt'],
+		['/Windows/Iexplore.exe', /google\.com/],
+		['/Windows/Netwatch.exe', /^Network$/],
+		['/Windows/Pinball.exe', /Space Cadet$/],
+	];
+	for (const [file_path, title] of programs) {
+		await page.evaluate((file_path) => (window as any).systemExecuteFile(file_path), file_path);
+		await expect(windowTitled(page, title)).toBeVisible({ timeout: 15_000 });
+	}
+	for (const screensaver of ['/Windows/System/3D Pipes (OpenGL).scr', '/Windows/System/3D Flower Box (OpenGL).scr']) {
+		await page.evaluate((file_path) => (window as any).systemExecuteFile(file_path), screensaver);
+		await expect(page.locator('body > iframe')).toBeVisible();
+		await page.keyboard.press('Escape');
+		await expect(page.locator('body > iframe')).toHaveCount(0);
+	}
 });

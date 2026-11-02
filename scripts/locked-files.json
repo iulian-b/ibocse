@@ -1,0 +1,371 @@
+{
+	"modified": "1995-07-11T09:50:00Z",
+	"files": {
+		"Autoexec.bat": 132,
+		"Bootlog.txt": 23519,
+		"Command.com": 92870,
+		"Config.sys": 98,
+		"Detlog.txt": 41866,
+		"Io.sys": 214416,
+		"Msdos.sys": 1676,
+		"Scandisk.log": 1246,
+		"Setuplog.txt": 97108,
+		"Program Files": {
+			"Accessories": {
+				"Backup.exe": 516096,
+				"Backup.hlp": 41356,
+				"Full System Backup.Set": 1536,
+				"Mspaint.exe": 344064,
+				"Wordpad.exe": 182784,
+				"HyperTerminal": {
+					"AT&T Mail.ht": 1104,
+					"CompuServe.ht": 1101,
+					"Hticons.dll": 50176,
+					"Hypertrm.dll": 393216,
+					"Hypertrm.exe": 6656,
+					"MCI Mail.ht": 1097
+				}
+			},
+			"Common Files": {
+				"Microsoft Shared": {
+					"MSInfo": {
+						"Msinfo32.exe": 152064,
+						"Msinfo32.hlp": 49546
+					}
+				}
+			},
+			"Internet Explorer": {
+				"@modified": "1996-08-13T03:01:00Z",
+				"Iexplore.cnt": 1874,
+				"Iexplore.exe": 192512,
+				"Iexplore.hlp": 32133,
+				"Readme.txt": 25211,
+				"Connection Wizard": {
+					"Icwconn1.exe": 156160,
+					"Inetwiz.exe": 31232,
+					"Isignup.exe": 38912
+				}
+			},
+			"Microsoft Exchange": {
+				"Exchng.hlp": 105234,
+				"Exchng32.exe": 5632,
+				"Mlset32.exe": 33280,
+				"Scanpst.exe": 279040
+			},
+			"Online Services": {
+				"@modified": "1996-08-24T11:11:10Z",
+				"Readme.txt": 6573,
+				"America Online": {
+					"Readme.txt": 2048,
+					"Setup.exe": 32816
+				},
+				"AT&T WorldNet Service": {
+					"Setup.exe": 19968
+				},
+				"CompuServe": {
+					"Setup.exe": 89088
+				},
+				"Prodigy": {
+					"Setup.exe": 43520
+				}
+			},
+			"Plus!": {
+				"@modified": "1995-07-31T12:00:00Z",
+				"Plus!.hlp": 52918,
+				"Readme.txt": 15841,
+				"Sage.exe": 59392,
+				"Pinball": {
+					"Font.dat": 10294,
+					"Pinball.dat": 928700,
+					"Pinball.exe": 351744,
+					"Pinball.hlp": 23514,
+					"Pinball.mid": 47076,
+					"Sound1.wav": 7228,
+					"Sound12.wav": 10744,
+					"Sound13.wav": 5432,
+					"Sound16.wav": 21308,
+					"Sound29.wav": 13626,
+					"Table.bmp": 361062,
+					"Wavemix.inf": 937
+				},
+				"Themes": {
+					"Dangerous Creatures wallpaper.bmp": 308278,
+					"Dangerous Creatures.Theme": 2912,
+					"Inside your Computer wallpaper.bmp": 308278,
+					"Inside your Computer.Theme": 2902,
+					"Leonardo da Vinci wallpaper.bmp": 308278,
+					"Leonardo da Vinci.Theme": 2851,
+					"More Windows.Theme": 2700,
+					"Mystery.Theme": 2777,
+					"Nature.Theme": 2742,
+					"Science.Theme": 2797,
+					"Sports.Theme": 2785,
+					"The 60's USA.Theme": 2851,
+					"The Golden Era.Theme": 2849,
+					"Travel.Theme": 2810,
+					"Windows 95.Theme": 2756
+				}
+			},
+			"The Microsoft Network": {
+				"Guide.exe": 76288,
+				"Msn.hlp": 66810,
+				"Msnver.txt": 112,
+				"Signup.exe": 64512
+			}
+		},
+		"Windows": {
+			"Black Thatch.bmp": 182,
+			"Blue Rivets.bmp": 222,
+			"Bubbles.bmp": 190,
+			"Carved Stone.bmp": 582,
+			"Cdplayer.exe": 106496,
+			"Circles.bmp": 190,
+			"Clouds.bmp": 307514,
+			"Control.exe": 2112,
+			"Control.ini": 1024,
+			"Defrag.exe": 225280,
+			"Display.txt": 14472,
+			"Explorer.exe": 204288,
+			"Extra.txt": 2040,
+			"Faq.txt": 28390,
+			"Forest.bmp": 66146,
+			"Freecell.exe": 30208,
+			"General.txt": 53048,
+			"Hardware.txt": 38563,
+			"Houndstooth.bmp": 118,
+			"Mplayer.exe": 23040,
+			"Msdosdrv.txt": 39390,
+			"Mshearts.exe": 125952,
+			"Network.txt": 56390,
+			"Printers.txt": 22406,
+			"Progman.exe": 182896,
+			"Progman.ini": 360,
+			"Programs.txt": 53262,
+			"Readme.txt": 32416,
+			"Regedit.exe": 120320,
+			"Rundll.exe": 3264,
+			"Rundll32.exe": 8704,
+			"Scandskw.exe": 237568,
+			"Setup.bmp": 157316,
+			"Straw Mat.bmp": 182,
+			"Sysedit.exe": 41408,
+			"System.dat": 471072,
+			"System.ini": 2245,
+			"Taskman.exe": 3744,
+			"Tiles.bmp": 190,
+			"Tips.txt": 15841,
+			"Triangles.bmp": 190,
+			"User.dat": 237600,
+			"Waves.bmp": 190,
+			"Win.com": 22679,
+			"Win.ini": 3891,
+			"Win386.swp": 33554432,
+			"Winfile.exe": 146864,
+			"Write.exe": 5328,
+			"Command": {
+				"Attrib.exe": 15252,
+				"Chkdsk.exe": 28096,
+				"Choice.com": 5175,
+				"Debug.exe": 20554,
+				"Deltree.exe": 19083,
+				"Diskcopy.com": 21975,
+				"Doskey.com": 15495,
+				"Edit.com": 69886,
+				"Extract.exe": 46656,
+				"Fc.exe": 20494,
+				"Fdisk.exe": 63116,
+				"Find.exe": 6658,
+				"Format.com": 40135,
+				"Keyb.com": 19927,
+				"Label.exe": 9324,
+				"Mem.exe": 32146,
+				"Mode.com": 29191,
+				"More.com": 10471,
+				"Move.exe": 27235,
+				"Mscdex.exe": 25473,
+				"Nlsfunc.exe": 6940,
+				"Scandisk.exe": 124262,
+				"Sort.exe": 26903,
+				"Start.exe": 30016,
+				"Sys.com": 18967,
+				"Xcopy.exe": 3878,
+				"Xcopy32.exe": 40960
+			},
+			"Config": {},
+			"Cursors": {
+				"3dgarro.cur": 326,
+				"3dgmove.cur": 326,
+				"3dgno.cur": 326,
+				"Appstar.ani": 12052,
+				"Arrow_m.cur": 326,
+				"Hourglas.ani": 12036
+			},
+			"Desktop": {},
+			"Favorites": {},
+			"Fonts": {
+				"Arial.ttf": 65412,
+				"Arialbd.ttf": 66952,
+				"Arialbi.ttf": 74172,
+				"Ariali.ttf": 62960,
+				"Cour.ttf": 76352,
+				"Courbd.ttf": 79264,
+				"Courbi.ttf": 68696,
+				"Couri.ttf": 61988,
+				"Coure.fon": 23408,
+				"Marlett.ttf": 26856,
+				"Modern.fon": 8704,
+				"Roman.fon": 10144,
+				"Script.fon": 11200,
+				"Serife.fon": 57936,
+				"Smalle.fon": 26112,
+				"Sserife.fon": 64544,
+				"Symbol.ttf": 64516,
+				"Times.ttf": 83260,
+				"Timesbd.ttf": 83568,
+				"Timesbi.ttf": 77300,
+				"Timesi.ttf": 81960,
+				"Vgaoem.fon": 5232,
+				"Vgasys.fon": 5360,
+				"Wingding.ttf": 71180
+			},
+			"Help": {
+				"Calc.cnt": 528,
+				"Calc.hlp": 23015,
+				"Cdplayer.hlp": 9914,
+				"Common.hlp": 18432,
+				"Freecell.hlp": 11744,
+				"Hypertrm.hlp": 36614,
+				"Mplayer.hlp": 10861,
+				"Mshearts.hlp": 13017,
+				"Mspaint.cnt": 1702,
+				"Mspaint.hlp": 22311,
+				"Network.hlp": 9003,
+				"Notepad.cnt": 403,
+				"Notepad.hlp": 13573,
+				"Sndrec.hlp": 9927,
+				"Sol.hlp": 13403,
+				"Windows.cnt": 21116,
+				"Windows.hlp": 312030,
+				"Winmine.hlp": 12902,
+				"Wordpad.hlp": 21810
+			},
+			"Inf": {
+				"Layout.inf": 238478,
+				"Machine.inf": 101398,
+				"Mmopt.inf": 8122,
+				"Msmouse.inf": 9041,
+				"Net.inf": 34113,
+				"Setupc.inf": 79112,
+				"Shell.inf": 11986
+			},
+			"Media": {
+				"Canyon.mid": 21082,
+				"Chimes.wav": 55776,
+				"Chord.wav": 24982,
+				"Ding.wav": 11598,
+				"Passport.mid": 23668,
+				"Tada.wav": 27804,
+				"The Microsoft Sound.wav": 135876,
+				"Utopia Asterisk.wav": 7140,
+				"Utopia Close.wav": 4664,
+				"Utopia Critical Stop.wav": 19066,
+				"Utopia Default.wav": 6268,
+				"Utopia Error.wav": 9850,
+				"Utopia Exclamation.wav": 9732,
+				"Utopia Maximize.wav": 5640,
+				"Utopia Minimize.wav": 5640,
+				"Utopia Open.wav": 6268,
+				"Utopia Question.wav": 16508,
+				"Utopia Windows Exit.wav": 24312,
+				"Utopia Windows Start.wav": 28092
+			},
+			"NetHood": {},
+			"Recent": {},
+			"SendTo": {
+				"3½ Floppy (A).lnk": 233,
+				"My Briefcase.lnk": 256
+			},
+			"ShellNew": {},
+			"Spool": {
+				"Printers": {}
+			},
+			"Start Menu": {
+				"Programs": {
+					"Internet Explorer.lnk": 357,
+					"Microsoft Exchange.lnk": 389,
+					"MS-DOS Prompt.lnk": 1062,
+					"The Microsoft Network.lnk": 425,
+					"Windows Explorer.lnk": 362,
+					"Accessories": {
+						"Calculator.lnk": 344,
+						"HyperTerminal.lnk": 392,
+						"Notepad.lnk": 341,
+						"Paint.lnk": 379,
+						"Phone Dialer.lnk": 349,
+						"WordPad.lnk": 383,
+						"Games": {
+							"FreeCell.lnk": 287,
+							"Hearts.lnk": 277,
+							"Minesweeper.lnk": 287,
+							"Solitaire.lnk": 275
+						},
+						"Multimedia": {
+							"CD Player.lnk": 289,
+							"Media Player.lnk": 293,
+							"Sound Recorder.lnk": 297,
+							"Volume Control.lnk": 291
+						},
+						"System Tools": {
+							"Backup.lnk": 377,
+							"Disk Defragmenter.lnk": 299,
+							"Net Watcher.lnk": 291,
+							"ScanDisk.lnk": 297,
+							"System Monitor.lnk": 295
+						}
+					},
+					"StartUp": {}
+				}
+			},
+			"System": {
+				"Advapi32.dll": 57344,
+				"Blank Screen.scr": 6656,
+				"Comctl32.dll": 352256,
+				"Commdlg.dll": 89248,
+				"Comdlg32.dll": 90112,
+				"Curves and Colors.scr": 16384,
+				"Flying Windows.scr": 12800,
+				"Gdi.exe": 141712,
+				"Gdi32.dll": 147968,
+				"Glu32.dll": 124416,
+				"Kernel32.dll": 413696,
+				"Krnl386.exe": 75632,
+				"Mmsystem.dll": 70848,
+				"Msvcrt20.dll": 253952,
+				"Mystify Your Mind.scr": 15360,
+				"Ole32.dll": 485376,
+				"Opengl32.dll": 783872,
+				"Scrolling Marquee.scr": 16384,
+				"Shell.dll": 41600,
+				"Shell32.dll": 790528,
+				"User.exe": 264016,
+				"User32.dll": 36864,
+				"Vmm32.vxd": 671950,
+				"Winmm.dll": 196608,
+				"Wsock32.dll": 65024,
+				"Color": {},
+				"Iosubsys": {
+					"Apix.vxd": 30823,
+					"Cdfs.vxd": 59349,
+					"Cdtsd.vxd": 14469,
+					"Disktsd.vxd": 15062,
+					"Esdi_506.pdr": 23944,
+					"Hsflop.pdr": 18597,
+					"Scsiport.pdr": 18039,
+					"Voltrack.vxd": 21262
+				},
+				"Vmm32": {}
+			},
+			"Temp": {}
+		}
+	}
+}
