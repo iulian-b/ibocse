@@ -163,7 +163,7 @@ document.getElementById('start_btn_find_internet').addEventListener("click", fun
 });
 document.getElementById('start_btn_help').addEventListener("click", function () {
 	console.log("[USR] ibocse@crlab2-h032: Opened help page");
-	open("https://github.com/iulian-b/ccc-crlab2-h032");
+	open("https://github.com/iulian-b/ibocse");
 });
 document.getElementById('start_btn_run').addEventListener("click", function () {
 	console.log("[USR] ibocse@crlab2-h032: Opened run()");

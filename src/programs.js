@@ -1821,9 +1821,19 @@ add_icon_not_via_filesystem({
 });
 add_icon_not_via_filesystem({
 	title: "Recycle Bin",
-	iconID: "recycle-bin",
+	iconID: "recycle-bin-full",
 	open: function () { systemExecuteFile("/Recycle Bin"); },
 	is_system_folder: true,
+});
+// (empty, if it's been emptied)
+withFilesystem(function () {
+	ZenFS.fs.readdir("/Recycle Bin", function (error, names) {
+		if (!error && names.length === 0) {
+			desktop_icons.find(({ title }) => title === "Recycle Bin").item.setIcons({
+				[DESKTOP_ICON_SIZE]: getIconPath("recycle-bin", DESKTOP_ICON_SIZE),
+			});
+		}
+	});
 });
 add_icon_not_via_filesystem({
 	title: "My Documents",
@@ -1947,12 +1957,6 @@ add_icon_not_via_filesystem({
 	title: "Minecraft",
 	iconID: "minecraft",
 	open: function () { Minecraft(); },
-	shortcut: true
-});
-add_icon_not_via_filesystem({
-	title: "Commander Keen",
-	iconID: "keen",
-	open: function () { CommanderKeen(); },
 	shortcut: true
 });
 add_icon_not_via_filesystem({

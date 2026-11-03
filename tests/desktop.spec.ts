@@ -42,7 +42,6 @@ test.describe('desktop icons', () => {
 		['Tomb Raider', 'Tomb Raider'],
 		['Quake III', 'Quake III'],
 		['Minecraft', 'Minecraft'],
-		['Commander Keen', 'Commander Keen'],
 		['Doom', 'Doom'],
 		['Cave Story', 'Cave Story'],
 		['Arx Fatalis', 'Arx Fatalis'],
@@ -99,6 +98,7 @@ test.describe('desktop icons', () => {
 
 	const games_only_in_folder: [title: string, exe: string][] = [
 		['Battle City', 'battlecity.exe'],
+		['Commander Keen', 'keen.exe'],
 		['Prince of Persia', 'prince.exe'],
 		['Sonic the Hedgehog', 'sonic.exe'],
 		['Super Mario 64', 'mario64.exe'],
@@ -113,6 +113,23 @@ test.describe('desktop icons', () => {
 			await expect(windowTitled(page, title)).toBeVisible({ timeout: 15_000 });
 		});
 	}
+});
+
+test('the Recycle Bin on the desktop shows whether there\'s something in it', async ({ page }) => {
+	await openDesktop(page);
+	const icon = desktopIcon(page, 'Recycle Bin').locator('img');
+	await expect(icon).toHaveAttribute('src', /recycle-bin-full-32x32\.png/);
+	await page.evaluate(() => new Promise<void>((resolve) => {
+		const fs = (window as any).ZenFS.fs;
+		fs.readdir('/Recycle Bin', (error, names: string[]) => {
+			let left = names.length;
+			for (const name of names) {
+				fs.unlink(`/Recycle Bin/${name}`, () => --left || resolve());
+			}
+		});
+	}));
+	await openDesktop(page);
+	await expect(icon).toHaveAttribute('src', /recycle-bin-32x32\.png/);
 });
 
 test.describe('Start menu', () => {
@@ -136,7 +153,7 @@ test.describe('Start menu', () => {
 		await openDesktop(page);
 		await openStartMenu(page);
 		// (the request itself is blocked; other sites are kept out of the tests)
-		const request = context.waitForEvent('request', (request) => request.url().startsWith('https://github.com/iulian-b/ccc-crlab2-h032'));
+		const request = context.waitForEvent('request', (request) => request.url().startsWith('https://github.com/iulian-b/ibocse'));
 		await page.locator('#start_btn_help').click();
 		await request;
 	});

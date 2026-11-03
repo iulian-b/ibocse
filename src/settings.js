@@ -20,7 +20,7 @@ const removable_programs = [
 	{ name: "Arx Fatalis", exe: "arxfatalis.exe", shortcut: "Arx Fatalis" },
 	{ name: "Battle City", exe: "battlecity.exe" },
 	{ name: "Cave Story", exe: "cavestory.exe", shortcut: "Cave Story" },
-	{ name: "Commander Keen", exe: "keen.exe", shortcut: "Commander Keen" },
+	{ name: "Commander Keen", exe: "keen.exe" },
 	{ name: "Counter Strike 1.6", exe: "counterstrike.exe", shortcut: "Counter Strike 1.6" },
 	{ name: "Cyberpunk 2077", exe: "cyberpunk.exe", shortcut: "Cyberpunk 2077" },
 	{ name: "Diablo", exe: "diablo.exe", shortcut: "Diablo" },
