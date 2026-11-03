@@ -174,6 +174,28 @@ var exe_extension_icon = {
 	cyberpunk: "cyberpunk"
 }
 
+// The icon of a file or folder (also for Find's results, src/find.js)
+function icon_id_for_file(file_path, is_directory) {
+	if (is_directory) {
+		// if extending this to different folder icons,
+		// note that "folder" is relied on (for sorting)
+		return "folder";
+	}
+	var file_extension = file_extension_from_path(file_path);
+	// TODO: look inside exe for icons
+	var icon_name;
+
+	if (["exe", "com", "scr"].includes(file_extension.toLowerCase())) {
+		var file_name = file_name_from_path(file_path);
+		icon_name = exe_extension_icon[file_name.slice(0, file_name.lastIndexOf(".")).toLowerCase()];
+	}
+	icon_name = icon_name || file_extension_icons[file_extension.toLowerCase()];
+
+	// Exception if in /Network
+	if (file_path.includes("/Network/")) return icon_name || "network";
+	else return icon_name || "document";
+}
+
 // @TODO: maintain less fake naming abstraction
 // base it more on the actual filesystem
 // @TODO: bring system folders, icons, and file associations into one place
@@ -874,24 +896,7 @@ function FolderView(folder_path, { asDesktop = false, onStatus, openFolder, open
 		});
 	};
 	var icon_id_from_stats_and_path = function (stats, file_path) {
-		if (stats.isDirectory()) {
-			// if extending this to different folder icons,
-			// note that "folder" is relied on (for sorting)
-			return "folder";
-		}
-		var file_extension = file_extension_from_path(file_path);
-		// TODO: look inside exe for icons
-		var icon_name;
-
-		if (["exe", "com", "scr"].includes(file_extension.toLowerCase())) {
-			var file_name = file_name_from_path(file_path);
-			icon_name = exe_extension_icon[file_name.slice(0, file_name.lastIndexOf(".")).toLowerCase()];
-		}
-		icon_name = icon_name || file_extension_icons[file_extension.toLowerCase()];
-
-		// Exception if in /Network
-		if (file_path.includes("/Network/")) return icon_name || "network";
-		else return icon_name || "document";
+		return icon_id_for_file(file_path, stats.isDirectory());
 	};
 	var icons_from_icon_id = function (icon_id) {
 		return {

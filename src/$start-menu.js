@@ -34,37 +34,42 @@ var close_start_menu = function () {
 	close_start_submenu();
 };
 
-// Settings' submenu, beside it (outside of the Start menu, which would cut it off)
-var $start_submenu = $("#start_menu_settings");
-var $start_settings_button = $("#start_btn_settings");
+// Submenus (Settings, Find), beside their item (outside of the Start menu, which would cut them off).
+// The items with one have aria-controls set to it.
+var $start_submenu_buttons = $(".start-btn.has-submenu");
 var start_submenu_timer;
-var open_start_submenu = function () {
-	clearTimeout(start_submenu_timer);
-	$start_submenu.prop("hidden", false);
-	const item_rect = $start_settings_button[0].getBoundingClientRect();
-	$start_submenu.css({
+var open_start_submenu = function (button) {
+	close_start_submenu();
+	const $button = $(button);
+	const $submenu = $(`#${$button.attr("aria-controls")}`);
+	$submenu.prop("hidden", false);
+	const item_rect = button.getBoundingClientRect();
+	$submenu.css({
 		left: $start_menu[0].getBoundingClientRect().right - 3,
-		top: Math.max(0, Math.min(item_rect.top - 3, innerHeight - $start_submenu.outerHeight())),
+		top: Math.max(0, Math.min(item_rect.top - 3, innerHeight - $submenu.outerHeight())),
 		zIndex: Number($start_menu.css("zIndex")) + 1,
 	});
-	$start_settings_button.addClass("submenu-open").attr("aria-expanded", true);
+	$button.addClass("submenu-open").attr("aria-expanded", true);
 };
 var close_start_submenu = function () {
 	clearTimeout(start_submenu_timer);
-	$start_submenu.prop("hidden", true);
-	$start_settings_button.removeClass("submenu-open").attr("aria-expanded", false);
+	$(".start-submenu").prop("hidden", true);
+	$start_submenu_buttons.removeClass("submenu-open").attr("aria-expanded", false);
 };
 // It opens when pointed at for a moment, like Windows' menus, and closes when another item is
-$start_settings_button.on("pointerenter", () => {
+$start_submenu_buttons.on("pointerenter", (event) => {
 	clearTimeout(start_submenu_timer);
-	start_submenu_timer = setTimeout(open_start_submenu, 300);
+	start_submenu_timer = setTimeout(() => open_start_submenu(event.currentTarget), 300);
 });
-$start_settings_button.on("pointerleave", () => {
-	if ($start_submenu.prop("hidden")) {
+$start_submenu_buttons.on("pointerleave", (event) => {
+	if (!$(event.currentTarget).hasClass("submenu-open")) {
 		clearTimeout(start_submenu_timer);
 	}
 });
-$(".start-btn").not($start_settings_button).on("pointerenter", close_start_submenu);
+$start_submenu_buttons.on("click", (event) => {
+	open_start_submenu(event.currentTarget);
+});
+$(".start-btn").not($start_submenu_buttons).on("pointerenter", close_start_submenu);
 var toggle_start_menu = function () {
 	if ($start_menu.is(":hidden")) {
 		open_start_menu();
@@ -130,9 +135,6 @@ document.getElementById('start_btn_favorites').addEventListener("click", functio
 document.getElementById('start_btn_documents').addEventListener("click", function () {
 	Explorer("/My Documents/");
 });
-document.getElementById('start_btn_settings').addEventListener("click", function () {
-	open_start_submenu();
-});
 document.getElementById('start_btn_control_panel').addEventListener("click", function () {
 	close_start_menu();
 	console.log("[USR] ibocse@crlab2-h032: control.exe()");
@@ -144,8 +146,20 @@ document.getElementById('start_btn_printers').addEventListener("click", function
 	Printers();
 });
 
-document.getElementById('start_btn_find').addEventListener("click", function () {
-	showMessageBox({iconID: 'error', title:'Error', message: 'Cannot start the search service in user mode. \n[Cause: 401 Unauthorized Access]'});
+document.getElementById('start_btn_find_files').addEventListener("click", function () {
+	close_start_menu();
+	console.log("[USR] ibocse@crlab2-h032: find.exe");
+	FindFiles();
+});
+document.getElementById('start_btn_find_computer').addEventListener("click", function () {
+	close_start_menu();
+	console.log("[USR] ibocse@crlab2-h032: find.exe /computer");
+	FindComputer();
+});
+document.getElementById('start_btn_find_internet').addEventListener("click", function () {
+	close_start_menu();
+	console.log("[USR] ibocse@crlab2-h032: iexplore.exe");
+	InternetExplorer();
 });
 document.getElementById('start_btn_help').addEventListener("click", function () {
 	console.log("[USR] ibocse@crlab2-h032: Opened help page");

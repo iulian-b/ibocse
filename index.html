@@ -22,7 +22,9 @@
 		<link href="classic.css" rel="stylesheet" type="text/css">
 		<link href="css/boot.css" rel="stylesheet" type="text/css">
 		<link href="css/crt.css" rel="stylesheet" type="text/css">
+		<link href="css/dialogs.css" rel="stylesheet" type="text/css">
 		<link href="css/control-panel.css" rel="stylesheet" type="text/css">
+		<link href="css/find.css" rel="stylesheet" type="text/css">
 		<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 		<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 		<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
@@ -105,7 +107,7 @@
 							</button>
 						</li>
 						<li>
-							<button id="start_btn_find" class="start-btn">
+							<button id="start_btn_find" class="start-btn has-submenu" aria-haspopup="menu" aria-controls="start_menu_find">
 								<img draggable="false" src="images/icons/find-file-32x32.png" width="32" height="32" style="vertical-align: middle;" />
 								Find
 							</button>
@@ -149,6 +151,20 @@
 				Printers
 			</button>
 		</div>
+		<div id="start_menu_find" class="start-submenu outset-deep" role="menu" hidden>
+			<button id="start_btn_find_files" class="start-submenu-item" role="menuitem">
+				<img draggable="false" src="images/icons/find-folder-16x16.png" width="16" height="16" />
+				Files or Folders...
+			</button>
+			<button id="start_btn_find_computer" class="start-submenu-item" role="menuitem">
+				<img draggable="false" src="images/icons/find-computer-16x16.png" width="16" height="16" />
+				Computer...
+			</button>
+			<button id="start_btn_find_internet" class="start-submenu-item" role="menuitem">
+				<img draggable="false" src="images/icons/internet-explorer-16x16.png" width="16" height="16" />
+				On the Internet...
+			</button>
+		</div>
 
 		<script src="lib/jquery.min.js"></script>
 		<script src="lib/zenfs.js"></script>
@@ -173,7 +189,9 @@
 		<script src="src/window-switcher.js"></script>
 		<script src="src/visualizer-overlay.js"></script>
 		<script src="src/programs.js"></script>
+		<script src="src/dialogs.js"></script>
 		<script src="src/control-panel.js"></script>
+		<script src="src/find.js"></script>
 		<script src="src/$bootloader.js"></script>
 		<script src="src/audio.js"></script>
 		<svg style="position: absolute; pointer-events: none; bottom: 100%;">

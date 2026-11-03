@@ -121,7 +121,6 @@ test.describe('Start menu', () => {
 		['start_btn_programs', 'Program Files'],
 		['start_btn_favorites', 'Favorites'],
 		['start_btn_documents', 'My Documents'],
-		['start_btn_find', 'Error'],
 		['start_btn_run', 'Run'],
 	];
 	for (const [id, title] of entries) {

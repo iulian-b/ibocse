@@ -1,0 +1,129 @@
+/* Find, in the Start menu (src/find.js). (Its tabs and controls are in css/dialogs.css.) */
+
+.find {
+	display: flex;
+	flex-direction: column;
+}
+.find-form {
+	display: flex;
+	gap: 10px;
+	padding: 6px 6px 8px;
+}
+.find-form .tabs {
+	flex: 1;
+	min-width: 0;
+}
+.find-form .tab-panel {
+	height: 126px;
+}
+.find-fields .field-label > span:first-child {
+	flex: none;
+	width: 56px;
+}
+.find-fields .field-label input,
+.find-fields .field-label select {
+	min-width: 0;
+}
+.find-buttons {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	padding-top: 21px;
+}
+.find-buttons button {
+	width: 90px;
+	height: 23px;
+	white-space: nowrap;
+}
+
+/* The magnifying glass, which goes around while searching */
+.find-animation {
+	display: flex;
+	justify-content: center;
+	margin-top: 10px;
+}
+.find-animation.searching img {
+	animation: find-searching 1s linear infinite;
+}
+@keyframes find-searching {
+	0% { transform: translate(4px, 0); }
+	25% { transform: translate(0, 4px); }
+	50% { transform: translate(-4px, 0); }
+	75% { transform: translate(0, -4px); }
+	100% { transform: translate(4px, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+	.find-animation.searching img {
+		animation: none;
+	}
+}
+
+.find-dates .radio-field input[type="number"] {
+	width: 48px;
+}
+.find-dates .radio-field input[type="date"] {
+	width: 120px;
+}
+.find-date-ranges {
+	margin-left: 20px;
+}
+.find-size select {
+	flex: none !important;
+	width: 90px;
+}
+.find-size input {
+	flex: none !important;
+	width: 64px;
+}
+
+/* The results, in columns (--find-columns) */
+.find-results {
+	flex: 1;
+	min-height: 0;
+	margin: 0 6px;
+	overflow: auto;
+	color: var(--WindowText);
+	background: var(--Window);
+	outline: none;
+}
+.find-results-header,
+.find-result {
+	display: grid;
+	grid-template-columns: var(--find-columns);
+}
+.find-results-header {
+	position: sticky;
+	top: 0;
+	z-index: 1;
+}
+.find-results-header button {
+	min-width: 0;
+	height: 18px;
+	padding: 0 4px;
+	text-align: left;
+	overflow: hidden;
+	white-space: nowrap;
+}
+.find-result > div {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	min-width: 0;
+	padding: 1px 4px;
+	white-space: nowrap;
+}
+.find-result > div > span {
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.find-result img {
+	flex: none;
+}
+/* (only the name is highlighted, as in Windows' Details view) */
+.find-result.selected > div:first-child > span {
+	color: var(--HilightText);
+	background: var(--Hilight);
+}
+.find .status-bar {
+	margin: 2px 6px 4px;
+}
