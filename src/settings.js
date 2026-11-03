@@ -123,7 +123,7 @@ function apply_color_scheme() {
 	window.themeCSSProperties = css_properties;
 }
 
-// Scan lines and flicker over the whole screen (css/crt.css)
+// Scan lines and curved glass over the whole screen (css/crt-monitor.css)
 function apply_crt_monitor() {
 	let crt_screen = document.getElementById("crt-screen");
 	if (!crt_screen) {

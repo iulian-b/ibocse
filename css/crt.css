@@ -129,34 +129,7 @@
     }
 }
 
-/* Display Properties > Effects: the whole screen as on a CRT monitor (src/settings.js) */
-.crt-screen {
-	position: fixed;
-	inset: 0;
-	z-index: 2147483647;
-	pointer-events: none;
-}
-.crt-screen::before {
-	content: "";
-	position: absolute;
-	inset: 0;
-	/* scan lines, and the red, green and blue of the phosphors */
-	background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-	background-size: 100% 2px, 3px 100%;
-}
-.crt-screen::after {
-	content: "";
-	position: absolute;
-	inset: 0;
-	background: rgba(18, 16, 16, 0.1);
-	animation: flicker 0.15s infinite;
-}
-@media (prefers-reduced-motion: reduce) {
-	.crt-screen::after {
-		animation: none;
-		opacity: 0.3;
-	}
-}
+/* (The desktop's CRT monitor effect, in Display Properties, is in css/crt-monitor.css) */
 
 /* UNCOMMENT TO ENABLE CRT EFFECT */
 /* 

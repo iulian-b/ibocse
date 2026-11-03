@@ -142,7 +142,7 @@ function DisplayProperties() {
 		const $effects = $("<div class='effects-panel'>").append(
 			$("<fieldset>").append(
 				$("<legend>").text("Visual effects"),
-				$Checkbox("Show the screen as on a CRT monitor (scan lines and flicker)", chosen.crt_monitor, (crt_monitor) => choose({ crt_monitor })),
+				$Checkbox("Show the screen as on a CRT monitor (scan lines and curved glass)", chosen.crt_monitor, (crt_monitor) => choose({ crt_monitor })),
 			),
 		);
 

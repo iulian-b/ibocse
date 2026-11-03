@@ -1,0 +1,51 @@
+/* Display Properties > Effects: the desktop as on a CRT monitor (src/settings.js).
+   Made to be easy on the eyes: faint, fine scan lines, and the curved glass's darker edges and glare,
+   with no flicker, and no colored stripes over the text.
+   (The POST screen has its own, older effect, in css/post.css.) */
+
+.crt-screen {
+	position: fixed;
+	inset: 0;
+	z-index: 2147483647;
+	pointer-events: none;
+	overflow: hidden;
+	background:
+		/* glare at the top left */
+		radial-gradient(ellipse 60% 45% at 25% 15%, rgba(255, 255, 255, 0.035), transparent),
+		/* darker toward the edges and corners, as the glass curves away */
+		radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.28) 100%);
+}
+
+/* A soft scan line every third pixel */
+.crt-screen::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: repeating-linear-gradient(to bottom, transparent 0 2px, rgba(0, 0, 0, 0.09) 2px 3px);
+}
+
+/* A faint band of light, rolling slowly down the screen */
+.crt-screen::after {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 30vh;
+	background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.03), transparent);
+	animation: crt-monitor-roll 12s linear infinite;
+	will-change: transform;
+}
+@keyframes crt-monitor-roll {
+	from {
+		transform: translateY(-30vh);
+	}
+	to {
+		transform: translateY(100vh);
+	}
+}
+@media (prefers-reduced-motion: reduce) {
+	.crt-screen::after {
+		display: none;
+	}
+}
