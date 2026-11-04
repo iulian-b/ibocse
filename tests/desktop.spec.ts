@@ -373,9 +373,10 @@ test.describe('boot menu', () => {
 		await cv.evaluate((iframe: any) => iframe.$window.close());
 	}
 
-	test('opens with F12, and is used with the arrow keys', async ({ page }) => {
+	test('opens with F11, and is used with the arrow keys', async ({ page }) => {
 		await page.goto('/$POST.html');
-		await page.keyboard.press('F12');
+		await expect(page.locator('#text-bottom')).toContainText('F11:Boot Menu');
+		await page.keyboard.press('F11');
 		await expect(page).toHaveURL(/BIOS\/BOOTMENU\.html$/);
 		await expect(page.locator('.boot-device')).toHaveText(['HDD:Lexar LNM620X256G-RNNNG', 'Network:IBA GE Slot 0600 v1242', 'USB:Virtual FDD', 'USB:Virtual DVD/CD-ROM']);
 		const selected = page.locator('.boot-device.selected');

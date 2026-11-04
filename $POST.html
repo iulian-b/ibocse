@@ -28,7 +28,7 @@
                 </div>
                 <div id="spacer"></div>
                 <div id="text-bottom">
-                    <kbd>DEL</kbd>:BIOS Setup <kbd>F5</kbd>:TEP Switch <kbd>F12</kbd>:Boot Menu <kbd>End</kbd>:Qflash<br />
+                    <kbd>DEL</kbd>:BIOS Setup <kbd>F5</kbd>:TEP Switch <kbd>F11</kbd>:Boot Menu <kbd>End</kbd>:Qflash<br />
                     07/23/2020-CP03-098F-R76K1X3PC-02<br />
                 </div>
             </section>
@@ -94,12 +94,13 @@
         const keyAction = {
             Delete: { keydown: Action.biosSetup },
             // F5: { keydown: Action.tepSwitch },
-            F12: { keydown: Action.bootMenu },
+            F11: { keydown: Action.bootMenu }, // (F12 opens the browser's developer tools)
             End: { keydown: Action.qFlash },
         }
         const keyHandler = (ev) => {
             if (ev.repeat) return; // Key-held, prevent repeated Actions (Does not work in IE11-)
             if (!(ev.key in keyAction) || !(ev.type in keyAction[ev.key])) return; // No such Action
+            ev.preventDefault(); // (not the browser's own, such as F11's full screen)
             keyAction[ev.key][ev.type]();  // Trigger an Action
         };
 
