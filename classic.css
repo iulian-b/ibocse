@@ -18,7 +18,7 @@
 	font-size: 12px;
 }
 .start-menu-titlebar {
-	background-image: url("images/themes/classic/start-menu-side.png");
+	/* (its picture is the operating system's: src/operating-systems.js) */
 	/* background-image: url("images/start-menu-side-98-js.png"); */
 	/* background-image: url("images/start-menu-side-98-js-alt.png"); */
 	background-repeat: no-repeat;

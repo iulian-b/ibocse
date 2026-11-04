@@ -7,9 +7,11 @@ shutdownAudio.preload = "none"; // big, and only needed at the very end
 shutdownAudio.volume = 0.2;
 
 function ClearStorage() {
-	// Files on the C: drive stay (they're in IndexedDB), and so does its record of deleted files, the Control Panel's settings,
-	// and the BIOS's (BIOS/SETUP.js), as with a CMOS battery
-	const kept = [journal_storage_key, settings_storage_key, "bios-settings"].map((key) => [key, localStorage.getItem(key)]);
+	// Files on the C: drive stay (they're in IndexedDB), and so does its record of deleted files, the Control Panel's settings
+	// (each operating system's), and the BIOS's (BIOS/SETUP.js), as with a CMOS battery.
+	// (Which operating system the boot menu booted goes, so the next boot is the hard disk's.)
+	const settings_storage_keys = Object.values(operating_systems).map((os) => os_storage_key("settings", os));
+	const kept = [journal_storage_key, ...settings_storage_keys, "bios-settings"].map((key) => [key, localStorage.getItem(key)]);
 	localStorage.clear();
 	for (const [key, value] of kept) {
 		if (value !== null) {
@@ -87,7 +89,7 @@ const update_dialog = () => {
 			16: "/images/icons/sinclair-updates-16x16.png",
 		},
 	});
-	$w.$content.html(`<p><img src='/images/banner.png'></p>`);
+	$w.$content.append($("<p>").append($("<img>").attr("src", booted_os.banner)));
 
 
 	// $w.$Button("Ok", () => $w.close()).css({ width: 100 });

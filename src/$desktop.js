@@ -27,8 +27,8 @@ function setDesktopWallpaper(file, repeat, saveToLocalStorage) {
 		var fr = new FileReader();
 		window.fr = fr;
 		fr.onload = () => {
-			localStorage.setItem("wallpaper-data-url", fr.result);
-			localStorage.setItem("wallpaper-repeat", repeat);
+			localStorage.setItem(os_storage_key("wallpaper-data-url"), fr.result);
+			localStorage.setItem(os_storage_key("wallpaper-repeat"), repeat);
 		};
 		fr.onerror = () => {
 			console.error("Error reading file (for setting wallpaper)", file);
@@ -37,9 +37,9 @@ function setDesktopWallpaper(file, repeat, saveToLocalStorage) {
 	}
 }
 try {
-	var wallpaper_data_url = localStorage.getItem("wallpaper-data-url");
-	var wallpaper_repeat = localStorage.getItem("wallpaper-repeat");
-	var theme_file_content = localStorage.getItem("desktop-theme");
+	var wallpaper_data_url = localStorage.getItem(os_storage_key("wallpaper-data-url"));
+	var wallpaper_repeat = localStorage.getItem(os_storage_key("wallpaper-repeat"));
+	var theme_file_content = localStorage.getItem(os_storage_key("desktop-theme"));
 	if (wallpaper_data_url) {
 		fetch(wallpaper_data_url).then(r => r.blob()).then(file => {
 			setDesktopWallpaper(file, wallpaper_repeat, false);

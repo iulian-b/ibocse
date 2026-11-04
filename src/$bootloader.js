@@ -13,7 +13,7 @@ const bootText = [
     `<div class="fade">:: performing fsck on '/dev/sda3'<br>/dev/sda3: recovering journal<br></div>`,
     `<div class="fade">/dev/sda3: clean, 45425/1607520 files, 606564/6425339 blocks<br></div>`,
     `<div class="fade">:: mounting '/dev/sda3' on real root<br>::running cleanup hook [udev]<br></div>`,
-    `<div class="fade"><br><img src="images/bootlogo.png"><br>Welcome to <span style="color: #4fa1ed">Sinclaire OS</span>!<br></div>`,
+    `<div class="fade"><br><img src="${booted_os.boot_logo}"><br>Welcome to <span style="color: #4fa1ed">Sinclaire OS</span>!<br></div>`,
     `<div class="fade">Tunnel Client:<br>` + escapeHTML(navigator.userAgent) + `<br></div><br>`,
 
     // 6-9 (systemd)

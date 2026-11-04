@@ -31,7 +31,8 @@ const copy = (from, toDir) => {
 // - lib/os-gui/$Window.js: titlebar icon margin, null check, draggable="false" for jQuery 4,
 //   no error when a window is closed before its iframe finishes loading,
 //   sandboxed iframes treated as cross-origin for focus integration
-// (The site's old green color scheme, which used to be in windows-98.css, is in css/themes/green.css.)
+// (The site's old green color scheme, which used to be in windows-98.css, is "Sinclair Green" in src/color-schemes.js,
+// the network operating system's: src/operating-systems.js.)
 copy("node_modules/os-gui/build/layout.css", "lib/os-gui/");
 copy("node_modules/os-gui/build/layout.css.map", "lib/os-gui/");
 copy("node_modules/os-gui/build/windows-98.css", "lib/os-gui/");

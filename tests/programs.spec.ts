@@ -80,7 +80,7 @@ test('PicView shows a picture, in a window shaped like it', async ({ page }) => 
 
 test('PicView shows a picture that only exists in the browser', async ({ page }) => {
 	await openDesktop(page);
-	await writeFile(page, '/My Pictures/saved.png', require('fs').readFileSync(require('path').resolve(__dirname, '..', 'images', 'start.png')));
+	await writeFile(page, '/My Pictures/saved.png', require('fs').readFileSync(require('path').resolve(__dirname, '..', 'images', 'icons', 'settings-16x16.png')));
 	await page.evaluate(() => (window as any).systemExecuteFile('/My Pictures/saved.png'));
 	const picture = page.frameLocator('iframe[src*="programs/picview"]').locator('#pic');
 	await expect(picture).toHaveAttribute('src', /^blob:/);
@@ -165,19 +165,19 @@ test('VMware boots this site as its guest OS', async ({ page }) => {
 test('Paint can open a file dropped onto the desktop', async ({ page, browserName }) => {
 	test.skip(browserName === 'webkit', 'WebKit does not support DataTransferItemList fully');
 	await openDesktop(page);
-	const buffer = require('fs').readFileSync(require('path').resolve(__dirname, '..', 'images', 'start.png'));
+	const buffer = require('fs').readFileSync(require('path').resolve(__dirname, '..', 'images', 'icons', 'settings-16x16.png'));
 	// Named .bmp so it opens in Paint (.png opens in PicView); Paint goes by the content, which is a PNG
 	const dataTransfer = await page.evaluateHandle((hex) => {
 		const dt = new DataTransfer();
 		const bytes = new Uint8Array(hex.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16)));
-		dt.items.add(new File([bytes], 'start.bmp', { type: 'image/bmp' }));
+		dt.items.add(new File([bytes], 'settings.bmp', { type: 'image/bmp' }));
 		return dt;
 	}, buffer.toString('hex'));
 	await page.locator('.desktop .folder-view').dispatchEvent('drop', { dataTransfer, clientX: 400, clientY: 300 });
-	await desktopIcon(page, 'start.bmp').dblclick();
+	await desktopIcon(page, 'settings.bmp').dblclick();
 	const paint = page.frameLocator('iframe[src*="programs/jspaint"]');
 	await expect(paint.locator('.main-canvas')).toHaveAttribute('width', '16');
-	await expect(paint.locator('.main-canvas')).toHaveAttribute('height', '14');
+	await expect(paint.locator('.main-canvas')).toHaveAttribute('height', '16');
 	await expect(windowTitled(page, /Paint$/)).toBeVisible();
 });
 

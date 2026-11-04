@@ -24,32 +24,37 @@ body {
     user-select: none; /* Standard */
 }
 
-#bootmenu {
-    display: block;
-    position: absolute;
-    justify-content: center;
+/* The boot menu (BIOS/BOOTMENU.html): a box in the middle of the screen, its heading the title bar,
+   and the selected device in white on black, as Bootstrap 386's lists have it */
+body.boot-menu {
+    display: flex;
     align-items: center;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    margin: auto;
-    width: 300px;
-    height: 110px;
+    justify-content: center;
+    min-height: 100vh;
 }
-
-.boot_heading {
-    display: block;
-    position: absolute;
-    justify-content: center;
-    align-items: center;
-    top: 0;
-    bottom: 16%;
-    left: 0;
-    right: 0;
-    margin: auto;
-    width: 306px;
-    height: 40px;
+#bootmenu {
+    width: max-content;
+    padding: 0 0 7px;
+}
+#bootmenu h1 {
+    margin: 0;
+}
+.boot-devices {
+    padding: 7px 0;
+    outline: none;
+}
+.boot-device {
+    padding: 7px 16px;
+    cursor: default;
+    white-space: pre;
+}
+.boot-device.selected {
+    color: #fff;
+    background-color: #000;
+}
+.boot-keys {
+    padding: 7px 16px 0;
+    border-top: 2px solid #000;
 }
 
 /* The CMOS Setup Utility (BIOS/SETUP.html): 80 columns by 25 rows of text, in the colors of VGA text mode,

@@ -1614,8 +1614,8 @@ function openThemeFile(file_path) {
 			}
 			loadThemeFromText(content);
 			try {
-				localStorage.setItem("desktop-theme", content);
-				localStorage.setItem("desktop-theme-path", file_path);
+				localStorage.setItem(os_storage_key("desktop-theme"), content);
+				localStorage.setItem(os_storage_key("desktop-theme-path"), file_path);
 			} catch (error) {
 				// no local storage
 			}

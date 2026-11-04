@@ -78,6 +78,8 @@
         $(function () {
             setTimeout(function() {
                 localStorage.setItem('POST',"1");
+                // (booting normally: the hard disk's operating system; the boot menu can boot the network's, src/operating-systems.js)
+                localStorage.removeItem("boot-device");
                 window.location.replace("index.html");
             }, 3000);
         });

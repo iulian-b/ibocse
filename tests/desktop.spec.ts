@@ -1,4 +1,5 @@
 import { test, expect, openDesktop, windowTitled, desktopIcon, openStartMenu, run, skipWithoutWebAudio } from './fixtures';
+import type { Page } from '@playwright/test';
 
 test.describe('first boot', () => {
 	test.use({ booted: false });
@@ -358,5 +359,95 @@ test.describe('power', () => {
 		await page.locator('.bios-answer', { hasText: 'Y' }).click();
 		await expect(page).toHaveURL(/\$POST\.html$/);
 		expect(await page.evaluate(() => localStorage.getItem('bios-settings'))).toBeNull();
+	});
+});
+
+test.describe('boot menu', () => {
+	const buttonFace = (page) => page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--ButtonFace').trim());
+
+	/** Waits for the boot sequence (which the boot menu shows) to end, as it does, with the CV, and closes it. */
+	async function finishBooting(page: Page) {
+		await expect.poll(() => page.evaluate(() => localStorage.getItem('boot')), { timeout: 15_000 }).toBe('true');
+		const cv = page.locator('iframe[src*="programs/pdfviewer"]');
+		await cv.waitFor({ state: 'attached' });
+		await cv.evaluate((iframe: any) => iframe.$window.close());
+	}
+
+	test('opens with F12, and is used with the arrow keys', async ({ page }) => {
+		await page.goto('/$POST.html');
+		await page.keyboard.press('F12');
+		await expect(page).toHaveURL(/BIOS\/BOOTMENU\.html$/);
+		await expect(page.locator('.boot-device')).toHaveText(['HDD:Lexar LNM620X256G-RNNNG', 'Network:IBA GE Slot 0600 v1242', 'USB:Virtual FDD', 'USB:Virtual DVD/CD-ROM']);
+		const selected = page.locator('.boot-device.selected');
+		await expect(selected).toHaveText(/^HDD/);
+		for (let i = 0; i < 4; i++) {
+			await page.keyboard.press('ArrowDown');
+		}
+		await expect(selected).toHaveText('USB:Virtual DVD/CD-ROM');
+		await page.keyboard.press('ArrowUp');
+		await expect(selected).toHaveText('USB:Virtual FDD');
+		// (there's nothing to boot on the USB drives, so the computer restarts)
+		await page.keyboard.press('Enter');
+		await expect(page).toHaveURL(/\$POST\.html$/);
+
+		// Esc boots the hard disk
+		await page.goto('/BIOS/BOOTMENU.html');
+		await page.keyboard.press('Escape');
+		await expect(page).toHaveURL(/index\.html$/);
+		await expect(page.locator('#taskbar')).toBeVisible({ timeout: 15_000 });
+		await expect(page.locator('.start-button img')).toHaveAttribute('src', 'images/os/hdd/start.png');
+		expect(await buttonFace(page)).toBe('rgb(192, 192, 192)');
+	});
+
+	test('the network boots the other operating system, with its own look and settings', async ({ page }) => {
+		test.slow(); // (it boots twice)
+		await page.goto('/BIOS/BOOTMENU.html');
+		await page.keyboard.press('ArrowDown');
+		await page.keyboard.press('Enter');
+		await expect(page).toHaveURL(/index\.html$/);
+		await expect(page.locator('#bootloader img')).toHaveAttribute('src', 'images/os/network/bootlogo.png');
+		await finishBooting(page);
+		expect(await buttonFace(page)).toBe('rgb(104, 120, 104)');
+		await expect(page.locator('#desktop')).toHaveCSS('background-image', /images\/os\/network\/wallpaper\.jpg/);
+		await expect(page.locator('.start-button img')).toHaveAttribute('src', 'images/os/network/start.png');
+		await expect(page.locator('.start-menu-titlebar')).toHaveCSS('background-image', /images\/os\/network\/start-menu-side\.png/);
+		// (its windows too)
+		await page.evaluate(() => (window as any).Notepad());
+		await expect(windowTitled(page, 'Untitled - Notepad')).toBeVisible();
+		const notepad = page.frames().find((frame) => frame.url().includes('programs/notepad'))!;
+		await expect.poll(() => notepad.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--ButtonFace').trim())).toBe('rgb(104, 120, 104)');
+
+		// Its own color scheme is the one it starts with, and what's chosen is its own
+		await page.evaluate(() => (window as any).DisplayProperties());
+		const display = windowTitled(page, 'Display Properties');
+		await display.locator('.tab', { hasText: 'Appearance' }).dispatchEvent('pointerdown');
+		await expect(display.locator('select')).toHaveValue('Sinclair Green');
+		await display.locator('select').selectOption('Brick');
+		await display.getByRole('button', { name: 'OK' }).click();
+		expect(await page.evaluate(() => JSON.parse(localStorage.getItem('network-settings')!).color_scheme)).toBe('Brick');
+		expect(await page.evaluate(() => localStorage.getItem('settings'))).toBeNull();
+
+		// A normal boot is the hard disk's again, as it was
+		await page.goto('/$POST.html');
+		await expect(page).toHaveURL(/index\.html$/, { timeout: 15_000 });
+		await page.waitForFunction(() => (window as any).DisplayProperties);
+		expect(await page.evaluate(() => localStorage.getItem('boot-device'))).toBeNull();
+		expect(await buttonFace(page)).toBe('rgb(192, 192, 192)');
+		await expect(page.locator('#desktop')).toHaveCSS('background-image', /images\/os\/hdd\/wallpaper\.jpeg/);
+		await page.evaluate(() => (window as any).DisplayProperties());
+		await display.locator('.tab', { hasText: 'Appearance' }).dispatchEvent('pointerdown');
+		await expect(display.locator('select')).toHaveValue('Windows Standard');
+		await expect(display.locator('option', { hasText: 'Sinclair Green' })).toHaveCount(0);
+	});
+
+	test('Shut Down forgets the network boot, but not the settings', async ({ page }) => {
+		await page.goto('/BIOS/BOOTMENU.html');
+		await page.locator('.boot-device', { hasText: 'Network' }).click();
+		await finishBooting(page);
+		await page.evaluate(() => localStorage.setItem('network-settings', JSON.stringify({ crt_monitor: true })));
+		await openStartMenu(page);
+		await page.locator('#start_btn_shutdown').click();
+		expect(await page.evaluate(() => localStorage.getItem('boot-device'))).toBeNull();
+		expect(await page.evaluate(() => localStorage.getItem('network-settings'))).toBe('{"crt_monitor":true}');
 	});
 });

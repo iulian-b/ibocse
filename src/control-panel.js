@@ -72,7 +72,7 @@ function DisplayProperties() {
 		const chosen = {
 			wallpaper: desktop_settings.wallpaper,
 			wallpaper_display: desktop_settings.wallpaper_display,
-			color_scheme: color_schemes[desktop_settings.color_scheme] ? desktop_settings.color_scheme : default_settings.color_scheme,
+			color_scheme: has_color_scheme(desktop_settings.color_scheme) ? desktop_settings.color_scheme : default_settings.color_scheme,
 			crt_monitor: desktop_settings.crt_monitor,
 		};
 		let $apply;
@@ -130,7 +130,7 @@ function DisplayProperties() {
 				</div>
 			</div>
 		`);
-		const $schemes = $("<select>").append(Object.keys(color_schemes).sort().map((name) => $("<option>").val(name).text(name)))
+		const $schemes = $("<select>").append(Object.keys(color_schemes).filter(has_color_scheme).sort().map((name) => $("<option>").val(name).text(name)))
 			.val(chosen.color_scheme)
 			.on("change", () => choose({ color_scheme: $schemes.val() }));
 		const $appearance = $("<div class='appearance-panel'>").append(
@@ -183,8 +183,8 @@ function DisplayProperties() {
 				Object.assign(desktop_settings, { wallpaper: chosen.wallpaper, wallpaper_display: chosen.wallpaper_display });
 				try {
 					// (instead of a picture set as the wallpaper from Paint)
-					localStorage.removeItem("wallpaper-data-url");
-					localStorage.removeItem("wallpaper-repeat");
+					localStorage.removeItem(os_storage_key("wallpaper-data-url"));
+					localStorage.removeItem(os_storage_key("wallpaper-repeat"));
 				} catch (error) {
 					// no local storage
 				}
@@ -194,8 +194,8 @@ function DisplayProperties() {
 				desktop_settings.color_scheme = chosen.color_scheme;
 				try {
 					// (instead of a .theme file opened from the drive)
-					localStorage.removeItem("desktop-theme");
-					localStorage.removeItem("desktop-theme-path");
+					localStorage.removeItem(os_storage_key("desktop-theme"));
+					localStorage.removeItem(os_storage_key("desktop-theme-path"));
 				} catch (error) {
 					// no local storage
 				}

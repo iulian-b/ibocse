@@ -9,35 +9,68 @@
     <link rel="stylesheet" href="../css/bios.css">
     <script src="../lib/jquery.min.js"></script>
 </head>
-<body>
-<h1 class="boot_heading">Please selsect boot device:</h1><br>
-<div class="jumbotron jumbotron-fluid" id="bootmenu">
-    <div class="container">
-        <div class="btn-group-vertical">
-<!--             CHANGE TO THIS http://kristopolous.github.io/BOOTSTRA.386/docs/4.4/components/list-group/-->
-            <button class="btn btn-primary" data-toggle="button" aria-pressed="false">
-                Network:IBA GE Slot 0600 v1242
-            </button>
-            <br>&nbsp;
-            <a href="../$POST.html" class="btn btn-primary" data-toggle="button" aria-pressed="false">
-                HDD:Lexar LNM620X256G-RNNNG
-            </a>
-            <br>&nbsp;
-            <a href="../$POST.html" class="btn btn-primary" data-toggle="button" aria-pressed="false">
-                USB:Virtual FDD
-            </a>
-            <br>&nbsp;
-            <a href="../$POST.html" class="btn btn-primary" data-toggle="button" aria-pressed="false">
-                USB:Virtual DVD/CD-ROM
-            </a>
-        </div>
+<body class="boot-menu">
+<div class="jumbotron" id="bootmenu">
+    <h1 id="boot_heading">Please select boot device:</h1>
+    <div class="boot-devices" role="listbox" aria-labelledby="boot_heading" tabindex="0">
+        <div class="boot-device selected" role="option" aria-selected="true" data-device="hdd">HDD:Lexar LNM620X256G-RNNNG</div>
+        <div class="boot-device" role="option" aria-selected="false" data-device="network">Network:IBA GE Slot 0600 v1242</div>
+        <div class="boot-device" role="option" aria-selected="false" data-device="usb-fdd">USB:Virtual FDD</div>
+        <div class="boot-device" role="option" aria-selected="false" data-device="usb-cdrom">USB:Virtual DVD/CD-ROM</div>
+    </div>
+    <div class="boot-keys">
+        &uarr; and &darr; to move selection<br>
+        ENTER to select boot device<br>
+        ESC to boot using defaults
     </div>
 </div>
 <script type="text/javascript">
-    function validateForm() {
-        document.getElementById("biosPassword").value = "";
-        console.log("[BIOS] Invalid Password");
+    // The hard disk and the network each have an operating system to boot (src/operating-systems.js);
+    // the USB drives have nothing in them, so the computer restarts.
+    const devices = [...document.querySelectorAll(".boot-device")];
+    let selected = 0;
+    function select(index) {
+        devices[selected].classList.remove("selected");
+        devices[selected].setAttribute("aria-selected", "false");
+        selected = Math.min(devices.length - 1, Math.max(0, index));
+        devices[selected].classList.add("selected");
+        devices[selected].setAttribute("aria-selected", "true");
     }
+    function boot(device) {
+        if (device !== "hdd" && device !== "network") {
+            location.replace("../$POST.html");
+            return;
+        }
+        try {
+            if (device === "network") {
+                localStorage.setItem("boot-device", "network");
+            } else {
+                localStorage.removeItem("boot-device");
+            }
+            localStorage.setItem("POST", "1"); // (past the POST screen: src/$post-redirect.js)
+            localStorage.removeItem("boot"); // (so it's seen booting: src/$bootloader.js)
+        } catch (error) {
+            // no local storage
+        }
+        location.replace("../index.html");
+    }
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+            select(selected + (event.key === "ArrowUp" ? -1 : 1));
+        } else if (event.key === "Enter") {
+            boot(devices[selected].dataset.device);
+        } else if (event.key === "Escape") {
+            boot("hdd");
+        } else {
+            return;
+        }
+        event.preventDefault();
+    });
+    for (const [index, device] of devices.entries()) {
+        device.addEventListener("pointerenter", () => select(index));
+        device.addEventListener("click", () => boot(device.dataset.device));
+    }
+    document.querySelector(".boot-devices").focus();
 </script>
 </body>
 </html>

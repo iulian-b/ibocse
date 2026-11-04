@@ -1,18 +1,16 @@
 // What's set in the Control Panel (src/control-panel.js): kept in localStorage, which Shut Down keeps it in (see ClearStorage),
-// and put in effect here as the desktop loads.
+// and put in effect here as the desktop loads. Each operating system has its own (src/operating-systems.js).
 
-const settings_storage_key = "settings";
+const settings_storage_key = os_storage_key("settings");
 
 const default_settings = {
-	wallpaper: "default", // "default" (the theme's own), the path of a picture on the drive, or null for none
+	wallpaper: "default", // "default" (the operating system's own), the path of a picture on the drive, or null for none
 	wallpaper_display: "stretch", // "tile", "center" or "stretch"
-	color_scheme: "Windows Standard", // one of color_schemes (src/color-schemes.js)
+	color_scheme: booted_os.color_scheme, // one of color_schemes (src/color-schemes.js)
 	crt_monitor: false,
 	cv_at_startup: true,
 	removed_programs: [], // file names of the programs in C:\Games that Add/Remove Programs removed
 };
-
-const default_wallpaper_url = "images/themes/classic/wallpaper.jpeg";
 
 // What Add/Remove Programs can remove: the games in C:\Games (not Windows' own Minesweeper and Pinball),
 // and the title of their desktop shortcut, if they have one
@@ -79,7 +77,7 @@ function wallpaper_css(url, display) {
 // Calls back with the URL of a wallpaper (null for none)
 function get_wallpaper_url(wallpaper, callback) {
 	if (wallpaper === "default") {
-		callback(default_wallpaper_url);
+		callback(booted_os.wallpaper);
 	} else if (wallpaper) {
 		file_path_to_viewable_url(wallpaper, wallpaper_picture_extensions, (error, url) => callback(error ? null : url));
 	} else {
@@ -91,7 +89,6 @@ function apply_wallpaper() {
 	const { wallpaper, wallpaper_display } = desktop_settings;
 	get_wallpaper_url(wallpaper, (url) => {
 		$(".desktop").css(wallpaper === "default" ?
-			// (as index.html has it)
 			{ backgroundImage: `url("${url}")`, backgroundRepeat: "no-repeat", backgroundPosition: "center", backgroundSize: "cover" } :
 			wallpaper_css(url, wallpaper_display));
 	});
@@ -135,15 +132,18 @@ function apply_crt_monitor() {
 	crt_screen.hidden = !desktop_settings.crt_monitor;
 }
 
-if (desktop_settings.color_scheme !== default_settings.color_scheme && color_schemes[desktop_settings.color_scheme]) {
+// (the stylesheets have Windows Standard)
+if (desktop_settings.color_scheme !== "Windows Standard" && has_color_scheme(desktop_settings.color_scheme)) {
 	apply_color_scheme();
 }
 apply_crt_monitor();
+// (a picture set as the wallpaper from Paint is used instead, see src/$desktop.js, until one is chosen in Display Properties)
+let wallpaper_from_paint = null;
 try {
-	// (a picture set as the wallpaper from Paint is used instead, see src/$desktop.js, until one is chosen in Display Properties)
-	if (!localStorage.getItem("wallpaper-data-url") && desktop_settings.wallpaper !== default_settings.wallpaper) {
-		apply_wallpaper();
-	}
+	wallpaper_from_paint = localStorage.getItem(os_storage_key("wallpaper-data-url"));
 } catch (error) {
 	// no local storage
+}
+if (!wallpaper_from_paint) {
+	apply_wallpaper();
 }

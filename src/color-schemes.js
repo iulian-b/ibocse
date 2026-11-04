@@ -57,7 +57,17 @@ const color_schemes = {
 	"Teal": "#c0c0c0 #004040 #008080 #808080 #c0c0c0 #ffffff #000000 #000000 #000000 #ffffff #c0c0c0 #c0c0c0 #808080 #008080 #ffffff #c0c0c0 #808080 #808080 #000000 #fffbf0 #ffffff #000000 #c0c0c0 #000000 #ffffff #c0c0c0 #008080 #00ccd8 #98c8b8 #008080 #c0c0c0",
 	"Wheat": "#eeeed0 #00401d #808000 #bcbc41 #dedea0 #ffffff #000000 #000000 #000000 #ffffff #dedea0 #dedea0 #bcbc41 #808000 #ffffff #dedea0 #bcbc41 #bcbc41 #000000 #ffffff #eeeed0 #000000 #dedea0 #000000 #ffffff #c0c0c0 #808000 #c8b048 #b8b880 #808000 #dedea0",
 	"Windows Standard": "#c0c0c0 #008080 #000080 #808080 #c0c0c0 #ffffff #000000 #000000 #000000 #ffffff #c0c0c0 #c0c0c0 #808080 #000080 #ffffff #c0c0c0 #808080 #808080 #000000 #c0c0c0 #ffffff #000000 #dfdfdf #000000 #ffffe1 #b4b4b4 #0000ff #1084d0 #b5b5b5 #000080 #c0c0c0",
+	// The colors this site had before going back to Windows'
+	"Sinclair Green": "#b0c0b0 #000000 #503840 #485048 #687868 #fffff0 #000000 #000000 #000000 #fffff0 #687868 #687868 #485048 #b87840 #ffffff #687868 #485048 #485048 #000000 #687868 #b0c0b0 #000000 #687868 #000000 #ced9ce #c0c0c0 #008080 #00ccd8 #98c8b8 #b87840 #687868",
 };
+
+// The color schemes only one of the operating systems has, as its own (src/operating-systems.js)
+const own_color_schemes = ["Sinclair Green"];
+
+// Whether the operating system running has a color scheme
+function has_color_scheme(name) {
+	return Object.hasOwn(color_schemes, name) && (!own_color_schemes.includes(name) || name === booted_os.color_scheme);
+}
 
 // The CSS properties for a color scheme, including the pictures that os-gui draws with its colors (as for a .theme file)
 function color_scheme_css_properties(name) {

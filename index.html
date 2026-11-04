@@ -45,9 +45,9 @@
 		<script>0</script>
 		<div id="bootloader" class="unselectable"></div>
 		<!-- <div id="screen" class="crt"></div> -->
-		<!-- Wallpaper -->
+		<!-- Wallpaper (the operating system's: src/settings.js) -->
 		<div id="preloader"></div>
-		<div id="desktop" class="desktop" style="background-image: url(images/themes/classic/wallpaper.jpeg); background-size: cover; background-position: center; "></div>
+		<div id="desktop" class="desktop"></div>
 		<!-- Build -->
 		<div id="buildtext" class="build-text unselectable" style="position: absolute; right: 5px; bottom: 28px; font-family: italic Fixedsys Excelsior, FixedSys, monospace; font-size: 11px; line-height: 0.4; color: white;">
 			<p>Sinclair OS-9 build 9.0.8 (x64)</p>
@@ -56,7 +56,7 @@
 		<!-- Start Button -->
 		<div id="taskbar" class="taskbar" style="z-index: 5001;">
 			<button class="start-button toggle" title="Click here to begin.">
-				<img src="images/start.png"/><b>Start</b>
+				<img alt=""/><b>Start</b> <!-- (the operating system's: src/operating-systems.js) -->
 			</button>
 			<div class="taskbar-divider"></div>
 			<div class="tasks"></div>
@@ -179,6 +179,7 @@
 		<script src="src/filesystem-setup.js"></script>
 		<script src="src/iframe-windows.js"></script>
 		<script src="src/Task.js"></script>
+		<script src="src/operating-systems.js"></script>
 		<script src="src/color-schemes.js"></script>
 		<script src="src/settings.js"></script>
 		<script src="src/$taskbar-time.js"></script>
