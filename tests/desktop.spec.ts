@@ -397,6 +397,7 @@ test.describe('boot menu', () => {
 		await expect(page).toHaveURL(/index\.html$/);
 		await expect(page.locator('#taskbar')).toBeVisible({ timeout: 15_000 });
 		await expect(page.locator('.start-button img')).toHaveAttribute('src', 'images/os/hdd/start.png');
+		await expect(page.locator('#buildtext')).toHaveText('Windows 98 Build 4.10.1998For testing purposes only.');
 		expect(await buttonFace(page)).toBe('rgb(192, 192, 192)');
 	});
 
@@ -411,12 +412,17 @@ test.describe('boot menu', () => {
 		expect(await buttonFace(page)).toBe('rgb(104, 120, 104)');
 		await expect(page.locator('#desktop')).toHaveCSS('background-image', /images\/os\/network\/wallpaper\.jpg/);
 		await expect(page.locator('.start-button img')).toHaveAttribute('src', 'images/os/network/start.png');
+		await expect(page.locator('#buildtext')).toHaveText('Sinclair OS-9 build 9.0.8f (x64)Not for commercial use.');
 		await expect(page.locator('.start-menu-titlebar')).toHaveCSS('background-image', /images\/os\/network\/start-menu-side\.png/);
 		// (its windows too)
 		await page.evaluate(() => (window as any).Notepad());
 		await expect(windowTitled(page, 'Untitled - Notepad')).toBeVisible();
 		const notepad = page.frames().find((frame) => frame.url().includes('programs/notepad'))!;
 		await expect.poll(() => notepad.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--ButtonFace').trim())).toBe('rgb(104, 120, 104)');
+		await page.evaluate(() => (window as any).SystemProperties());
+		const systemInfo = windowTitled(page, 'System Properties').locator('.system-info');
+		await expect(systemInfo).toContainText('Sinclair OS-9');
+		await expect(systemInfo).toContainText('9.0.8f (x64)');
 
 		// Its own color scheme is the one it starts with, and what's chosen is its own
 		await page.evaluate(() => (window as any).DisplayProperties());
@@ -439,6 +445,10 @@ test.describe('boot menu', () => {
 		await display.locator('.tab', { hasText: 'Appearance' }).dispatchEvent('pointerdown');
 		await expect(display.locator('select')).toHaveValue('Windows Standard');
 		await expect(display.locator('option', { hasText: 'Sinclair Green' })).toHaveCount(0);
+		await page.evaluate(() => (window as any).SystemProperties());
+		await expect(systemInfo).toContainText('Microsoft Windows 98');
+		await expect(systemInfo).toContainText('4.10.1998');
+		await expect(systemInfo).not.toContainText('Sinclair');
 	});
 
 	test('Shut Down forgets the network boot, but not the settings', async ({ page }) => {

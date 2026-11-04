@@ -405,7 +405,7 @@ function SystemProperties() {
 			$("<img class='system-picture' width='96' height='96' draggable='false'>").attr("src", getIconPath("my-computer", 48)),
 			$("<dl class='system-info'>").append(
 				$("<dt>").text("System:"),
-				$("<dd>").append("Sinclair OS-9", $("<br>"), "9.0.8 (x64)"),
+				$("<dd>").append(booted_os.name, $("<br>"), booted_os.version),
 				$("<dt>").text("Registered to:"),
 				$("<dd>").append("ibocse", $("<br>"), "crlab2-h032", $("<br>"), "24796-OEM-0014736-66386"),
 				$("<dt>").text("Computer:"),
