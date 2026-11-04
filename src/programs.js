@@ -930,7 +930,7 @@ function Solitaire() {
 function showScreensaver(iframeSrc) {
 	const mouseDistanceToExit = 15;
 	const $iframe = $("<iframe>").attr("src", iframeSrc);
-	const $surface = $("<div>"); // interact to close
+	const $surface = $("<div tabindex='-1'>"); // interact to close
 	$surface.css({
 		position: "fixed",
 		left: 0,
@@ -940,6 +940,7 @@ function showScreensaver(iframeSrc) {
 		zIndex: $Window.Z_INDEX + 10000,
 		cursor: "none",
 		touchAction: "none",
+		outline: "none",
 	});
 	$iframe.css({
 		position: "fixed",
@@ -954,9 +955,22 @@ function showScreensaver(iframeSrc) {
 	});
 	$surface.appendTo("body");
 	$iframe.appendTo("body");
+	// Keys go where the focus is, which can be a window's page (an iframe), where they'd never reach the keydown handler below;
+	// so the screensaver takes the focus, and takes it back from windows that take it as they finish loading.
+	// (It goes back to where it was afterwards.)
+	const previouslyFocused = document.activeElement;
+	const keepFocus = () => {
+		setTimeout(() => $surface[0].focus({ preventScroll: true }));
+	};
+	keepFocus();
+	window.addEventListener("blur", keepFocus);
 	const cleanUp = () => {
+		window.removeEventListener("blur", keepFocus);
 		$surface.remove();
 		$iframe.remove();
+		if (previouslyFocused?.isConnected) {
+			previouslyFocused.focus({ preventScroll: true });
+		}
 		const prevent = (event) => {
 			event.preventDefault();
 		};

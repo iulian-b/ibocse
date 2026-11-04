@@ -1,13 +1,13 @@
 {
-	"name": "ccc-crlab2-h032",
+	"name": "ibocse",
 	"description": "Web-OS",
 	"version": "0.0.9",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/iulian-b/ccc-crlab2-h032.git"
+		"url": "https://github.com/iulian-b/ibocse.git"
 	},
 	"bugs": {
-		"url": "https://github.com/iulian-b/ccc-crlab2-h032/issues"
+		"url": "https://github.com/iulian-b/ibocse/issues"
 	},
 	"license": "UNLICENSED",
 	"private": true,

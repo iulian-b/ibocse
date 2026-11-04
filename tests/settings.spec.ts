@@ -80,7 +80,8 @@ test('Display Properties changes the color scheme, of every window', async ({ pa
 	const explorer = page.frameLocator('iframe[src*="programs/explorer"]');
 	await expect(explorer.frameLocator('iframe').locator('.desktop-icon').first()).toBeVisible();
 	const folder = page.frames().find((frame) => frame.parentFrame()?.url().includes('programs/explorer') && frame.url().startsWith('about:'))!;
-	expect(await folder.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--ButtonFace').trim())).toBe('rgb(194, 191, 165)');
+	// (the colors come with the folder's load event, which in Firefox can be after the icons show)
+	await expect.poll(() => folder.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--ButtonFace').trim())).toBe('rgb(194, 191, 165)');
 
 	await openDesktop(page);
 	expect(await cssProperty(page, '--ButtonFace')).toBe('rgb(194, 191, 165)');

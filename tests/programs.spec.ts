@@ -110,14 +110,14 @@ test.describe('on a laptop screen', () => {
 
 test('MDView shows Markdown files', async ({ page }) => {
 	await openDesktop(page);
-	await writeFile(page, '/My Documents/notes.md', '# Notes\n\n- one\n- two\n\nSee [the project](https://github.com/iulian-b/ccc-crlab2-h032).\n');
+	await writeFile(page, '/My Documents/notes.md', '# Notes\n\n- one\n- two\n\nSee [the project](https://github.com/iulian-b/ibocse).\n');
 	await page.evaluate(() => (window as any).systemExecuteFile('/My Documents/notes.md'));
 	await expect(windowTitled(page, 'notes.md - MDView')).toBeVisible();
 	const markdown = page.frameLocator('iframe[src*="programs/mdview"]').locator('#document');
 	await expect(markdown.locator('h1')).toHaveText('Notes');
 	await expect(markdown.locator('li')).toHaveText(['one', 'two']);
 	const link = markdown.getByRole('link', { name: 'the project' });
-	await expect(link).toHaveAttribute('href', 'https://github.com/iulian-b/ccc-crlab2-h032');
+	await expect(link).toHaveAttribute('href', 'https://github.com/iulian-b/ibocse');
 	await expect(link).toHaveAttribute('target', '_blank');
 });
 
@@ -143,10 +143,11 @@ test('MS-DOS Prompt boots the emulator', async ({ page }) => {
 });
 
 test('Winamp plays a song, and can be closed and opened again', async ({ page }) => {
+	test.slow(); // (in Firefox, loading Winamp and the song can take over 15 seconds while the other tests run)
 	await openDesktop(page);
 	await skipWithoutWebAudio(page);
 	await page.evaluate(() => (window as any).systemExecuteFile('/My Music/blue.mp3'));
-	await expect(page.locator('.tasks .task .title', { hasText: /^1\. blue - Winamp/ })).toBeVisible({ timeout: 15_000 });
+	await expect(page.locator('.tasks .task .title', { hasText: /^1\. blue - Winamp/ })).toBeVisible({ timeout: 30_000 });
 	await page.evaluate('winamp_interface.close()');
 	await expect(page.locator('#webamp')).toHaveCount(0);
 	await page.evaluate(() => (window as any).openWinamp());

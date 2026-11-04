@@ -19,9 +19,9 @@
                     <br />
                     Cornell Computing Center IntDev BIOS REV.2<br />
                     <br />
-                    Main Processor : C^3(R) SSPU Lynx Gen.II @ 4.30GHz<br />
+                    Main Processor : C^3(R) SSPU Lynx Gen.II @ <span id="cpu_frequency">4.30</span>GHz<br />
                     &lt;CPUID:0729 Patch ID:6561&gt;<br />
-                    <span>Memory Testing : &nbsp;<span id="memory_counter" class="unselectable">67108864</span>&nbsp;&nbsp;&nbsp;DRAM CLK : 2600MHz (36-40-40-96)</span><br />
+                    <span>Memory Testing : &nbsp;<span id="memory_counter" class="unselectable">67108864</span>&nbsp;&nbsp;&nbsp;DRAM CLK : <span id="dram_clock">2600</span>MHz (36-40-40-96)</span><br />
                     <br />
                     <span id="mounted_disks"><br><br><br><br></span>
                     <br/>
@@ -41,6 +41,18 @@
                 return window.setTimeout( callback, seconds * 1000 );
             }
         })
+        // The speeds set in the BIOS (BIOS/SETUP.js)
+        try {
+            const bios = JSON.parse(localStorage.getItem("bios-settings")) || {};
+            if (bios.cpu_ratio && bios.cpu_ratio !== "Auto") {
+                $("#cpu_frequency").text((parseInt(bios.cpu_ratio) / 10).toFixed(2));
+            }
+            if (bios.memory_multiplier && bios.memory_multiplier !== "Auto") {
+                $("#dram_clock").text(Math.round(parseFloat(bios.memory_multiplier) * 100));
+            }
+        } catch (error) {
+            // no local storage, or no saved BIOS settings
+        }
         let memoryCounter = $("#memory_counter");
         let mountedDisks = $("#mounted_disks");
 
@@ -72,7 +84,7 @@
     </script>
     <script type="text/javascript">
         const Action = {
-            biosSetup() { location.replace("BIOS/SETUP.html"); },
+            biosSetup() { location.replace("BIOS/PASSWORD.html"); },
             // tepSwitch() { console.log("tepSwitch"); }, big troll
             bootMenu() { location.replace("BIOS/BOOTMENU.html"); },
             qFlash() { console.log("qFlash"); }

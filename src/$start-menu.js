@@ -7,8 +7,9 @@ shutdownAudio.preload = "none"; // big, and only needed at the very end
 shutdownAudio.volume = 0.2;
 
 function ClearStorage() {
-	// Files on the C: drive stay (they're in IndexedDB), and so does its record of deleted files, and the Control Panel's settings
-	const kept = [journal_storage_key, settings_storage_key].map((key) => [key, localStorage.getItem(key)]);
+	// Files on the C: drive stay (they're in IndexedDB), and so does its record of deleted files, the Control Panel's settings,
+	// and the BIOS's (BIOS/SETUP.js), as with a CMOS battery
+	const kept = [journal_storage_key, settings_storage_key, "bios-settings"].map((key) => [key, localStorage.getItem(key)]);
 	localStorage.clear();
 	for (const [key, value] of kept) {
 		if (value !== null) {

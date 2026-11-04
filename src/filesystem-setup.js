@@ -89,7 +89,7 @@ function configure_filesystem() {
 		}
 	});
 	// Files are only downloaded when they're opened (disableAsyncCache), and nothing is copied into memory up front.
-	return ZenFS.configure({
+	const configured = ZenFS.configure({
 		mounts: {
 			"/": {
 				backend: ZenFS.CopyOnWrite,
@@ -105,6 +105,30 @@ function configure_filesystem() {
 			},
 		},
 	});
+	return configured.then(() => look_up_read_only(ZenFS.mounts.get("/").writable));
+}
+
+// ZenFS's IndexedDB store opens every transaction for writing, even just to look a file up, and Safari runs those one at a time,
+// committing each: after Find has looked at every file on the drive, the next thing done with it would wait seconds for them.
+// Looking up (stat, readdir, read) opens a read-only one instead. (Those methods open their transaction before they first wait.)
+function look_up_read_only(store_fs) {
+	const { db } = store_fs.store;
+	const open_transaction = db.transaction;
+	let looking_up = false;
+	db.transaction = function (store_names, mode, options) {
+		return open_transaction.call(this, store_names, looking_up ? "readonly" : mode, options);
+	};
+	for (const method of ["stat", "readdir", "read"]) {
+		const look_up = store_fs[method];
+		store_fs[method] = function (...args) {
+			looking_up = true;
+			try {
+				return look_up.apply(this, args);
+			} finally {
+				looking_up = false;
+			}
+		};
+	}
 }
 
 // Whether a file on the drive is the site's own, unchanged copy (so it can be linked to on the server)

@@ -3,36 +3,18 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bootstrap w/ Vite</title>
-    <link rel="stylesheet" href="css/bootstrap.css">
+    <title>CMOS Setup Utility</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="../css/bios.css">
-    <script src="../lib/jquery.min.js"></script>
+    <script>
+        // Only after the password (PASSWORD.html)
+        if (sessionStorage.getItem("bios-unlocked") !== "1") {
+            location.replace("PASSWORD.html");
+        }
+    </script>
 </head>
-<body>
-<div class="jumbotron jumbotron-fluid" id="password_jumbotron">
-    <div class="container">
-        <h1 class="display-4">Password</h1>
-        <form id="biosForm">
-            <div class="form-group">
-                <input type="password" class="form-control" id="biosPassword" placeholder="ESC: Exit">
-            </div>
-        </form>
-    </div>
-    <br>
-</div>
-<script type="text/javascript">
-    function validateForm() {
-        document.getElementById("biosPassword").value = "";
-        console.log("[BIOS] Invalid Password");
-    }
-    document.getElementById("biosForm").addEventListener("submit", function (event) {
-        event.preventDefault();
-        validateForm();
-    });
-    document.addEventListener("keydown", function (event) {
-        if (event.key === "Escape") location.replace("../$POST.html");
-    });
-</script>
+<body class="bios-setup">
+<div id="bios" class="bios-screen"></div>
+<script src="SETUP.js"></script>
 </body>
 </html>

@@ -273,10 +273,11 @@ test.describe('power', () => {
 	});
 
 	test('logging off stops Winamp', async ({ page }) => {
+		test.slow(); // (as in programs.spec.ts, Winamp can take a while to load)
 		await openDesktop(page);
 		await skipWithoutWebAudio(page);
 		await page.evaluate(() => (window as any).systemExecuteFile('/My Music/blue.mp3'));
-		await expect(page.locator('.tasks .task .title', { hasText: /^1\. blue - Winamp/ })).toBeVisible({ timeout: 15_000 });
+		await expect(page.locator('.tasks .task .title', { hasText: /^1\. blue - Winamp/ })).toBeVisible({ timeout: 30_000 });
 		await openStartMenu(page);
 		await page.locator('#start_btn_logoff').click();
 		await expect(page.locator('#taskbar')).toHaveCount(0);
@@ -286,13 +287,76 @@ test.describe('power', () => {
 	test('the BIOS setup can be left with Esc', async ({ page }) => {
 		await page.goto('/$POST.html');
 		await page.keyboard.press('Delete');
-		await expect(page).toHaveURL(/BIOS\/SETUP\.html$/);
+		await expect(page).toHaveURL(/BIOS\/PASSWORD\.html$/);
 		const password = page.locator('#biosPassword');
 		await password.fill('hunter2');
 		await password.press('Enter');
-		await expect(page).toHaveURL(/BIOS\/SETUP\.html$/);
+		await expect(page).toHaveURL(/BIOS\/PASSWORD\.html$/);
 		await expect(password).toHaveValue('');
 		await page.keyboard.press('Escape');
 		await expect(page).toHaveURL(/\$POST\.html$/);
+	});
+
+	test('the BIOS setup\'s password is 1998, and opens the CMOS Setup Utility', async ({ page }) => {
+		await page.goto('/BIOS/PASSWORD.html');
+		const password = page.locator('#biosPassword');
+		// (the placeholder isn't the color of the box)
+		expect(await password.evaluate((input) => getComputedStyle(input, '::placeholder').color)).toBe('rgb(85, 85, 85)');
+		await password.fill('1998');
+		await password.press('Enter');
+		await expect(page).toHaveURL(/BIOS\/SETUP\.html$/);
+		await expect(page.locator('#bios')).toContainText('CMOS Setup Utility');
+		await expect(page.locator('.bios-menu-item.selected')).toHaveText('►Standard CMOS Features');
+	});
+
+	test('the CMOS Setup Utility can\'t be opened without the password', async ({ page }) => {
+		await page.goto('/BIOS/SETUP.html');
+		await expect(page).toHaveURL(/BIOS\/PASSWORD\.html$/);
+	});
+
+	test('what\'s saved in the BIOS shows on the POST screen', async ({ page }) => {
+		await page.goto('/BIOS/PASSWORD.html');
+		await page.locator('#biosPassword').fill('1998');
+		await page.locator('#biosPassword').press('Enter');
+		await expect(page.locator('#bios')).toContainText('Frequency/Voltage Control');
+		for (let i = 0; i < 6; i++) {
+			await page.keyboard.press('ArrowDown');
+		}
+		await page.keyboard.press('Enter');
+		await expect(page.locator('.bios-subtitle')).toHaveText('Frequency/Voltage Control');
+		await expect(page.locator('.bios-item.selected')).toContainText('CPU Clock Ratio');
+		for (let i = 0; i < 6; i++) {
+			await page.keyboard.press('PageUp'); // (Auto, 40X, ... 45X)
+		}
+		await expect(page.locator('.bios-item.selected .bios-value')).toHaveText('[45X]');
+		await expect(page.locator('#bios')).toContainText('4.50GHz');
+		await page.keyboard.press('F10');
+		await expect(page.locator('.bios-dialog')).toContainText('SAVE to CMOS and EXIT');
+		await page.keyboard.press('Enter');
+		await expect(page).toHaveURL(/\$POST\.html$/);
+		await expect(page.locator('#cpu_frequency')).toHaveText('4.50');
+	});
+
+	test('the CMOS Setup Utility can be used by clicking', async ({ page }) => {
+		await page.goto('/BIOS/PASSWORD.html');
+		await page.locator('#biosPassword').fill('1998');
+		await page.locator('#biosPassword').press('Enter');
+		// (click to select, and click again to open)
+		const item = page.locator('.bios-menu-item', { hasText: 'Advanced BIOS Features' });
+		await item.click();
+		await item.click();
+		await expect(page.locator('.bios-subtitle')).toHaveText('Advanced BIOS Features');
+		const quickBoot = page.locator('.bios-item', { hasText: 'Quick Boot' });
+		await quickBoot.click();
+		await quickBoot.click();
+		await page.locator('.bios-option', { hasText: 'Disabled' }).click();
+		await expect(quickBoot).toContainText('[Disabled]');
+		await page.locator('.bios-key', { hasText: 'ESC:Exit' }).click();
+		const exit = page.locator('.bios-menu-item', { hasText: 'Exit Without Saving' });
+		await exit.click();
+		await exit.click();
+		await page.locator('.bios-answer', { hasText: 'Y' }).click();
+		await expect(page).toHaveURL(/\$POST\.html$/);
+		expect(await page.evaluate(() => localStorage.getItem('bios-settings'))).toBeNull();
 	});
 });
