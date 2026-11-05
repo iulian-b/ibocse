@@ -86,7 +86,10 @@ const update_dialog = () => {
 		title: booted_os.name, resizable: false, maximizeButton: false, minimizeButton: false,
 		icons: booted_os.logo_icons,
 	});
-	$w.$content.append($("<p>").append($("<img>").attr("src", booted_os.banner)));
+	$w.$content.addClass("about").append(
+		$("<p>").append($("<img>").attr("src", booted_os.banner)),
+		$DialogButtons([{ label: "Credits", action: Credits }]), // (src/credits.js)
+	);
 
 
 	// $w.$Button("Ok", () => $w.close()).css({ width: 100 });

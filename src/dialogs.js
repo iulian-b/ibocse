@@ -39,10 +39,11 @@ function open_dialog_window(key, make_window) {
 }
 
 // Dialog boxes and property sheets can't be resized; folders (the Control Panel, Printers) and Find can
-function make_dialog_window(title, iconID, { resizable = false } = {}) {
+// (icon: an icon's ID, or its pictures at two sizes)
+function make_dialog_window(title, icon, { resizable = false } = {}) {
 	const $w = $Window({
 		title,
-		icons: iconsAtTwoSizes(iconID),
+		icons: typeof icon === "string" ? iconsAtTwoSizes(icon) : icon,
 		resizable,
 		maximizeButton: resizable,
 		minimizeButton: resizable,
@@ -109,7 +110,7 @@ function $Checkbox(label, checked, on_change) {
 	return $("<label class='checkbox-field'>").append($input, $("<span>").text(label));
 }
 
-// A list box: items are { label, value, iconID? }; calls back when one is selected
+// A list box: items are { label, value, iconID?, detail? } (detail: at the right, as Windows Setup's sizes); calls back when one is selected
 function $ListBox({ on_select, on_activate } = {}) {
 	const $list = $("<div class='list-box inset-deep' role='listbox' tabindex='0'>");
 	let items = [];
@@ -132,7 +133,11 @@ function $ListBox({ on_select, on_activate } = {}) {
 			if (item.iconID) {
 				$item.append($("<img width='16' height='16' draggable='false'>").attr("src", getIconPath(item.iconID, 16)));
 			}
-			return $item.append($("<span>").text(item.label));
+			$item.append($("<span>").text(item.label));
+			if (item.detail) {
+				$item.append($("<span class='list-item-detail'>").text(item.detail));
+			}
+			return $item;
 		}));
 		select(items.findIndex((item) => item.value === selected_value), { scroll: false });
 	};

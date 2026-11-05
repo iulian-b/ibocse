@@ -257,6 +257,27 @@
 	color: var(--HilightText);
 	background: var(--Hilight);
 }
+.list-item-detail {
+	margin-left: auto;
+	padding: 0 2px 0 16px;
+}
+
+/* About (src/$start-menu.js), and its Credits (src/credits.js), like Windows Setup's list of components */
+.about .dialog-buttons {
+	margin: 0 10px 10px;
+}
+.credits {
+	width: 360px;
+}
+.credits .list-box {
+	height: 182px; /* (10 lines) */
+}
+.credits-page {
+	margin-right: auto;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
 
 .status-bar {
 	height: 18px;

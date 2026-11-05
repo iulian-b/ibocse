@@ -194,6 +194,40 @@ test.describe('Start menu', () => {
 		await request;
 	});
 
+	test("About's Credits list who made what, and open their pages", async ({ page, context }) => {
+		await openDesktop(page);
+		await openStartMenu(page);
+		await page.locator('#start_btn_update').click();
+		await windowTitled(page, 'Windows 98').getByRole('button', { name: 'Credits' }).click();
+		const credits = windowTitled(page, 'Credits');
+		const items = credits.getByRole('option');
+		await expect(items.first()).toHaveText('98.jsIsaiah Odhner');
+		await expect(items.first()).toHaveAttribute('aria-selected', 'true');
+		await expect(credits).toContainText('Page: github.com/1j01/98');
+		// (every one with its icon)
+		await expect.poll(() => credits.locator('.list-item img').evaluateAll((icons) => icons.every((icon) => (icon as HTMLImageElement).naturalWidth === 16))).toBe(true);
+
+		const webamp = items.filter({ hasText: 'Webamp' });
+		await expect(webamp).toContainText('Jordan Eldredge');
+		// (the request itself is blocked; other sites are kept out of the tests)
+		const request = context.waitForEvent('request', (request) => request.url().startsWith('https://github.com/captbaritone/webamp'));
+		await webamp.dblclick();
+		await request;
+		await expect(credits).toContainText('Page: github.com/captbaritone/webamp');
+
+		// The games, by whoever made them, with the web versions played here as their pages
+		const doom = items.filter({ hasText: 'Doom' });
+		await expect(doom).toContainText('id Software');
+		await doom.click();
+		await expect(credits).toContainText('Page: raz0red.github.io/webprboom');
+		const programs = await (await page.request.get('/src/programs.js')).text();
+		const games: string[] = await page.evaluate('game_credits.map((credit) => credit.url)');
+		expect(games.length).toBeGreaterThan(20);
+		for (const url of games) {
+			expect(programs, `${url} is where a game is played`).toContain(`"${url}"`);
+		}
+	});
+
 	test('opens with the Windows key, not Ctrl', async ({ page }) => {
 		await openDesktop(page);
 		await page.keyboard.press('Control');
@@ -506,6 +540,7 @@ test.describe('boot menu', () => {
 		// Its name, in About, its message boxes, and Run
 		await page.evaluate('update_dialog()');
 		await expect(windowTitled(page, 'Sinclair OS-9').locator('.window-content img')).toHaveAttribute('src', 'images/os/network/banner.png');
+		await expect(windowTitled(page, 'Sinclair OS-9').getByRole('button', { name: 'Credits' })).toBeVisible();
 		await page.evaluate('void showMessageBox({ message: "Hello" })'); // (not waiting for it to be closed)
 		await expect(windowTitled(page, /^Sinclair$/)).toContainText('Hello');
 		await page.evaluate(() => (window as any).openRunDialog());
