@@ -84,10 +84,7 @@ var toggle_start_menu = function () {
 const update_dialog = () => {
 	const $w = $Window({
 		title: booted_os.name, resizable: false, maximizeButton: false, minimizeButton: false,
-		icons: {
-			32: "/images/icons/sinclair-updates-32x32.png",
-			16: "/images/icons/sinclair-updates-16x16.png",
-		},
+		icons: booted_os.logo_icons,
 	});
 	$w.$content.append($("<p>").append($("<img>").attr("src", booted_os.banner)));
 

@@ -205,7 +205,7 @@ var go_to = async function (address, action_name = "go") {
 		// });
 
 		$("#status-bar-right-icon").attr({
-			src: getIconPath("sinclair-updates", 16),
+			src: booted_os.logo_icons[16],
 		}).show();
 		$("#status-bar-right-text").text(booted_os.name);
 	} else {

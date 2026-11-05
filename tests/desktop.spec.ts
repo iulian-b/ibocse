@@ -6,13 +6,9 @@ test.describe('first boot', () => {
 
 	test('plays the boot sequence once, then shows the desktop', async ({ page }) => {
 		await page.goto('/', { waitUntil: 'domcontentloaded' }); // (the boot screen only lasts a few seconds)
+		// (Windows 98's, the hard disk's operating system's)
 		await expect(page.locator('#bootloader')).toBeVisible();
-		await expect(page.locator('#bootloader')).toContainText('Load Kernel Module configfs...'); // (a part that used to be skipped)
-		await expect(page.locator('#bootloader')).toContainText('Starting Desktop Environment...');
-		// (its parts appear one after another, "Starting Desktop Environment..." last)
-		const delays = await page.locator('#bootloader > .fade').evaluateAll((parts) => parts.map((part) => parseFloat(getComputedStyle(part).animationDelay)));
-		expect(delays.length).toBeGreaterThan(10);
-		expect(delays.every((delay, index) => index === 0 || delay > delays[index - 1])).toBe(true);
+		await expect(page.locator('#bootloader')).toHaveText('Starting Windows 98...');
 		// (and the desktop is nowhere to be seen, or used, until it's done)
 		await expect(page.locator('.desktop-icon').first()).toBeHidden();
 		await expect(page.locator('.start-button')).toBeHidden();
@@ -20,6 +16,8 @@ test.describe('first boot', () => {
 		await page.keyboard.press('F3'); // (Find)
 		await expect(page.locator('.start-menu')).toBeHidden();
 		await expect(page.locator('.find-window')).toHaveCount(0);
+		await expect(page.locator('.windows-98-splash img')).toHaveAttribute('src', 'images/os/hdd/bootlogo.png');
+		await expect(page.locator('.windows-98-splash')).toContainText('Windows 98');
 		await expect(page.locator('#taskbar')).toBeVisible({ timeout: 15_000 });
 		await expect(page.locator('#bootloader')).toHaveCount(0);
 		await expect(page.locator('html')).not.toHaveClass(/booting/);
@@ -420,10 +418,12 @@ test.describe('boot menu', () => {
 		await page.keyboard.press('Escape');
 		await expect(page.locator('.boot-screen')).toContainText('Verifying DMI Pool Data');
 		await expect(page).toHaveURL(/index\.html$/, { timeout: 15_000 });
-		await expect(page.locator('#bootloader')).toContainText('Starting version 4.10.1998');
-		await expect(page.locator('#bootloader')).toContainText('Welcome to Windows 98!');
+		await expect(page.locator('#bootloader')).toHaveText('Starting Windows 98...');
 		await expect(page.locator('#taskbar')).toBeVisible({ timeout: 15_000 });
 		await expect(page.locator('.start-button img')).toHaveAttribute('src', 'images/os/hdd/start.png');
+		// (Windows' logo, not Sinclair's: in the Start menu, and as the tab's icon)
+		await expect(page.locator('#start_btn_update img')).toHaveAttribute('src', '/images/icons/windows-32x32-8bpp.png');
+		expect(await page.locator('link[rel~="icon"]').evaluateAll((links) => links.map((link) => link.getAttribute('href')))).toEqual(['/images/icons/windows-32x32-8bpp.png', '/images/icons/windows-32x32-8bpp.png', '/images/icons/windows-32x32-8bpp.png']);
 		await expect(page.locator('#buildtext')).toHaveText('Windows 98 Build 4.10.1998For testing purposes only.');
 		expect(await buttonFace(page)).toBe('rgb(192, 192, 192)');
 		await page.evaluate(() => (window as any).openRunDialog());
@@ -441,13 +441,22 @@ test.describe('boot menu', () => {
 		await expect(bootScreen).toContainText(/DHCP\.[|/\-\\]/);
 		await expect(bootScreen).toContainText('CLIENT IP: 10.6.0.32');
 		await expect(page).toHaveURL(/index\.html$/, { timeout: 15_000 });
+		// (Sinclair OS's own boot)
 		await expect(page.locator('#bootloader img')).toHaveAttribute('src', 'images/os/network/bootlogo.png');
 		await expect(page.locator('#bootloader')).toContainText('Starting version 9.0.8f-sinclaire');
 		await expect(page.locator('#bootloader')).toContainText('Welcome to Sinclaire OS!');
+		await expect(page.locator('#bootloader')).toContainText('Load Kernel Module configfs...'); // (a part that used to be skipped)
+		await expect(page.locator('#bootloader')).toContainText('Starting Desktop Environment...');
+		// (its parts appear one after another, "Starting Desktop Environment..." last)
+		const delays = await page.locator('#bootloader > .fade').evaluateAll((parts) => parts.map((part) => parseFloat(getComputedStyle(part).animationDelay)));
+		expect(delays.length).toBeGreaterThan(10);
+		expect(delays.every((delay, index) => index === 0 || delay > delays[index - 1])).toBe(true);
 		await finishBooting(page);
 		expect(await buttonFace(page)).toBe('rgb(104, 120, 104)');
 		await expect(page.locator('#desktop')).toHaveCSS('background-image', /images\/os\/network\/wallpaper\.jpg/);
 		await expect(page.locator('.start-button img')).toHaveAttribute('src', 'images/os/network/start.png');
+		await expect(page.locator('#start_btn_update img')).toHaveAttribute('src', '/images/icons/sinclair-updates-32x32.png');
+		await expect(page.locator('link[rel="icon"][sizes="32x32"]')).toHaveAttribute('href', '/favicon-32x32.png'); // (the site's own)
 		await expect(page.locator('#buildtext')).toHaveText('Sinclair OS-9 build 9.0.8f (x64)Not for commercial use.');
 		await expect(page.locator('.start-menu-titlebar')).toHaveCSS('background-image', /images\/os\/network\/start-menu-side\.png/);
 		// (its windows too)

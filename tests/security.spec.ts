@@ -63,6 +63,8 @@ test.describe('XSS', () => {
 	test.describe('user agent in the boot screen', () => {
 		test.use({ booted: false, userAgent: `Mozilla/5.0 <img src=x onerror="console.log('XSS-MARK ua')">` });
 		test('is shown as text', async ({ page }) => {
+			// (Sinclair OS's boot shows it: the network's operating system)
+			await page.addInitScript(() => localStorage.setItem('boot-device', 'network'));
 			await page.goto('/', { waitUntil: 'domcontentloaded' }); // (the boot screen only lasts a few seconds)
 			await expect(page.locator('#bootloader')).toContainText('<img src=x');
 		});

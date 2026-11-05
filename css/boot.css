@@ -66,6 +66,53 @@
     pointer-events: none;
 }
 
+/* Windows 98's boot (src/$boot-windows-98.js): its line of text, then its logo, with the bar along the bottom */
+#bootloader.windows-98-boot {
+    overflow: hidden;
+}
+.windows-98-starting {
+    padding: 8px;
+    color: #c0c0c0;
+}
+.windows-98-splash {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    color: #fff;
+    opacity: 0;
+    animation: fadeIn .5s forwards;
+}
+.windows-98-name {
+    font: bold 22px "MS W98 UI", sans-serif;
+    text-align: center;
+}
+.windows-98-name small {
+    font-size: 11px;
+}
+.windows-98-bar {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 8px;
+    background: linear-gradient(90deg, #000080, #1084d0, #a6caf0, #1084d0, #000080) 0 0 / 400px 100% repeat-x;
+    animation: windows-98-bar 1.5s linear infinite;
+}
+@keyframes windows-98-bar {
+    to {
+        background-position-x: 400px;
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .windows-98-bar {
+        animation: none;
+    }
+}
+
 /* While the computer boots (src/$boot-screen.js), there's only the boot sequence: the desktop is there, but not seen or clickable
    (the CRT monitor effect, which is the screen's, stays). Then the desktop shows, a part at a time (src/$bootloader.js). */
 html.booting:has(#bootloader) body > :not(#bootloader, #crt-screen) {

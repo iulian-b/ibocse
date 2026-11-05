@@ -1,7 +1,8 @@
 // The computer's two operating systems, which the boot menu (BIOS/BOOTMENU.html) chooses between:
 // the hard disk's, which boots by default (after the POST screen, $POST.html), and another, booted from the network:
 // the site as it used to look, in green.
-// Each has its own name, color scheme and pictures (each in its own folder in images/os/), and its own settings (src/settings.js),
+// Each has its own name, color scheme and pictures (each in its own folder in images/os/), its own boot
+// (src/$boot-windows-98.js, src/$boot-sinclair-os.js), and its own settings (src/settings.js),
 // as does everything else it keeps in localStorage (os_storage_key). They share the C: drive.
 const operating_systems = {
 	hdd: {
@@ -9,16 +10,17 @@ const operating_systems = {
 		short_name: "Windows", // the title of its message boxes, and in Run ("... and Windows will open it for you")
 		system_name: "Microsoft Windows 98", // in System Properties (src/control-panel.js)
 		version: "4.10.1998",
-		boot_name: "Windows 98", // as it boots (src/$bootloader.js): "Welcome to ...!"
-		boot_version: "4.10.1998", // "Starting version ..."
 		build_text: ["Windows 98 Build 4.10.1998", "For testing purposes only."], // in the corner of the desktop
 		color_scheme: "Windows Standard", // (src/color-schemes.js)
 		wallpaper: "images/os/hdd/wallpaper.jpeg",
 		glitch: "images/os/hdd/glitch.png", // the wallpaper as Digitalis crashes it (src/crash-handler.js)
 		start_menu_side: "images/os/hdd/start-menu-side.png",
 		banner: "images/os/hdd/banner.png", // in About, in the Start menu
-		boot_logo: "images/os/hdd/bootlogo.png", // while it boots (src/$bootloader.js)
+		boot_logo: "images/os/hdd/bootlogo.png", // while it boots
 		start_button: "images/os/hdd/start.png",
+		// Its logo as icons: About's, in the Start menu and on its window, and VMware's (which runs it)
+		logo_icons: { 16: "/images/icons/windows-16x16-1bpp.png", 32: "/images/icons/windows-32x32-8bpp.png" },
+		tab_icon: "/images/icons/windows-32x32-8bpp.png", // the browser tab's icon
 		storage_prefix: "",
 	},
 	network: {
@@ -26,8 +28,6 @@ const operating_systems = {
 		short_name: "Sinclair",
 		system_name: "Sinclair OS-9",
 		version: "9.0.8f (x64)",
-		boot_name: "Sinclaire OS",
-		boot_version: "9.0.8f-sinclaire",
 		build_text: ["Sinclair OS-9 build 9.0.8f (x64)", "Not for commercial use."],
 		color_scheme: "Sinclair Green",
 		wallpaper: "images/os/network/wallpaper.jpg",
@@ -36,6 +36,8 @@ const operating_systems = {
 		banner: "images/os/network/banner.png",
 		boot_logo: "images/os/network/bootlogo.png",
 		start_button: "images/os/network/start.png",
+		logo_icons: { 16: "/images/icons/sinclair-updates-16x16.png", 32: "/images/icons/sinclair-updates-32x32.png" },
+		tab_icon: null, // (the site's own, which is Sinclair's: favicon.ico)
 		storage_prefix: "network-",
 	},
 };
@@ -61,4 +63,8 @@ function os_storage_key(key, os = booted_os) {
 // (on the desktop; programs that show the name, Run and VMware, load this too)
 $("#buildtext").append(...booted_os.build_text.map((line) => $("<p>").text(line)));
 $(".start-button img").attr("src", booted_os.start_button);
+$("#start_btn_update img").attr("src", booted_os.logo_icons[32]);
+if (booted_os.tab_icon) {
+	$('link[rel~="icon"]').attr({ href: booted_os.tab_icon, type: "image/png" }).removeAttr("sizes");
+}
 $(".start-menu-titlebar").css("background-image", `url("${booted_os.start_menu_side}")`);
