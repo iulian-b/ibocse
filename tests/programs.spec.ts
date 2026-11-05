@@ -25,6 +25,34 @@ test('Calculator can do some math', async ({ page }) => {
 	await expect(calculator.getByRole('textbox')).toHaveValue('3');
 });
 
+test('Explorer scrolls a folder while selecting past its edge, as far as its icons go', async ({ page, browserName }) => {
+	test.skip(browserName === 'webkit', 'Playwright\'s WebKit doesn\'t start dragging in a folder in Explorer\'s nested frames');
+	await page.setViewportSize({ width: 1024, height: 700 });
+	await openDesktop(page);
+	await page.evaluate(() => (window as any).Explorer('/Windows/'));
+	const folder = page.frameLocator('iframe[src*="programs/explorer"]').frameLocator('iframe');
+	const view = folder.locator('.folder-view');
+	await expect(folder.locator('.desktop-icon').first()).toBeVisible();
+	const box = (await view.boundingBox())!;
+	// (from a spot without an icon, at the top right)
+	const icons = await folder.locator('.desktop-icon').evaluateAll((els) => els.map((el) => el.getBoundingClientRect().right));
+	const viewRight = await view.evaluate((el) => el.getBoundingClientRect().right);
+	const x = box.x + box.width - Math.max(8, viewRight - Math.max(...icons) + 4) / 2;
+	await page.mouse.move(x, box.y + 6);
+	await page.mouse.down();
+	for (let y = box.y + 30; y <= box.y + box.height + 60; y += 30) {
+		await page.mouse.move(x - 2, y);
+	}
+	for (let i = 0; i < 100; i++) {
+		await page.mouse.move(x - 2 - (i % 2), box.y + box.height + 40);
+	}
+	await expect(folder.locator('.marquee')).toBeVisible();
+	await page.mouse.up();
+	const [scrollTop, icons_bottom] = await view.evaluate((el) => [el.scrollTop, Math.max(...[...el.querySelectorAll<HTMLElement>('.desktop-icon')].map((icon) => icon.offsetTop + icon.offsetHeight)) - el.clientHeight]);
+	expect(scrollTop).toBeGreaterThan(0);
+	expect(scrollTop).toBeLessThanOrEqual(icons_bottom);
+});
+
 test('Explorer lists a folder and can start renaming a file', async ({ page }) => {
 	await openDesktop(page);
 	await desktopIcon(page, 'My Documents').dblclick();

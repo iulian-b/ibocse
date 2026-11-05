@@ -128,6 +128,29 @@ test.describe('desktop icons', () => {
 	}
 });
 
+test('selecting by dragging past the bottom of the screen doesn\'t scroll the desktop', async ({ page }) => {
+	await page.setViewportSize({ width: 800, height: 600 });
+	await openDesktop(page);
+	// (whatever reaches past the desktop's edge, as an icon's long name can, or the selection box itself, where pixels are fractions)
+	await page.evaluate(() => {
+		const spill = document.createElement('div');
+		spill.style.cssText = 'position: absolute; left: 0; top: 590px; width: 10px; height: 100px';
+		document.getElementById('desktop-icons')!.append(spill);
+	});
+	await page.mouse.move(700, 100);
+	await page.mouse.down();
+	for (let y = 150; y <= 650; y += 50) {
+		await page.mouse.move(690, y); // (past the taskbar, and the bottom of the window)
+	}
+	for (let i = 0; i < 20; i++) {
+		await page.mouse.move(690 - (i % 2), 630);
+	}
+	await expect(page.locator('#desktop-icons .marquee')).toBeVisible();
+	await page.mouse.up();
+	expect(await page.locator('#desktop-icons').evaluate((view) => view.scrollTop)).toBe(0);
+	await expect(desktopIcon(page, 'My Computer')).toBeInViewport();
+});
+
 test('the Recycle Bin on the desktop shows whether there\'s something in it', async ({ page }) => {
 	await openDesktop(page);
 	const icon = desktopIcon(page, 'Recycle Bin').locator('img');

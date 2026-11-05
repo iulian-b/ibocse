@@ -235,6 +235,14 @@ function FolderView(folder_path, { asDesktop = false, onStatus, openFolder, open
 
 	this.element = $folder_view[0];
 
+	// The desktop doesn't scroll (its overflow is hidden, but the browser can still scroll it, to show an icon partly past its edge, say)
+	if (asDesktop) {
+		$folder_view.on("scroll", () => {
+			$folder_view[0].scrollTop = 0;
+			$folder_view[0].scrollLeft = 0;
+		});
+	}
+
 	this.items = [];
 
 	this.add_item = (folder_view_item) => {
@@ -627,16 +635,24 @@ function FolderView(folder_path, { asDesktop = false, onStatus, openFolder, open
 			if (dragging) {
 				drag_update();
 				// scroll the view by dragging the mouse at/past the edge
-				const scroll_speed = 10;
-				if (current.x === clamp_left) {
-					$folder_view[0].scrollLeft -= scroll_speed;
-				} else if (current.x === clamp_right) {
-					$folder_view[0].scrollLeft += scroll_speed;
-				}
-				if (current.y === clamp_top) {
-					$folder_view[0].scrollTop -= scroll_speed;
-				} else if (current.y === clamp_bottom) {
-					$folder_view[0].scrollTop += scroll_speed;
+				// (not the desktop, which doesn't scroll; and only as far as there are icons: the marquee follows the edge,
+				// so any bit of it past the edge would make room to scroll further, and so on, for as long as the mouse moves)
+				if (!asDesktop) {
+					const scroll_speed = 10;
+					const view = $folder_view[0];
+					const icons = $folder_view.find(".desktop-icon").get();
+					const max_scroll_left = Math.max(0, ...icons.map((icon) => icon.offsetLeft + icon.offsetWidth - view.clientWidth));
+					const max_scroll_top = Math.max(0, ...icons.map((icon) => icon.offsetTop + icon.offsetHeight - view.clientHeight));
+					if (current.x === clamp_left) {
+						view.scrollLeft -= scroll_speed;
+					} else if (current.x === clamp_right && view.scrollLeft < max_scroll_left) {
+						view.scrollLeft = Math.min(max_scroll_left, view.scrollLeft + scroll_speed);
+					}
+					if (current.y === clamp_top) {
+						view.scrollTop -= scroll_speed;
+					} else if (current.y === clamp_bottom && view.scrollTop < max_scroll_top) {
+						view.scrollTop = Math.min(max_scroll_top, view.scrollTop + scroll_speed);
+					}
 				}
 			}
 		};
