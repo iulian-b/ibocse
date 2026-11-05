@@ -15,6 +15,7 @@ const operating_systems = {
 		wallpaper: "images/os/hdd/wallpaper.jpeg",
 		glitch: "images/os/hdd/glitch.png", // the wallpaper as Digitalis crashes it (src/crash-handler.js)
 		start_menu_side: "images/os/hdd/start-menu-side.png",
+		start_menu_side_color: "#000080", // (the rest of the bar, above the picture)
 		banner: "images/os/hdd/banner.png", // in About, in the Start menu
 		boot_logo: "images/os/hdd/bootlogo.png", // while it boots
 		start_button: "images/os/hdd/start.png",
@@ -33,6 +34,7 @@ const operating_systems = {
 		wallpaper: "images/os/network/wallpaper.jpg",
 		glitch: "images/os/network/glitch.jpg",
 		start_menu_side: "images/os/network/start-menu-side.png",
+		start_menu_side_color: null, // (the color scheme's: classic.css)
 		banner: "images/os/network/banner.png",
 		boot_logo: "images/os/network/bootlogo.png",
 		start_button: "images/os/network/start.png",
@@ -68,3 +70,6 @@ if (booted_os.tab_icon) {
 	$('link[rel~="icon"]').attr({ href: booted_os.tab_icon, type: "image/png" }).removeAttr("sizes");
 }
 $(".start-menu-titlebar").css("background-image", `url("${booted_os.start_menu_side}")`);
+if (booted_os.start_menu_side_color) {
+	$(".start-menu-titlebar").css("background-color", booted_os.start_menu_side_color);
+}

@@ -446,6 +446,7 @@ test.describe('boot menu', () => {
 		await expect(page.locator('.start-button img')).toHaveAttribute('src', 'images/os/hdd/start.png');
 		// (Windows' logo, not Sinclair's: in the Start menu, and as the tab's icon)
 		await expect(page.locator('#start_btn_update img')).toHaveAttribute('src', '/images/icons/windows-32x32-8bpp.png');
+		await expect(page.locator('.start-menu-titlebar')).toHaveCSS('background-color', 'rgb(0, 0, 128)'); // (Windows 98's navy sidebar)
 		expect(await page.locator('link[rel~="icon"]').evaluateAll((links) => links.map((link) => link.getAttribute('href')))).toEqual(['/images/icons/windows-32x32-8bpp.png', '/images/icons/windows-32x32-8bpp.png', '/images/icons/windows-32x32-8bpp.png']);
 		await expect(page.locator('#buildtext')).toHaveText('Windows 98 Build 4.10.1998For testing purposes only.');
 		expect(await buttonFace(page)).toBe('rgb(192, 192, 192)');
