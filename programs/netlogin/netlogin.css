@@ -28,7 +28,7 @@ label {
     margin-top: 10px;
     margin-bottom: 5px;
     text-align: right;
-	font-size: 13px;
+	font-size: 11px;
 	padding-right: 4px;
 	overflow: none !important;
 }
@@ -38,7 +38,7 @@ input {
     box-sizing: border-box; 
 }
 .nettext {
-    font-size: 13px;
+    font-size: 11px;
     padding-left: 20px;
     padding-right: 4px;
     float: left;
@@ -48,8 +48,7 @@ input {
 } */
 
 html {
-	font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif,
-		"Segoe MDL2 Assets", "Calculator MDL2 Assets";
+	font-family: "MS Sans Serif", sans-serif; /* (css/ms-sans-serif.css) */
 	height: 100%;
 	width: 100%;
 	font-size: 15px;

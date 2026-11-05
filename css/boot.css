@@ -13,6 +13,7 @@
     background-color: rgba(0,0,0);
     /* transition : all ease-in-out 600ms; */
     font-family: IBM3x;
+    font-size: 16px;
     overflow-y:scroll;
 }
 
@@ -87,7 +88,7 @@
     animation: fadeIn .5s forwards;
 }
 .windows-98-name {
-    font: bold 22px "MS W98 UI", sans-serif;
+    font: bold 22px "MS Sans Serif", sans-serif;
     text-align: center;
 }
 .windows-98-name small {

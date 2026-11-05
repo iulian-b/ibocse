@@ -143,9 +143,9 @@ body,
 	margin-left: -8px;
 }
 
-/* From .menus *, .menu-popup * {} */
+/* From .menus *, .menu-popup * {} (Windows 98's font: css/ms-sans-serif.css) */
 * {
-	font-family: 'Segoe UI', sans-serif;
-	font-size: 12px;
+	font-family: "MS Sans Serif", sans-serif;
+	font-size: 11px;
 	cursor: default;
 }

@@ -252,7 +252,7 @@ html, body {
 	left: 0;
 	right: 0;
 	/* flex centering + preventing overflow wrap means the font can be too big and it'll still stay centered */
-	font-size: 12px;
+	font-size: 11px;
 	white-space: pre;
 	justify-content: center;
 }

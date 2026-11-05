@@ -82,3 +82,5 @@ So this project shall stay the same, as i do not want to infringe on the right o
 The C: drive runs on [ZenFS](https://github.com/zen-fs/core) ([@zenfs/core](https://www.npmjs.com/package/@zenfs/core) and [@zenfs/dom](https://www.npmjs.com/package/@zenfs/dom), LGPL-3.0-or-later), bundled unmodified into `lib/zenfs.js` by `npm run pull-libs` (rebuild it from the versions in `package.json` to replace it).
 
 Credits to [kristopolous](https://github.com/kristopolous) for the Bootstrap BIOS-esque theme https://github.com/kristopolous/BOOTSTRA.386 (Apache 2.0) used in my BIOS/BootMenu pages.
+
+The interface font, as Windows 98's, is [MS Sans Serif](https://fontstruct.com/fontstructions/show/1384746/ms-sans-serif) and [MS Sans Serif Bold](https://fontstruct.com/fontstructions/show/1384862/ms-sans-serif-bold) by [lou](https://fontstruct.com/fontstructors/38403/lou), made with FontStruct, under [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/), in the web font conversions of [98.css](https://github.com/jdan/98.css) (see [font/ms-sans-serif](font/ms-sans-serif/README.md)).

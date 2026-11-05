@@ -3,8 +3,8 @@ body {
 	flex-direction: column;
 	background: var(--ButtonFace);
 	color: var(--ButtonText);
-	font-family: sans-serif;
-	font-size: 10pt;
+	font-family: "MS Sans Serif", sans-serif; /* (css/ms-sans-serif.css) */
+	font-size: 11px;
 }
 .toolbars {
 	display: flex;
@@ -133,7 +133,7 @@ button {
 	height: 40px;
 	box-sizing: border-box;
 	padding: 0;
-	font-size: 12px;
+	font-size: 11px;
 	line-height: 12px;
 }
 .toolbar-button .label-text {

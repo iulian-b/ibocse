@@ -12,28 +12,23 @@
 	border-left: 1px solid var(--ButtonShadow);
 	border-right: 1px solid var(--ButtonHilight);
 }
+/* (Windows 98's font: css/ms-sans-serif.css) */
+body {
+	font-family: "MS Sans Serif", sans-serif;
+	font-size: 11px;
+}
 .taskbar-time {
-	font-family: sans-serif;
-	font-family: "MS Sans Serif", "Segoe UI", sans-serif;
-	font-size: 12px;
+	font-family: "MS Sans Serif", sans-serif;
+	font-size: 11px;
 }
-/* The hard disk's operating system's Start button (src/operating-systems.js), as Windows 95's:
-   "Start" in MS Sans Serif's bold, a pixel further after the S, as it was there */
-@font-face {
-	font-family: "MS W98 UI";
-	src: url("font/ms-w98-ui/MSW98UI-Bold.woff2") format("woff2"), url("font/ms-w98-ui/MSW98UI-Bold.woff") format("woff");
-	font-weight: bold;
-	font-display: block;
-}
-html[data-os="hdd"] .start-button b {
+/* The Start button, as Windows 95's: "Start" in MS Sans Serif's bold, a pixel further after the S, as it was there */
+.start-button b {
 	position: relative;
 	top: 1px;
 	margin-left: 3px;
-	font-family: "MS W98 UI", sans-serif;
-	font-size: 11px;
 	font-weight: bold;
 }
-html[data-os="hdd"] .start-button b::first-letter {
+.start-button b::first-letter {
 	margin-right: 1px;
 }
 .start-menu-titlebar {
@@ -95,10 +90,9 @@ html[data-os="hdd"] .start-button b::first-letter {
 	height: 75px;
 }
 .desktop-icon .title {
-	font-family: sans-serif;
-	font-family: "MS Sans Serif", "Segoe UI", sans-serif;
+	font-family: "MS Sans Serif", sans-serif;
 	/*font-size: 10px;*/
-	font-size: 8pt;
+	font-size: 11px;
 	/* background: var(--Background); */
 	color: white;
 	position: relative;
@@ -181,8 +175,8 @@ html[data-os="hdd"] .start-button b::first-letter {
 }
 
 .help-window .item {
-	font-family: 'Segoe UI', sans-serif;
-	font-size: 12px;
+	font-family: "MS Sans Serif", sans-serif;
+	font-size: 11px;
 	padding: 0 2px;
 	position: relative; /* for ::after */
 }
@@ -262,8 +256,8 @@ html[data-os="hdd"] .start-button b::first-letter {
 }
 .window-switcher-window-name {
     align-self: stretch;
-	font-family: "MS Sans Serif", "Segoe UI", sans-serif;
-	font-size: 10pt; /* not sure about the font-size/line-height */
+	font-family: "MS Sans Serif", sans-serif;
+	font-size: 11px; /* not sure about the font-size/line-height */
 	line-height: 16px;
 	font-weight: bold;
 	height: 24px; /* should be 25px, but the border is getting screwed up if this isn't an even number */

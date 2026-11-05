@@ -1,0 +1,29 @@
+/* Windows 98's interface font, MS Sans Serif, at its size there: 8 points, 11 pixels (on whose grid it's drawn, so it renders crisp).
+   Recreations by lou, CC BY-SA 3.0 (font/ms-sans-serif/README.md).
+   Linked by the desktop and by the programs in its windows, after os-gui's stylesheets: this is the font of their title bars and menus,
+   and of buttons and fields. (The desktop's other text is in classic.css, and programs' in their own stylesheets.) */
+@font-face {
+	font-family: "MS Sans Serif";
+	/* (from the site's root, since Explorer copies stylesheets into its folders' pages) */
+	src: url("/font/ms-sans-serif/ms_sans_serif.woff2") format("woff2"), url("/font/ms-sans-serif/ms_sans_serif.woff") format("woff");
+	font-weight: normal;
+	font-display: block;
+}
+@font-face {
+	font-family: "MS Sans Serif";
+	src: url("/font/ms-sans-serif/ms_sans_serif_bold.woff2") format("woff2"), url("/font/ms-sans-serif/ms_sans_serif_bold.woff") format("woff");
+	font-weight: bold;
+	font-display: block;
+}
+
+.os-window .window-titlebar,
+body > .window-titlebar,
+.menus *,
+.menu-popup *,
+button,
+input,
+select {
+	font-family: "MS Sans Serif", sans-serif;
+	font-size: 11px;
+	-webkit-font-smoothing: none;
+}

@@ -718,6 +718,7 @@ ${doc.documentElement.outerHTML}`;
 							<link href="/classic.css" rel="stylesheet" type="text/css">
 							<link href="/lib/os-gui/layout.css" rel="stylesheet" type="text/css">
 							<link href="/lib/os-gui/windows-98.css" rel="stylesheet" type="text/css">
+							<link href="/css/ms-sans-serif.css" rel="stylesheet" type="text/css">
 							<style>
 								:host {
 									display: flex;
@@ -870,6 +871,7 @@ ${doc.documentElement.outerHTML}`;
 		<link href="/classic.css" rel="stylesheet" type="text/css">
 		<link href="/lib/os-gui/layout.css" rel="stylesheet" type="text/css">
 		<link href="/lib/os-gui/windows-98.css" rel="stylesheet" type="text/css">
+		<link href="/css/ms-sans-serif.css" rel="stylesheet" type="text/css">
 		<meta name="viewport" content="width=device-width, user-scalable=no">
 		<script src="/lib/jquery.min.js"></script>
 		<script src="/lib/os-gui/$Window.js"></script>

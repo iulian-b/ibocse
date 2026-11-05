@@ -1,8 +1,4 @@
-@font-face {
-	font-family: MSW98UI;
-	src: url(../../font/ms-w98-ui/MSW98UI-Regular.woff);
-}
-
+/* (Windows 98's font: css/ms-sans-serif.css) */
 img {
     float: left;
 }
@@ -26,12 +22,12 @@ img {
 }
 button:enabled {
 	font-size: 11px;
-	font-family: "MSW98UI";
+	font-family: "MS Sans Serif", sans-serif;
 	width: 70px;
 }
 label {
 	font-size: 11px;
-	font-family: "MSW98UI";
+	font-family: "MS Sans Serif", sans-serif;
     margin-top: 10px;
     margin-bottom: 5px;
     text-align: right;
@@ -45,7 +41,7 @@ input {
 }
 .runtext {
     font-size: 11px;
-	font-family: "MSW98UI";
+	font-family: "MS Sans Serif", sans-serif;
     padding-left: 10px;
     padding-right: 4px;
 	margin-top: 7px;
