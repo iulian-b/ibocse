@@ -83,7 +83,7 @@ var toggle_start_menu = function () {
 
 const update_dialog = () => {
 	const $w = $Window({
-		title: "Sinclair OS-9", resizable: false, maximizeButton: false, minimizeButton: false,
+		title: booted_os.name, resizable: false, maximizeButton: false, minimizeButton: false,
 		icons: {
 			32: "/images/icons/sinclair-updates-32x32.png",
 			16: "/images/icons/sinclair-updates-16x16.png",

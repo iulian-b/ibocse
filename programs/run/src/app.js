@@ -1,5 +1,8 @@
 window.defaultMessageBoxTitle = "Run";
 
+// (the operating system that's running: src/operating-systems.js)
+document.getElementById("os-name").textContent = booted_os.short_name;
+
 let container = document.getElementById("app");
 
 $("body").on("mousedown selectstart contextmenu", function (e) {

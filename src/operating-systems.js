@@ -5,8 +5,12 @@
 // as does everything else it keeps in localStorage (os_storage_key). They share the C: drive.
 const operating_systems = {
 	hdd: {
-		name: "Microsoft Windows 98", // in System Properties (src/control-panel.js)
+		name: "Windows 98", // in the titles of About and VMware (which runs it), and Display Properties' name for its wallpaper
+		short_name: "Windows", // the title of its message boxes, and in Run ("... and Windows will open it for you")
+		system_name: "Microsoft Windows 98", // in System Properties (src/control-panel.js)
 		version: "4.10.1998",
+		boot_name: "Windows 98", // as it boots (src/$bootloader.js): "Welcome to ...!"
+		boot_version: "4.10.1998", // "Starting version ..."
 		build_text: ["Windows 98 Build 4.10.1998", "For testing purposes only."], // in the corner of the desktop
 		color_scheme: "Windows Standard", // (src/color-schemes.js)
 		wallpaper: "images/os/hdd/wallpaper.jpeg",
@@ -19,7 +23,11 @@ const operating_systems = {
 	},
 	network: {
 		name: "Sinclair OS-9",
+		short_name: "Sinclair",
+		system_name: "Sinclair OS-9",
 		version: "9.0.8f (x64)",
+		boot_name: "Sinclaire OS",
+		boot_version: "9.0.8f-sinclaire",
 		build_text: ["Sinclair OS-9 build 9.0.8f (x64)", "Not for commercial use."],
 		color_scheme: "Sinclair Green",
 		wallpaper: "images/os/network/wallpaper.jpg",
@@ -47,6 +55,7 @@ function os_storage_key(key, os = booted_os) {
 	return os.storage_prefix + key;
 }
 
+// (on the desktop; programs that show the name, Run and VMware, load this too)
 $("#buildtext").append(...booted_os.build_text.map((line) => $("<p>").text(line)));
 $(".start-button img").attr("src", booted_os.start_button);
 $(".start-menu-titlebar").css("background-image", `url("${booted_os.start_menu_side}")`);

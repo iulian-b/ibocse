@@ -100,7 +100,7 @@ function DisplayProperties() {
 			),
 		);
 		// (the pictures in My Pictures, like Windows' own .bmp files in C:\Windows)
-		const wallpaper_items = [{ label: "(None)", value: null }, { label: "Sinclair", value: "default" }];
+		const wallpaper_items = [{ label: "(None)", value: null }, { label: booted_os.name, value: "default" }];
 		$wallpapers.set_items(wallpaper_items, chosen.wallpaper);
 		withFilesystem(() => {
 			ZenFS.fs.readdir("/My Pictures", (error, names = []) => {
@@ -405,7 +405,7 @@ function SystemProperties() {
 			$("<img class='system-picture' width='96' height='96' draggable='false'>").attr("src", getIconPath("my-computer", 48)),
 			$("<dl class='system-info'>").append(
 				$("<dt>").text("System:"),
-				$("<dd>").append(booted_os.name, $("<br>"), booted_os.version),
+				$("<dd>").append(booted_os.system_name, $("<br>"), booted_os.version),
 				$("<dt>").text("Registered to:"),
 				$("<dd>").append("ibocse", $("<br>"), "crlab2-h032", $("<br>"), "24796-OEM-0014736-66386"),
 				$("<dt>").text("Computer:"),

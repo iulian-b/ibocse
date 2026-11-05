@@ -36,7 +36,7 @@ test.describe('desktop icons', () => {
 		['Notepad', 'Untitled - Notepad'],
 		['Calculator', 'Calculator'],
 		['Terminal', 'MS-DOS Prompt'],
-		['VMware 2.0', 'VMware - Sinclair OS-9'],
+		['VMware 2.0', 'VMware - Windows 98'],
 		['Pinball', /Space Cadet$/], // becomes "Wormhole Window - Space Cadet" where the game can't get WebGL
 		['Diablo', 'Diablo'],
 		['Wolfenstein', 'Wolf 3D'],
@@ -135,7 +135,7 @@ test('the Recycle Bin on the desktop shows whether there\'s something in it', as
 
 test.describe('Start menu', () => {
 	const entries: [id: string, title: string][] = [
-		['start_btn_update', 'Sinclair OS-9'],
+		['start_btn_update', 'Windows 98'],
 		['start_btn_programs', 'Program Files'],
 		['start_btn_favorites', 'Favorites'],
 		['start_btn_documents', 'My Documents'],
@@ -395,10 +395,14 @@ test.describe('boot menu', () => {
 		await page.goto('/BIOS/BOOTMENU.html');
 		await page.keyboard.press('Escape');
 		await expect(page).toHaveURL(/index\.html$/);
+		await expect(page.locator('#bootloader')).toContainText('Starting version 4.10.1998');
+		await expect(page.locator('#bootloader')).toContainText('Welcome to Windows 98!');
 		await expect(page.locator('#taskbar')).toBeVisible({ timeout: 15_000 });
 		await expect(page.locator('.start-button img')).toHaveAttribute('src', 'images/os/hdd/start.png');
 		await expect(page.locator('#buildtext')).toHaveText('Windows 98 Build 4.10.1998For testing purposes only.');
 		expect(await buttonFace(page)).toBe('rgb(192, 192, 192)');
+		await page.evaluate(() => (window as any).openRunDialog());
+		await expect(page.frameLocator('iframe[src*="programs/run"]').locator('.runtext')).toContainText('and Windows will open it for you');
 	});
 
 	test('the network boots the other operating system, with its own look and settings', async ({ page }) => {
@@ -408,6 +412,8 @@ test.describe('boot menu', () => {
 		await page.keyboard.press('Enter');
 		await expect(page).toHaveURL(/index\.html$/);
 		await expect(page.locator('#bootloader img')).toHaveAttribute('src', 'images/os/network/bootlogo.png');
+		await expect(page.locator('#bootloader')).toContainText('Starting version 9.0.8f-sinclaire');
+		await expect(page.locator('#bootloader')).toContainText('Welcome to Sinclaire OS!');
 		await finishBooting(page);
 		expect(await buttonFace(page)).toBe('rgb(104, 120, 104)');
 		await expect(page.locator('#desktop')).toHaveCSS('background-image', /images\/os\/network\/wallpaper\.jpg/);
@@ -433,6 +439,14 @@ test.describe('boot menu', () => {
 		await display.getByRole('button', { name: 'OK' }).click();
 		expect(await page.evaluate(() => JSON.parse(localStorage.getItem('network-settings')!).color_scheme)).toBe('Brick');
 		expect(await page.evaluate(() => localStorage.getItem('settings'))).toBeNull();
+
+		// Its name, in About, its message boxes, and Run
+		await page.evaluate('update_dialog()');
+		await expect(windowTitled(page, 'Sinclair OS-9').locator('.window-content img')).toHaveAttribute('src', 'images/os/network/banner.png');
+		await page.evaluate('void showMessageBox({ message: "Hello" })'); // (not waiting for it to be closed)
+		await expect(windowTitled(page, /^Sinclair$/)).toContainText('Hello');
+		await page.evaluate(() => (window as any).openRunDialog());
+		await expect(page.frameLocator('iframe[src*="programs/run"]').locator('.runtext')).toContainText('and Sinclair will open it for you');
 
 		// A normal boot is the hard disk's again, as it was
 		await page.goto('/$POST.html');

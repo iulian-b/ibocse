@@ -147,7 +147,8 @@ var go_to = async function (address, action_name = "go") {
 	}
 	active_address = address; // must come after pushing to history stack
 
-	set_title("VMware - Sinclair OS-9");
+	// (the guest runs the operating system the computer booted: src/operating-systems.js)
+	set_title("VMware - " + booted_os.name);
 	set_icon(get_icon_for_address(address));
 
 	$("#status-bar-left-text").empty();
@@ -206,7 +207,7 @@ var go_to = async function (address, action_name = "go") {
 		$("#status-bar-right-icon").attr({
 			src: getIconPath("sinclair-updates", 16),
 		}).show();
-		$("#status-bar-right-text").text("Sinclair OS-9");
+		$("#status-bar-right-text").text(booted_os.name);
 	} else {
 		const eventHandlers = {}; // @TODO: less hacky event duct tape
 		// (just wanna have multiple listeners, but I gave myself a single-listener API)

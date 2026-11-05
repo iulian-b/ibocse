@@ -1,4 +1,4 @@
-window.defaultMessageBoxTitle = "Sinclair";
+window.defaultMessageBoxTitle = booted_os.short_name;
 
 var $desktop = $(".desktop");
 $desktop.css("touch-action", "none"); // TODO: should this be in FolderView, or is it to prevent scrolling the page or what?

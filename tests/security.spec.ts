@@ -44,7 +44,7 @@ test.describe('XSS', () => {
 		let popups = 0;
 		context.on('page', () => popups++);
 		await page.evaluate(() => (window as any).openURLFile('/My Documents/evil.url'));
-		await expect(windowTitled(page, 'Sinclair')).toBeVisible(); // "Cannot open ..." message box
+		await expect(windowTitled(page, /^Windows$/)).toBeVisible(); // "Cannot open ..." message box
 		expect(popups).toBe(0);
 	});
 

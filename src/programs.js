@@ -1158,7 +1158,7 @@ NetworkNeighborhood.acceptsFilePaths = false;
 function VirtualMachine() {
 	// The "guest OS" is this site's own desktop
 	var address = location.origin + "/";
-	var win_title = "VMware - Sinclair OS";
+	var win_title = "VMware - " + booted_os.name;
 	var $win = make_iframe_window({
 		src: "programs/vmware/index.html" + (address ? ("?address=" + encodeURIComponent(address)) : ""),
 		icons: iconsAtTwoSizes("vm"),

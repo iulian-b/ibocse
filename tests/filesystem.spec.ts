@@ -146,6 +146,9 @@ test('Windows\' own files can be looked at, but not opened or downloaded', async
 	await folder.locator('.desktop-icon', { hasText: 'Wordpad.exe' }).dblclick();
 	await expect(windowTitled(page, 'Wordpad.exe')).toContainText('Insufficient permissions');
 	await windowTitled(page, 'Wordpad.exe').getByRole('button', { name: 'OK' }).click();
+	// (closing the message box gives its folder's window the focus back, which in Firefox, under load, can come
+	// after the next window opens, bringing it back in front of that one)
+	await page.locator('iframe[src*="Accessories"]').evaluate((iframe: any) => iframe.$window.close());
 
 	// (a picture would be shown when it's selected)
 	await page.evaluate(() => (window as any).Explorer('/Windows/'));
