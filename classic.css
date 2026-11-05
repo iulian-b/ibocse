@@ -17,6 +17,25 @@
 	font-family: "MS Sans Serif", "Segoe UI", sans-serif;
 	font-size: 12px;
 }
+/* The hard disk's operating system's Start button (src/operating-systems.js), as Windows 95's:
+   "Start" in MS Sans Serif's bold, a pixel further after the S, as it was there */
+@font-face {
+	font-family: "MS W98 UI";
+	src: url("font/ms-w98-ui/MSW98UI-Bold.woff2") format("woff2"), url("font/ms-w98-ui/MSW98UI-Bold.woff") format("woff");
+	font-weight: bold;
+	font-display: block;
+}
+html[data-os="hdd"] .start-button b {
+	position: relative;
+	top: 1px;
+	margin-left: 3px;
+	font-family: "MS W98 UI", sans-serif;
+	font-size: 11px;
+	font-weight: bold;
+}
+html[data-os="hdd"] .start-button b::first-letter {
+	margin-right: 1px;
+}
 .start-menu-titlebar {
 	/* (its picture is the operating system's: src/operating-systems.js) */
 	/* background-image: url("images/start-menu-side-98-js.png"); */

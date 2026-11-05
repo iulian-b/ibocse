@@ -41,14 +41,17 @@ const operating_systems = {
 };
 
 // The one running: the network's if the boot menu booted it, until the next normal boot or Shut Down
-const booted_os = (() => {
+const booted_device = (() => {
 	try {
 		const device = localStorage.getItem("boot-device");
-		return Object.hasOwn(operating_systems, device) ? operating_systems[device] : operating_systems.hdd;
+		return Object.hasOwn(operating_systems, device) ? device : "hdd";
 	} catch (error) {
-		return operating_systems.hdd; // no local storage
+		return "hdd"; // no local storage
 	}
 })();
+const booted_os = operating_systems[booted_device];
+// (for the stylesheets: classic.css)
+document.documentElement.dataset.os = booted_device;
 
 // The hard disk's are under the keys as they've always been
 function os_storage_key(key, os = booted_os) {
