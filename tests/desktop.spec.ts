@@ -9,8 +9,22 @@ test.describe('first boot', () => {
 		await expect(page.locator('#bootloader')).toBeVisible();
 		await expect(page.locator('#bootloader')).toContainText('Load Kernel Module configfs...'); // (a part that used to be skipped)
 		await expect(page.locator('#bootloader')).toContainText('Starting Desktop Environment...');
+		// (its parts appear one after another, "Starting Desktop Environment..." last)
+		const delays = await page.locator('#bootloader > .fade').evaluateAll((parts) => parts.map((part) => parseFloat(getComputedStyle(part).animationDelay)));
+		expect(delays.length).toBeGreaterThan(10);
+		expect(delays.every((delay, index) => index === 0 || delay > delays[index - 1])).toBe(true);
+		// (and the desktop is nowhere to be seen, or used, until it's done)
+		await expect(page.locator('.desktop-icon').first()).toBeHidden();
+		await expect(page.locator('.start-button')).toBeHidden();
+		await page.keyboard.press('Meta'); // (which opens the Start menu)
+		await page.keyboard.press('F3'); // (Find)
+		await expect(page.locator('.start-menu')).toBeHidden();
+		await expect(page.locator('.find-window')).toHaveCount(0);
 		await expect(page.locator('#taskbar')).toBeVisible({ timeout: 15_000 });
 		await expect(page.locator('#bootloader')).toHaveCount(0);
+		await expect(page.locator('html')).not.toHaveClass(/booting/);
+		await page.keyboard.press('Meta');
+		await expect(page.locator('.start-menu')).toBeVisible();
 		await expect.poll(() => page.evaluate(() => localStorage.getItem('boot'))).toBe('true');
 
 		await page.reload();
@@ -260,7 +274,7 @@ test.describe('power', () => {
 
 		await page.goto('/');
 		await expect(page).toHaveURL(/\$POST\.html$/);
-		await expect(page.locator('#memory_counter')).toContainText('OK');
+		await expect(page.locator('#memory_counter')).toContainText('OK', { timeout: 10_000 });
 		// then boots again, with the boot sequence, since shutting down clears everything
 		await expect(page).toHaveURL(/\/(index\.html)?$/, { timeout: 10_000 });
 		await expect(page.locator('#taskbar')).toBeVisible({ timeout: 15_000 });
@@ -288,7 +302,10 @@ test.describe('power', () => {
 	test('the BIOS setup can be left with Esc', async ({ page }) => {
 		await page.goto('/$POST.html');
 		await page.keyboard.press('Delete');
-		await expect(page).toHaveURL(/BIOS\/PASSWORD\.html$/);
+		// (after the memory test, as a real POST does)
+		await expect(page.locator('#post_message')).toHaveText('Entering SETUP...');
+		await expect(page.locator('#memory_counter')).not.toContainText('OK');
+		await expect(page).toHaveURL(/BIOS\/PASSWORD\.html$/, { timeout: 15_000 });
 		const password = page.locator('#biosPassword');
 		await password.fill('hunter2');
 		await password.press('Enter');
@@ -305,6 +322,7 @@ test.describe('power', () => {
 		expect(await password.evaluate((input) => getComputedStyle(input, '::placeholder').color)).toBe('rgb(85, 85, 85)');
 		await password.fill('1998');
 		await password.press('Enter');
+		await expect(page.locator('#password_jumbotron')).toBeHidden(); // (a moment's blank screen)
 		await expect(page).toHaveURL(/BIOS\/SETUP\.html$/);
 		await expect(page.locator('#bios')).toContainText('CMOS Setup Utility');
 		await expect(page.locator('.bios-menu-item.selected')).toHaveText('►Standard CMOS Features');
@@ -367,7 +385,7 @@ test.describe('boot menu', () => {
 
 	/** Waits for the boot sequence (which the boot menu shows) to end, as it does, with the CV, and closes it. */
 	async function finishBooting(page: Page) {
-		await expect.poll(() => page.evaluate(() => localStorage.getItem('boot')), { timeout: 15_000 }).toBe('true');
+		await expect.poll(() => page.evaluate(() => localStorage.getItem('boot')), { timeout: 25_000 }).toBe('true');
 		const cv = page.locator('iframe[src*="programs/pdfviewer"]');
 		await cv.waitFor({ state: 'attached' });
 		await cv.evaluate((iframe: any) => iframe.$window.close());
@@ -377,7 +395,8 @@ test.describe('boot menu', () => {
 		await page.goto('/$POST.html');
 		await expect(page.locator('#text-bottom')).toContainText('F11:Boot Menu');
 		await page.keyboard.press('F11');
-		await expect(page).toHaveURL(/BIOS\/BOOTMENU\.html$/);
+		await expect(page.locator('#post_message')).toHaveText('Entering Boot Menu...');
+		await expect(page).toHaveURL(/BIOS\/BOOTMENU\.html$/, { timeout: 15_000 });
 		await expect(page.locator('.boot-device')).toHaveText(['HDD:Lexar LNM620X256G-RNNNG', 'Network:IBA GE Slot 0600 v1242', 'USB:Virtual FDD', 'USB:Virtual DVD/CD-ROM']);
 		const selected = page.locator('.boot-device.selected');
 		await expect(selected).toHaveText(/^HDD/);
@@ -387,14 +406,20 @@ test.describe('boot menu', () => {
 		await expect(selected).toHaveText('USB:Virtual DVD/CD-ROM');
 		await page.keyboard.press('ArrowUp');
 		await expect(selected).toHaveText('USB:Virtual FDD');
-		// (there's nothing to boot on the USB drives, so the computer restarts)
+		// (there's nothing to boot on the USB drives, so the computer restarts, once Enter is pressed)
+		await page.keyboard.press('Enter');
+		await expect(page.locator('.boot-screen')).toHaveText('DISK BOOT FAILURE, INSERT SYSTEM DISK AND PRESS ENTER');
+		await page.keyboard.press('ArrowUp'); // (not the menu any more)
+		await page.waitForTimeout(500);
+		await expect(page).toHaveURL(/BOOTMENU\.html$/);
 		await page.keyboard.press('Enter');
 		await expect(page).toHaveURL(/\$POST\.html$/);
 
 		// Esc boots the hard disk
 		await page.goto('/BIOS/BOOTMENU.html');
 		await page.keyboard.press('Escape');
-		await expect(page).toHaveURL(/index\.html$/);
+		await expect(page.locator('.boot-screen')).toContainText('Verifying DMI Pool Data');
+		await expect(page).toHaveURL(/index\.html$/, { timeout: 15_000 });
 		await expect(page.locator('#bootloader')).toContainText('Starting version 4.10.1998');
 		await expect(page.locator('#bootloader')).toContainText('Welcome to Windows 98!');
 		await expect(page.locator('#taskbar')).toBeVisible({ timeout: 15_000 });
@@ -410,7 +435,12 @@ test.describe('boot menu', () => {
 		await page.goto('/BIOS/BOOTMENU.html');
 		await page.keyboard.press('ArrowDown');
 		await page.keyboard.press('Enter');
-		await expect(page).toHaveURL(/index\.html$/);
+		// (the network card's boot agent gets an address first)
+		const bootScreen = page.locator('.boot-screen');
+		await expect(bootScreen).toContainText('Intel(R) Boot Agent GE v1.2.42');
+		await expect(bootScreen).toContainText(/DHCP\.[|/\-\\]/);
+		await expect(bootScreen).toContainText('CLIENT IP: 10.6.0.32');
+		await expect(page).toHaveURL(/index\.html$/, { timeout: 15_000 });
 		await expect(page.locator('#bootloader img')).toHaveAttribute('src', 'images/os/network/bootlogo.png');
 		await expect(page.locator('#bootloader')).toContainText('Starting version 9.0.8f-sinclaire');
 		await expect(page.locator('#bootloader')).toContainText('Welcome to Sinclaire OS!');

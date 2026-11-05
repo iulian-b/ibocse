@@ -160,6 +160,8 @@ const bootText = [
     </div>`,
 	`<div class="fade"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(150, 150, 150)">Starting Desktop Environment...</span><br></div>`
 ];
+// When each part of it appears, in seconds, in order (and any added after these, a moment apart)
+const bootTextDelays = [0.1, 0.2, 0.4, 0.5, 0.9, 1, 1.1, 1.2, 1.3, 1.4, 1.6, 1.8, 1.9, 2, 2.1, 2.3, 2.5, 3, 3.2];
 
 
 function toggleDeskop(switcher) {
@@ -172,7 +174,11 @@ function toggleDeskop(switcher) {
         desktop.style.display = "flex";
         bootLoader.remove();
         sleep(1000).then(() => { desktopIcons.style.display = "flex";});
-        sleep(2000).then(() => { taskBar.style.display = "flex"; });
+        sleep(2000).then(() => {
+            taskBar.style.display = "flex";
+            // (the desktop takes keys again: src/$boot-screen.js)
+            document.documentElement.classList.remove("booting");
+        });
         buildText.style.color = "white";
 
         sleep(2300).then(() => { localStorage.setItem("boot", "true");});
@@ -193,8 +199,8 @@ function sleep(ms) {
 }
 
 window.addEventListener('DOMContentLoaded', function() {
-    // Play only first time
-    if (localStorage.getItem("boot") == null) {
+    // Play only first time (src/$boot-screen.js)
+    if (document.documentElement.classList.contains("booting")) {
         // Toggle desktop OFF
         toggleDeskop(false);
 		bootLoader.classList.add("crt");
@@ -209,6 +215,10 @@ window.addEventListener('DOMContentLoaded', function() {
         for (const text of bootText) {
             bootLoader.insertAdjacentHTML('beforeend', text);
         }
+        bootLoader.querySelectorAll(":scope > .fade").forEach((part, index) => {
+            const last = bootTextDelays.length - 1;
+            part.style.animationDelay = `${index <= last ? bootTextDelays[index] : bootTextDelays[last] + (index - last) * 0.1}s`;
+        });
         setTimeout(scrollDown, 1300);
 
         preloader.style.display = "none";

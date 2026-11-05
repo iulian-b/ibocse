@@ -21,10 +21,11 @@
                     <br />
                     Main Processor : C^3(R) SSPU Lynx Gen.II @ <span id="cpu_frequency">4.30</span>GHz<br />
                     &lt;CPUID:0729 Patch ID:6561&gt;<br />
-                    <span>Memory Testing : &nbsp;<span id="memory_counter" class="unselectable">67108864</span>&nbsp;&nbsp;&nbsp;DRAM CLK : <span id="dram_clock">2600</span>MHz (36-40-40-96)</span><br />
+                    <span id="memory_line" style="visibility: hidden">Memory Testing : &nbsp;<span id="memory_counter" class="unselectable">67108864</span>&nbsp;&nbsp;&nbsp;DRAM CLK : <span id="dram_clock">2600</span>MHz (36-40-40-96)</span><br />
                     <br />
                     <span id="mounted_disks"><br><br><br><br></span>
                     <br/>
+                    <span id="post_message"></span>
                 </div>
                 <div id="spacer"></div>
                 <div id="text-bottom">
@@ -55,40 +56,66 @@
         }
         let memoryCounter = $("#memory_counter");
         let mountedDisks = $("#mounted_disks");
+        const memorySize = Number(memoryCounter.text());
 
-        memoryCounter.each(function () {
-            $(this).prop('memory_counter',0).animate({
-                Counter: $(this).text()
-            }, {
-                duration: 1500,
-                easing: 'swing',
-                step: function (now) {
-                    $(this).text(Math.ceil(now));
-                }
-            });
+        // At about a real POST's pace: a moment before the memory test, the test, the drives found after it, then booting
+        let bootTimer;
+        let entering = false; // (into Setup or the boot menu, which wait for the memory test, as a real POST does)
+        const memoryTested = new Promise(function (resolve) {
+            setTimeout(function () {
+                memoryCounter.text("0");
+                $("#memory_line").css("visibility", "visible");
+                memoryCounter.prop('Counter', 0).animate({
+                    Counter: memorySize
+                }, {
+                    duration: 2500,
+                    easing: 'swing',
+                    step: function (now) {
+                        $(this).text(Math.ceil(now));
+                    },
+                    complete: resolve
+                });
+            }, 1000);
         });
-        memoryCounter.promise().done(function () {
+        memoryTested.then(function () {
             memoryCounter.append(' OK');
             mountedDisks.html("&nbsp;&nbsp;&nbsp;Primary Master : Lexar LNM620X256G-RNNNG 256GB<br />" +
                 "&nbsp;&nbsp;&nbsp;&nbsp;Primary Slave : WDC WD8005FFBX 8TB <br />" +
                 "&nbsp;Secondary Master : WDC WD161KFGX 16TB<br />" +
                 "&nbsp;&nbsp;Secondary Slave : None<br/>"
             );
-        });
-        $(function () {
-            setTimeout(function() {
+            if (entering) {
+                return;
+            }
+            bootTimer = setTimeout(function() {
                 localStorage.setItem('POST',"1");
                 // (booting normally: the hard disk's operating system; the boot menu can boot the network's, src/operating-systems.js)
                 localStorage.removeItem("boot-device");
                 window.location.replace("index.html");
-            }, 3000);
+            }, 1500);
         });
+
+        // Del and F11: once the memory is tested, and at least a moment after the key
+        function enter(page, message) {
+            if (entering) {
+                return;
+            }
+            entering = true;
+            clearTimeout(bootTimer);
+            $("#post_message").text(message);
+            const earliest = Date.now() + 1500;
+            memoryTested.then(function () {
+                setTimeout(function () {
+                    location.replace(page);
+                }, Math.max(800, earliest - Date.now()));
+            });
+        }
     </script>
     <script type="text/javascript">
         const Action = {
-            biosSetup() { location.replace("BIOS/PASSWORD.html"); },
+            biosSetup() { enter("BIOS/PASSWORD.html", "Entering SETUP..."); },
             // tepSwitch() { console.log("tepSwitch"); }, big troll
-            bootMenu() { location.replace("BIOS/BOOTMENU.html"); },
+            bootMenu() { enter("BIOS/BOOTMENU.html", "Entering Boot Menu..."); },
             qFlash() { console.log("qFlash"); }
         }
         const keyAction = {

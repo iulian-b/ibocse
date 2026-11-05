@@ -56,6 +56,20 @@ body.boot-menu {
     padding: 7px 16px 0;
     border-top: 2px solid #000;
 }
+/* What a device shows as it boots, over the whole screen */
+.boot-screen {
+    position: fixed;
+    inset: 0;
+    margin: 0;
+    padding: 16px;
+    overflow: hidden;
+    font-family: inherit;
+    font-size: 16px;
+    line-height: 16px;
+    color: #aaa;
+    background: #000;
+    white-space: pre-wrap;
+}
 
 /* The CMOS Setup Utility (BIOS/SETUP.html): 80 columns by 25 rows of text, in the colors of VGA text mode,
    as big as fits the window */

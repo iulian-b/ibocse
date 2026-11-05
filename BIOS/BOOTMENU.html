@@ -26,9 +26,10 @@
 </div>
 <script type="text/javascript">
     // The hard disk and the network each have an operating system to boot (src/operating-systems.js);
-    // the USB drives have nothing in them, so the computer restarts.
+    // the USB drives have nothing in them, so the computer restarts, once Enter is pressed.
     const devices = [...document.querySelectorAll(".boot-device")];
     let selected = 0;
+    let booting = false;
     function select(index) {
         devices[selected].classList.remove("selected");
         devices[selected].setAttribute("aria-selected", "false");
@@ -36,8 +37,47 @@
         devices[selected].classList.add("selected");
         devices[selected].setAttribute("aria-selected", "true");
     }
-    function boot(device) {
-        if (device !== "hdd" && device !== "network") {
+    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+    // What a device shows as it boots: the BIOS's last check before the hard disk, the network card's boot agent getting an address
+    async function boot(device) {
+        if (booting) {
+            return;
+        }
+        booting = true;
+        document.getElementById("bootmenu").style.display = "none";
+        const screen = document.createElement("pre");
+        screen.className = "boot-screen";
+        document.body.append(screen);
+        const print = (text) => {
+            screen.textContent += text;
+        };
+        if (device === "network") {
+            print("Intel(R) Boot Agent GE v1.2.42\nCopyright (C) 1997-2008, Intel Corporation\n\n");
+            await sleep(500);
+            print("CLIENT MAC ADDR: 00 1B 21 3C 9A 5E  GUID: 4C4C4544-0036-3510-8039-C7C04F523532\n");
+            const before = screen.textContent;
+            for (let i = 0; i < 12; i++) {
+                screen.textContent = before + "DHCP." + "|/-\\"[i % 4];
+                await sleep(120);
+            }
+            screen.textContent = before + "CLIENT IP: 10.6.0.32  MASK: 255.255.0.0  DHCP IP: 10.6.0.1\nGATEWAY IP: 10.6.0.1\n\n";
+            await sleep(600);
+            print("TFTP.");
+            await sleep(500);
+        } else if (device === "hdd") {
+            print("Verifying DMI Pool Data ");
+            for (let i = 0; i < 8; i++) {
+                await sleep(150);
+                print(".");
+            }
+            await sleep(500);
+        } else {
+            print("DISK BOOT FAILURE, INSERT SYSTEM DISK AND PRESS ENTER");
+            await sleep(300); // (not the click or key that chose the drive)
+            await new Promise((resolve) => {
+                document.addEventListener("keydown", (event) => event.key === "Enter" && resolve());
+                document.addEventListener("click", resolve);
+            });
             location.replace("../$POST.html");
             return;
         }
@@ -55,6 +95,9 @@
         location.replace("../index.html");
     }
     document.addEventListener("keydown", function (event) {
+        if (booting) {
+            return;
+        }
         if (event.key === "ArrowUp" || event.key === "ArrowDown") {
             select(selected + (event.key === "ArrowUp" ? -1 : 1));
         } else if (event.key === "Enter") {
