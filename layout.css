@@ -25,6 +25,24 @@ html, body {
 	box-sizing: border-box;
 	display: flex;
 	flex-direction: row;
+	/* each time it's shown (src/$start-menu.js) */
+	animation: start-menu-open 100ms ease-in-out;
+}
+/* Opening, it slides up out of the taskbar, all of it together (its sidebar too), as Windows 98's did */
+@keyframes start-menu-open {
+	from {
+		transform: translateY(100%);
+		clip-path: inset(0 0 100% 0);
+	}
+	to {
+		transform: translateY(0);
+		clip-path: inset(0 0 0 0);
+	}
+}
+@media (prefers-reduced-motion: reduce) {
+	.start-menu {
+		animation: none;
+	}
 }
 .start-menu-titlebar {
 	flex: 0 0 auto;

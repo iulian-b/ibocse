@@ -235,6 +235,36 @@ test.describe('Start menu', () => {
 		await page.keyboard.press('Meta');
 		await expect(page.locator('.start-menu')).toBeVisible();
 	});
+
+	test('its sidebar is there as soon as it opens, sliding up with the rest of it', async ({ page }) => {
+		await openDesktop(page);
+		const sidebar = page.locator('.start-menu-titlebar img');
+		await expect(sidebar).toHaveAttribute('src', 'images/os/hdd/start-menu-side.png');
+		// (downloaded with the page, not once the menu first opens, which made it show up late)
+		await expect.poll(() => sidebar.evaluate((picture: HTMLImageElement) => picture.complete && picture.naturalWidth)).toBe(21);
+		await expect(page.locator('.start-menu')).toBeHidden();
+		// From its first moment: all of it, laid out as it ends up, sliding up together
+		const opening = await page.evaluate(() => {
+			(window as any).open_start_menu();
+			const menu = document.querySelector('.start-menu')!;
+			const [animation] = menu.getAnimations() as CSSAnimation[];
+			animation.pause();
+			animation.currentTime = 50; // (halfway)
+			const [menuBox, pictureBox] = [menu, document.querySelector('.start-menu-titlebar img')!].map((element) => element.getBoundingClientRect());
+			const shifted = new DOMMatrix(getComputedStyle(menu).transform).f;
+			animation.finish();
+			const [restingMenuBox, restingPictureBox] = [menu, document.querySelector('.start-menu-titlebar img')!].map((element) => element.getBoundingClientRect());
+			return {
+				name: animation.animationName, shifted, menuMoved: menuBox.top - restingMenuBox.top, pictureMoved: pictureBox.top - restingPictureBox.top,
+				height: menuBox.height, restingHeight: restingMenuBox.height,
+			};
+		});
+		expect(opening.name).toBe('start-menu-open');
+		expect(opening.shifted).toBeGreaterThan(0); // (still on its way up)
+		expect(opening.menuMoved).toBeCloseTo(opening.shifted, 0);
+		expect(opening.pictureMoved).toBeCloseTo(opening.shifted, 0);
+		expect(opening.height).toBe(opening.restingHeight);
+	});
 });
 
 test.describe('sounds', () => {
@@ -523,7 +553,7 @@ test.describe('boot menu', () => {
 		await expect(page.locator('#start_btn_update img')).toHaveAttribute('src', '/images/icons/sinclair-updates-32x32.png');
 		await expect(page.locator('link[rel="icon"][sizes="32x32"]')).toHaveAttribute('href', '/favicon-32x32.png'); // (the site's own)
 		await expect(page.locator('#buildtext')).toHaveText('Sinclair OS-9 build 9.0.8f (x64)Not for commercial use.');
-		await expect(page.locator('.start-menu-titlebar')).toHaveCSS('background-image', /images\/os\/network\/start-menu-side\.png/);
+		await expect(page.locator('.start-menu-titlebar img')).toHaveAttribute('src', 'images/os/network/start-menu-side.png');
 		// (its windows too)
 		await page.evaluate(() => (window as any).Notepad());
 		await expect(windowTitled(page, 'Untitled - Notepad')).toBeVisible();

@@ -71,7 +71,9 @@ $("#start_btn_update img").attr("src", booted_os.logo_icons[32]);
 if (booted_os.tab_icon) {
 	$('link[rel~="icon"]').attr({ href: booted_os.tab_icon, type: "image/png" }).removeAttr("sizes");
 }
-$(".start-menu-titlebar").css("background-image", `url("${booted_os.start_menu_side}")`);
+// (a picture in the page, so it's downloaded now: as the bar's background, it was only once the menu first opened,
+// so it showed up late)
+$(".start-menu-titlebar img").attr("src", booted_os.start_menu_side);
 if (booted_os.start_menu_side_color) {
 	$(".start-menu-titlebar").css("background-color", booted_os.start_menu_side_color);
 }

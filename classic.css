@@ -32,12 +32,15 @@ body {
 	margin-right: 1px;
 }
 .start-menu-titlebar {
-	/* (its picture is the operating system's: src/operating-systems.js) */
-	/* background-image: url("images/start-menu-side-98-js.png"); */
-	/* background-image: url("images/start-menu-side-98-js-alt.png"); */
-	background-repeat: no-repeat;
-	background-position: bottom left;
-	background-color: var(--ButtonShadow); /* behind the banner picture's text, in the color scheme's colors */
+	/* its picture (the operating system's: src/operating-systems.js) at the bottom */
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
+	overflow: hidden;
+	background-color: var(--ButtonShadow); /* above the picture, in the color scheme's colors */
+}
+.start-menu-titlebar img {
+	display: block;
 }
 .start-menu li a,
 .start-menu .back-link {
