@@ -236,7 +236,7 @@ function set_program_removed(program, removed) {
 	save_settings();
 
 	const shortcut = desktop_icons.find(({ title }) => title === program.shortcut);
-	if (shortcut) {
+	if (shortcut && is_shown_on_desktop(shortcut.title)) {
 		const index = folder_view.items.indexOf(shortcut.item);
 		if (removed && index !== -1) {
 			folder_view.items.splice(index, 1);
@@ -282,7 +282,7 @@ function AddRemovePrograms() {
 			on_activate: (program) => remove(program),
 		});
 		const list_programs = (selected) => {
-			$programs.set_items(removable_programs
+			$programs.set_items(installed_programs()
 				.filter((program) => !desktop_settings.removed_programs.includes(program.exe))
 				.map((program) => ({ label: program.name, value: program, iconID: exe_extension_icon[program.exe.replace(/\.exe$/, "")] })), selected);
 		};
@@ -300,7 +300,7 @@ function AddRemovePrograms() {
 		});
 		const $restore = $("<button>").text("Restore Defaults").on("click", async () => {
 			if (await ask_yes_or_no("Restore Defaults", "Do you want to put back all of the programs that were removed?")) {
-				for (const program of removable_programs) {
+				for (const program of installed_programs()) {
 					set_program_removed(program, false);
 				}
 				list_programs();
@@ -458,16 +458,16 @@ function SystemProperties() {
 			),
 		);
 
-		// Startup (like System Configuration Utility's)
+		// Startup (like System Configuration Utility's): the CV, where the operating system has it (src/$desktop.js)
 		const $startup = $("<div class='startup-panel'>").append(
 			$("<p>").text("Choose the programs to run when Windows starts:"),
 			$("<div class='list-box inset-deep startup-list'>").append(
-				$("<div class='list-item'>").append(
+				is_shown_on_drive(startup_cv_path) ? $("<div class='list-item'>").append(
 					$Checkbox("CV (EN).pdf", cv_at_startup, (checked) => {
 						cv_at_startup = checked;
 					}),
-					$("<span class='startup-command'>").text("C:\\My Documents\\CV (EN).pdf"),
-				),
+					$("<span class='startup-command'>").text("C:" + startup_cv_path.replaceAll("/", "\\")),
+				) : [],
 			),
 		);
 

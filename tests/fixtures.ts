@@ -83,9 +83,12 @@ export async function openDesktop(page: Page) {
 	await page.waitForFunction(() => (window as any).folder_view && typeof (window as any).systemExecuteFile === 'function');
 	// (the black cover shown while the page loads; it once stayed up for good on returning visits)
 	await expect(page.locator('#preloader')).toBeHidden();
-	const cv = page.locator('iframe[src*="programs/pdfviewer"]');
-	await cv.waitFor({ state: 'attached' });
-	await cv.evaluate((iframe: any) => iframe.$window.close());
+	// (where the operating system has it: src/os-files.js)
+	if (await page.evaluate('is_shown_on_drive(startup_cv_path)')) {
+		const cv = page.locator('iframe[src*="programs/pdfviewer"]');
+		await cv.waitFor({ state: 'attached' });
+		await cv.evaluate((iframe: any) => iframe.$window.close());
+	}
 	await expect(page.locator('.os-window')).toHaveCount(0);
 }
 

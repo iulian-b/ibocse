@@ -100,14 +100,26 @@ $("html").on("drop", function (event) {
 
 // Listeners
 window.addEventListener('DOMContentLoaded', function() {
-	if (localStorage.getItem("boot") === "true" && desktop_settings.cv_at_startup) {
-		PDFViewer("/My Documents/CV (EN).pdf");
-		// localStorage.setItem("init", "true");
-	}
-	// The page is ready: take away the black cover that hides the desktop while it loads.
-	// (On the first visit, the boot sequence takes over from it; after a shutdown, src/$post-redirect.js has already gone to the POST screen.)
-	document.getElementById("preloader").style.display = "none";
+	// (once the desktop has its icons: src/programs.js)
+	os_files_ready.then(() => {
+		if (localStorage.getItem("boot") === "true") {
+			open_startup_programs();
+			// localStorage.setItem("init", "true");
+		}
+		// The page is ready: take away the black cover that hides the desktop while it loads.
+		// (On the first visit, the boot sequence takes over from it; after a shutdown, src/$post-redirect.js has already gone to the POST screen.)
+		document.getElementById("preloader").style.display = "none";
+	});
 });
+
+// The CV, unless it's been taken out of the Startup (System Properties, src/control-panel.js),
+// or the operating system doesn't have it (src/os-files.js)
+const startup_cv_path = "/My Documents/CV (EN).pdf";
+function open_startup_programs() {
+	if (desktop_settings.cv_at_startup && is_shown_on_drive(startup_cv_path)) {
+		PDFViewer(startup_cv_path);
+	}
+}
 
 // Run Handler (called by the Run dialog, programs/run)
 // Like on Windows, programs run with or without ".exe", in any case.
@@ -161,7 +173,9 @@ function runCommand(target) {
 		"digitalis": () => { audioPanic(); timeToPanic(); },
 	};
 	var program_name = target.toLowerCase().replace(/\.exe$/, "");
-	if (Object.hasOwn(programs, program_name)) {
+	// (a game the operating system doesn't have, src/os-files.js, isn't found)
+	var game = removable_programs.find((program) => program.exe === program_name + ".exe");
+	if (Object.hasOwn(programs, program_name) && !(game && !is_shown_on_drive("/Games/" + game.exe))) {
 		programs[program_name]();
 	} else if (target.toLowerCase().endsWith(".exe")) {
 		showMessageBox({ iconID: "error", title: target, message: "Cannot find the file '" + target + "' (or one of its components). Make sure the path and filename are correct and that all required libraries are available." });

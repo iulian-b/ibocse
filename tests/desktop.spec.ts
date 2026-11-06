@@ -441,9 +441,14 @@ test.describe('boot menu', () => {
 	/** Waits for the boot sequence (which the boot menu shows) to end, as it does, with the CV, and closes it. */
 	async function finishBooting(page: Page) {
 		await expect.poll(() => page.evaluate(() => localStorage.getItem('boot')), { timeout: 25_000 }).toBe('true');
-		const cv = page.locator('iframe[src*="programs/pdfviewer"]');
-		await cv.waitFor({ state: 'attached' });
-		await cv.evaluate((iframe: any) => iframe.$window.close());
+		// (the CV, where the operating system has it: the network's doesn't, src/os-files.js)
+		await expect(page).toHaveURL(/index\.html$/, { timeout: 15_000 });
+		await page.waitForFunction('typeof startup_cv_path === "string"');
+		if (await page.evaluate('os_files_ready.then(() => is_shown_on_drive(startup_cv_path))')) {
+			const cv = page.locator('iframe[src*="programs/pdfviewer"]');
+			await cv.waitFor({ state: 'attached' });
+			await cv.evaluate((iframe: any) => iframe.$window.close());
+		}
 	}
 
 	test('opens with F11, and is used with the arrow keys', async ({ page }) => {

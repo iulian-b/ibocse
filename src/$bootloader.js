@@ -29,7 +29,7 @@ function toggleDeskop(switcher) {
         buildText.style.color = "white";
 
         sleep(2300).then(() => { localStorage.setItem("boot", "true");});
-        sleep(2300).then(() => { if (desktop_settings.cv_at_startup) PDFViewer("/My Documents/CV (EN).pdf");});
+        sleep(2300).then(() => os_files_ready).then(open_startup_programs); // (src/$desktop.js)
         // sleep(2300).then(() => { systemExecuteFile("/My Documents/CV (EN).pdf"); });
     }
 }

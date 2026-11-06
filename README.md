@@ -49,6 +49,8 @@ The desktop's C: drive is the [C/](C/) folder: `C/My Documents` is `C:\My Docume
 
 Nothing needs updating by hand: the list of files the desktop reads, `filesystem-index.json`, is made from `C/` by [scripts/filesystem-index.js](scripts/filesystem-index.js) (on every request with `npm start`, and into `dist/` by the build; `npm run make-fs-index` writes one next to `C/` for any other server). File names can't contain `#`, `?`, `%` or `\`, since the files are downloaded by their URL; the script leaves those out and says so. Hidden files (starting with `.`, like the `.gitkeep` files that keep empty folders in git), `desktop.ini` and `Thumbs.db` are left out too.
 
+Both operating systems (the hard disk's and the network's, see [src/operating-systems.js](src/operating-systems.js)) share the drive, but each shows only some of its files, and of the desktop's icons: what its `files.json` says (`images/os/hdd/files.json`, `images/os/network/files.json`). Each lists every icon on the desktop and every file and folder in `C/`, with `true` to show it or `false` not to; what's in a folder that isn't shown isn't either. A file added to `C/` needs a line in each (the tests say if one is missing). Files that aren't listed, like Windows' own and those visitors save, are shown.
+
 The filesystem itself is [ZenFS](https://github.com/zen-fs/core): files are downloaded from `C/` only when they're opened, and anything a visitor saves, changes or deletes is kept in their browser (IndexedDB, plus a list of deleted files in localStorage). The desktop runs it, and the programs in its windows use it through a `MessagePort`, so they all see the same files (see [src/filesystem-setup.js](src/filesystem-setup.js)).
 
 [//]: # (## Demo)

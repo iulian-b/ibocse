@@ -3,7 +3,8 @@
 // the site as it used to look, in green.
 // Each has its own name, color scheme and pictures (each in its own folder in images/os/), its own boot
 // (src/$boot-windows-98.js, src/$boot-sinclair-os.js), and its own settings (src/settings.js),
-// as does everything else it keeps in localStorage (os_storage_key). They share the C: drive.
+// as does everything else it keeps in localStorage (os_storage_key). They share the C: drive,
+// but each shows only what its files.json says of it, and of the desktop's icons (src/os-files.js).
 const operating_systems = {
 	hdd: {
 		name: "Windows 98", // in the titles of About and VMware (which runs it), and Display Properties' name for its wallpaper
@@ -19,6 +20,7 @@ const operating_systems = {
 		banner: "images/os/hdd/banner.png", // in About, in the Start menu
 		boot_logo: "images/os/hdd/bootlogo.png", // while it boots
 		start_button: "images/os/hdd/start.png",
+		files: "images/os/hdd/files.json", // which of the desktop's icons and the drive's files it shows (src/os-files.js)
 		// Its logo as icons: About's, in the Start menu and on its window, and VMware's (which runs it)
 		logo_icons: { 16: "/images/icons/windows-16x16-1bpp.png", 32: "/images/icons/windows-32x32-8bpp.png" },
 		tab_icon: "/images/icons/windows-32x32-8bpp.png", // the browser tab's icon
@@ -38,6 +40,7 @@ const operating_systems = {
 		banner: "images/os/network/banner.png",
 		boot_logo: "images/os/network/bootlogo.png",
 		start_button: "images/os/network/start.png",
+		files: "images/os/network/files.json",
 		logo_icons: { 16: "/images/icons/sinclair-updates-16x16.png", 32: "/images/icons/sinclair-updates-32x32.png" },
 		tab_icon: null, // (the site's own, which is Sinclair's: favicon.ico)
 		storage_prefix: "network-",

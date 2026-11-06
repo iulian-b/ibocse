@@ -105,7 +105,74 @@ function configure_filesystem() {
 			},
 		},
 	});
-	return configured.then(() => look_up_read_only(ZenFS.mounts.get("/").writable));
+	return configured.then(async () => {
+		const drive = ZenFS.mounts.get("/");
+		look_up_read_only(drive.writable);
+		// The desktop shows the operating system's own files (src/os-files.js); a program opened on its own shows them all
+		if (typeof os_files_ready !== "undefined") {
+			await os_files_ready;
+			hide_files(drive, is_shown_on_drive, has_files_not_shown_in);
+		}
+	});
+}
+
+// Each operating system shows only some of the drive's files (src/os-files.js); the rest are as if they weren't there.
+// They're left out of their folders and can't be found (ENOENT), nothing can be made in their place (EACCES),
+// and a folder with any of them in it can't be removed or moved, so they're kept for the operating systems that show them.
+// (The programs' windows use the drive through this too, by a MessagePort.)
+function hide_files(drive, is_shown, has_files_not_shown_in) {
+	const fail = (code, syscall, path) => Object.assign(ZenFS.withErrno(code), { syscall, path });
+	const find = (syscall, path) => {
+		if (!is_shown(path)) {
+			throw fail("ENOENT", syscall, path);
+		}
+	};
+	const make = (syscall, path) => {
+		if (!is_shown(path)) {
+			throw fail("EACCES", syscall, path);
+		}
+	};
+	const keep_inside = (syscall, path, code) => {
+		if (has_files_not_shown_in(path)) {
+			throw fail(code, syscall, path);
+		}
+	};
+	const checks = {
+		read: (path) => find("read", path),
+		write: (path) => find("write", path),
+		stat: (path) => find("stat", path),
+		touch: (path) => find("touch", path),
+		unlink: (path) => find("unlink", path),
+		readdir: (path) => find("readdir", path),
+		rmdir: (path) => { find("rmdir", path); keep_inside("rmdir", path, "ENOTEMPTY"); },
+		createFile: (path) => make("open", path),
+		mkdir: (path) => make("mkdir", path),
+		rename: (old_path, new_path) => { find("rename", old_path); make("rename", new_path); keep_inside("rename", old_path, "EACCES"); },
+		link: (path, new_path) => { find("link", path); make("link", new_path); },
+	};
+	const shown_names = (folder_path, names) => names.filter((name) => is_shown((folder_path === "/" ? "" : folder_path) + "/" + name));
+	for (const [method, check] of Object.entries(checks)) {
+		const original = drive[method];
+		const original_sync = drive[method + "Sync"];
+		// (failing as each does: a promise rejects, the other throws)
+		drive[method] = async function (...args) {
+			check(...args);
+			const result = await original.apply(this, args);
+			return method === "readdir" ? shown_names(args[0], result) : result;
+		};
+		drive[method + "Sync"] = function (...args) {
+			check(...args);
+			const result = original_sync.apply(this, args);
+			return method === "readdir" ? shown_names(args[0], result) : result;
+		};
+	}
+	for (const method of ["streamRead", "streamWrite"]) {
+		const original = drive[method];
+		drive[method] = function (path, ...args) {
+			find(method, path);
+			return original.call(this, path, ...args);
+		};
+	}
 }
 
 // ZenFS's IndexedDB store opens every transaction for writing, even just to look a file up, and Safari runs those one at a time,

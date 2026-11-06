@@ -1308,22 +1308,23 @@ function openWinamp(file_path) {
 
 	load_winamp_bundle_if_not_loaded(includeButterchurn, function () {
 		const webamp_options = {
+			// (My Music's songs, those the operating system has: src/os-files.js)
 			initialTracks: [
-				{metaData: {artist: "Alice Deejay", title: "Better Off Alone"}, url: drive_path_to_url("/My Music/better-off-alone.mp3")},
-				{metaData: {artist: "BIG Mountain", title: "Baby i Love Your Way"}, url: drive_path_to_url("/My Music/big_mountain-baby_i_love_your_way.mp3")},
-				{metaData: {artist: "Coolio", title: "Gangsta's Paradise"}, url: drive_path_to_url("/My Music/Coolio - Gangsta's Paradise.mp3")},
-				{metaData: {artist: "Dr. Dre", title: "Still D.R.E."}, url: drive_path_to_url("/My Music/STILL DRE.mp3")},
-				{metaData: {artist: "Eiffel 65", title: "Blue"}, url: drive_path_to_url("/My Music/blue.mp3")},
-				{metaData: {artist: "Linkin Park", title: "In The End"}, url: drive_path_to_url("/My Music/linkin_park-in_the_end.mp3")},
-				{metaData: {artist: "Linkin Park", title: "Numb"}, url: drive_path_to_url("/My Music/linkin_park-numb.mp3")},
-				{metaData: {artist: "Nirvana", title: "Hearth Shaped Box"}, url: drive_path_to_url("/My Music/Nirvana - Heart Shaped Box.mp3")},
-				{metaData: {artist: "Nirvana", title: "Smells Like Teen Spirit"}, url: drive_path_to_url("/My Music/smells like teen spirit.mp3")},
-				{metaData: {artist: "Notorius B.I.G.", title: "Big Poppa"}, url: drive_path_to_url("/My Music/Big Poppa.mp3")},
-				{metaData: {artist: "Notorious B.I.G.", title: "Juicy"}, url: drive_path_to_url("/My Music/Juicy.mp3")},
-				{metaData: {artist: "Radiohead", title: "Creep"}, url: drive_path_to_url("/My Music/Radiohead - Creep.mp3")},
-				{metaData: {artist: "R.E.M.", title: "Losing My Religion"}, url: drive_path_to_url("/My Music/Losing my religion.mp3")},
+				{metaData: {artist: "Alice Deejay", title: "Better Off Alone"}, path: "/My Music/better-off-alone.mp3"},
+				{metaData: {artist: "BIG Mountain", title: "Baby i Love Your Way"}, path: "/My Music/big_mountain-baby_i_love_your_way.mp3"},
+				{metaData: {artist: "Coolio", title: "Gangsta's Paradise"}, path: "/My Music/Coolio - Gangsta's Paradise.mp3"},
+				{metaData: {artist: "Dr. Dre", title: "Still D.R.E."}, path: "/My Music/STILL DRE.mp3"},
+				{metaData: {artist: "Eiffel 65", title: "Blue"}, path: "/My Music/blue.mp3"},
+				{metaData: {artist: "Linkin Park", title: "In The End"}, path: "/My Music/linkin_park-in_the_end.mp3"},
+				{metaData: {artist: "Linkin Park", title: "Numb"}, path: "/My Music/linkin_park-numb.mp3"},
+				{metaData: {artist: "Nirvana", title: "Hearth Shaped Box"}, path: "/My Music/Nirvana - Heart Shaped Box.mp3"},
+				{metaData: {artist: "Nirvana", title: "Smells Like Teen Spirit"}, path: "/My Music/smells like teen spirit.mp3"},
+				{metaData: {artist: "Notorius B.I.G.", title: "Big Poppa"}, path: "/My Music/Big Poppa.mp3"},
+				{metaData: {artist: "Notorious B.I.G.", title: "Juicy"}, path: "/My Music/Juicy.mp3"},
+				{metaData: {artist: "Radiohead", title: "Creep"}, path: "/My Music/Radiohead - Creep.mp3"},
+				{metaData: {artist: "R.E.M.", title: "Losing My Religion"}, path: "/My Music/Losing my religion.mp3"},
 
-			],
+			].filter(({ path }) => is_shown_on_drive(path)).map(({ metaData, path }) => ({ metaData, url: drive_path_to_url(path) })),
 			initialSkin: {
 				url: "programs/winamp/skins/base-2.91.wsz",
 			},
@@ -1811,7 +1812,8 @@ function systemExecuteFile(file_path) {
 // Note: `C:\Windows\Desktop` doesn't contain My Computer, My Documents, Network Neighborhood, Recycle Bin, or Internet Explorer,
 // or Connect to the Internet, or Setup MSN Internet Access,
 // whereas `Desktop` does (that's the full address it shows; it's one of them "special locations")
-// All of them, in order, including the shortcuts of programs removed with Add/Remove Programs (src/control-panel.js)
+// All of them, in order, including the shortcuts of programs removed with Add/Remove Programs (src/control-panel.js),
+// and those the operating system doesn't show (src/os-files.js)
 var desktop_icons = [];
 var add_icon_not_via_filesystem = function (options) {
 	const item = new FolderViewItem({
@@ -1822,10 +1824,11 @@ var add_icon_not_via_filesystem = function (options) {
 		...options,
 	});
 	desktop_icons.push({ title: options.title, item });
-	if (!is_shortcut_of_removed_program(options.title)) {
-		folder_view.add_item(item);
-	}
 };
+// (put on the desktop once it's known which the operating system shows, below)
+function is_on_desktop(title) {
+	return is_shown_on_desktop(title) && !is_shortcut_of_removed_program(title);
+}
 add_icon_not_via_filesystem({
 	title: "My Computer",
 	iconID: "my-computer",
@@ -2071,8 +2074,15 @@ add_icon_not_via_filesystem({
 	shortcut: true
 });
 
-
-folder_view.arrange_icons();
+// (arranged as ever: the icons not shown leave no gaps)
+os_files_ready.then(() => {
+	for (const { title, item } of desktop_icons) {
+		if (is_on_desktop(title)) {
+			folder_view.add_item(item);
+		}
+	}
+	folder_view.arrange_icons();
+});
 
 function iconsAtTwoSizes(iconID) {
 	return {

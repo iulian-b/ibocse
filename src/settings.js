@@ -58,6 +58,11 @@ function save_settings() {
 
 var desktop_settings = load_settings();
 
+// Those the operating system has (src/os-files.js), removed or not
+function installed_programs() {
+	return removable_programs.filter((program) => is_shown_on_drive("/Games/" + program.exe));
+}
+
 function is_shortcut_of_removed_program(title) {
 	return removable_programs.some((program) => program.shortcut === title && desktop_settings.removed_programs.includes(program.exe));
 }
