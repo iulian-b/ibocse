@@ -1,13 +1,36 @@
 // Sinclair OS-9's boot (the network's operating system: src/operating-systems.js), as src/$bootloader.js plays it:
 // like Linux's, its parts appearing one after another (css/boot.css), down to "Starting Desktop Environment...".
 
+// Its logo (as About has it: images/os/network/banner.png) in the console's own characters, a color for each letter of
+// this picture: 26 characters by 13 lines, which in the console's font (each character twice as tall as it's wide) is square
+const sinclair_os_logo_picture = [
+    "BBBBBBBBBBBBBBBBBBBBBBBBBB",
+    "BBBBBBBBBBBBBBBBBBBBBBBBBB",
+    "BBBBBBBBBBBBBBBBBBBBBBBBBB",
+    "",
+    "",
+    "YYYYYY       KKK  KKK  KKK",
+    "YYYYYY       KKK  KKK  KKK",
+    "YYYYYY       KKK  KKK  KKK",
+    "",
+    "",
+    "RRRRRRRRRRRRRRRRRRRRRRRRRR",
+    "RRRRRRRRRRRRRRRRRRRRRRRRRR",
+    "RRRRRRRRRRRRRRRRRRRRRRRRRR",
+];
+// (the logo's colors, brighter, as thin lines of characters on black need; its black bars in the console's gray)
+const sinclair_os_logo_colors = { B: "#2456d6", Y: "#fcd116", K: "rgb(150, 150, 150)", R: "#e0283a" };
+const sinclair_os_logo = sinclair_os_logo_picture
+    .map((line) => line.replace(/B+|Y+|K+|R+/g, (run) => `<span style="color: ${sinclair_os_logo_colors[run[0]]}">${"#".repeat(run.length)}</span>`))
+    .join("\n");
+
 const sinclair_os_boot_text = [
     // 0-5
     `<div class="fade">:: running early hook [udev]<br>Starting version 9.0.8f-sinclaire<br>:: running hook [udev]<br>:: Triggering uevents...<br></div>`,
     `<div class="fade">:: performing fsck on '/dev/sda3'<br>/dev/sda3: recovering journal<br></div>`,
     `<div class="fade">/dev/sda3: clean, 45425/1607520 files, 606564/6425339 blocks<br></div>`,
     `<div class="fade">:: mounting '/dev/sda3' on real root<br>::running cleanup hook [udev]<br></div>`,
-    `<div class="fade"><br><img src="${booted_os.boot_logo}"><br>Welcome to <span style="color: #4fa1ed">Sinclaire OS</span>!<br></div>`,
+    `<div class="fade"><br><pre class="sinclair-os-logo" aria-hidden="true">${sinclair_os_logo}</pre><br>Welcome to <span style="color: #4fa1ed">Sinclaire OS</span>!<br></div>`,
     `<div class="fade">Tunnel Client:<br>` + escapeHTML(navigator.userAgent) + `<br></div><br>`,
 
     // 6-9 (systemd)

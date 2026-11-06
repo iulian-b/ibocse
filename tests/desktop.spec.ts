@@ -505,7 +505,9 @@ test.describe('boot menu', () => {
 		await expect(bootScreen).toContainText('CLIENT IP: 10.6.0.32');
 		await expect(page).toHaveURL(/index\.html$/, { timeout: 15_000 });
 		// (Sinclair OS's own boot)
-		await expect(page.locator('#bootloader img')).toHaveAttribute('src', 'images/os/network/bootlogo.png');
+		// (its logo, in characters)
+		await expect(page.locator('#bootloader .sinclair-os-logo')).toContainText('##########################');
+		await expect(page.locator('#bootloader img')).toHaveCount(0);
 		await expect(page.locator('#bootloader')).toContainText('Starting version 9.0.8f-sinclaire');
 		await expect(page.locator('#bootloader')).toContainText('Welcome to Sinclaire OS!');
 		await expect(page.locator('#bootloader')).toContainText('Load Kernel Module configfs...'); // (a part that used to be skipped)

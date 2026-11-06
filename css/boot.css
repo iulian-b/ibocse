@@ -67,6 +67,13 @@
     pointer-events: none;
 }
 
+/* Sinclair OS's logo, in characters (src/$boot-sinclair-os.js): spaced as they're drawn, each line a character tall */
+.sinclair-os-logo {
+    margin: 0;
+    font: inherit;
+    line-height: 16px;
+}
+
 /* Windows 98's boot (src/$boot-windows-98.js): its line of text, then its logo, with the bar along the bottom */
 #bootloader.windows-98-boot {
     overflow: hidden;

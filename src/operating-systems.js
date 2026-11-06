@@ -18,7 +18,7 @@ const operating_systems = {
 		start_menu_side: "images/os/hdd/start-menu-side.png",
 		start_menu_side_color: "#000080", // (the rest of the bar, above the picture)
 		banner: "images/os/hdd/banner.png", // in About, in the Start menu
-		boot_logo: "images/os/hdd/bootlogo.png", // while it boots
+		boot_logo: "images/os/hdd/bootlogo.png", // while it boots (Sinclair OS draws its own, in characters: src/$boot-sinclair-os.js)
 		start_button: "images/os/hdd/start.png",
 		files: "images/os/hdd/files.json", // which of the desktop's icons and the drive's files it shows (src/os-files.js)
 		// Its logo as icons: About's, in the Start menu and on its window, and VMware's (which runs it)
@@ -38,7 +38,6 @@ const operating_systems = {
 		start_menu_side: "images/os/network/start-menu-side.png",
 		start_menu_side_color: null, // (the color scheme's: classic.css)
 		banner: "images/os/network/banner.png",
-		boot_logo: "images/os/network/bootlogo.png",
 		start_button: "images/os/network/start.png",
 		files: "images/os/network/files.json",
 		logo_icons: { 16: "/images/icons/sinclair-updates-16x16.png", 32: "/images/icons/sinclair-updates-32x32.png" },
