@@ -46,7 +46,7 @@
 	"devDependencies": {
 		"@playwright/test": "^1.64.1",
 		"@types/node": "^24.19.2",
-		"@zenfs/core": "2.8.3",
+		"@zenfs/core": "2.9.0",
 		"@zenfs/dom": "1.2.14",
 		"butterchurn": "2.6.7",
 		"butterchurn-presets": "2.4.7",
