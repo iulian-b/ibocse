@@ -42,7 +42,8 @@ async function walk_drive(folder_path, include_subfolders, on_entry, is_stopped)
 			continue;
 		}
 		on_entry({ path, name, folder_path, stats });
-		if (include_subfolders && stats.isDirectory()) {
+		// (not into a GitHub folder, src/github-folders.js, unless it's where to look: what's in it is on GitHub, not the drive)
+		if (include_subfolders && stats.isDirectory() && !Object.hasOwn(github_folders, path)) {
 			await walk_drive(path, true, on_entry, is_stopped);
 		}
 	}

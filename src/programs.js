@@ -1625,6 +1625,57 @@ function openThemeFile(file_path) {
 }
 openThemeFile.acceptsFilePaths = true;
 
+// Zip archives: there's nothing to open them with, but an encrypted one asks for its password first, as WinRAR does.
+// No password opens it, however many are tried (C:\Desktop\Projects\EuropaEmpire.zip has random bytes for its file).
+function openArchive(file_path) {
+	withFilesystem(function () {
+		ZenFS.fs.readFile(file_path, function (error, data) {
+			if (error) {
+				return alert("Failed to open " + file_path + "\n\n" + error);
+			}
+			// Its first file's header: "PK\3\4", the version needed to extract it, then its flags, the lowest of which says
+			// it's encrypted; its name's length, then (after the rest of the header) its name
+			const header = new DataView(data.buffer, data.byteOffset, data.byteLength);
+			if (data.byteLength < 30 || header.getUint32(0, true) !== 0x04034b50 || !(header.getUint16(6, true) & 1)) {
+				return alert("No program is associated with zip files");
+			}
+			const encrypted_file_name = new TextDecoder().decode(data.subarray(30, 30 + header.getUint16(26, true)));
+			console.log("[USR] ibocse@crlab2-h032: unzip(" + file_path + ")");
+			ask_for_archive_password(file_path, encrypted_file_name);
+		});
+	});
+}
+openArchive.acceptsFilePaths = true;
+
+function ask_for_archive_password(file_path, encrypted_file_name) {
+	const archive_name = file_name_from_path(file_path);
+	const $password = $("<input type='password' autocomplete='off'>");
+	open_dialog_window("archive-password:" + file_path, () => {
+		const $w = make_dialog_window("Enter password", "zip");
+		const try_password = () => {
+			console.log("[USR] ibocse@crlab2-h032: unzip(" + file_path + ") -p ********");
+			show_message_box({ iconID: "error", title: archive_name, message: "The specified password is incorrect." })
+				.then(() => $password.trigger("focus").trigger("select"));
+		};
+		$password.on("keydown", (event) => {
+			if (event.key === "Enter") {
+				event.preventDefault(); // (or the key would go on to press the message's OK, as soon as it's shown)
+				try_password();
+			}
+		});
+		$w.$content.addClass("property-sheet archive-password").append(
+			$("<p>").text(`Enter password for the encrypted file\n${encrypted_file_name} in archive ${archive_name}`),
+			$("<label class='field-label'>").append($("<span>").text("Password:"), $password),
+			$DialogButtons([
+				{ label: "OK", is_default: true, action: try_password },
+				{ label: "Cancel", action: () => $w.close() },
+			]),
+		);
+		return $w;
+	});
+	requestAnimationFrame(() => $password.trigger("focus"));
+}
+
 // Note: extensions must be lowercase here. This is used to implement case-insensitive matching.
 var file_extension_associations = {
 	// Fonts:
@@ -1766,6 +1817,7 @@ var file_extension_associations = {
 	htm: Explorer,
 	html: Explorer,
 	url: openURLFile,
+	zip: openArchive,
 	theme: openThemeFile,
 	themepack: openThemeFile,
 	pdf: PDFViewer,

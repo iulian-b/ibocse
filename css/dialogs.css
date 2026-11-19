@@ -197,6 +197,7 @@
 	background-color: var(--ButtonFace);
 }
 .dialog-window input[type="text"],
+.dialog-window input[type="password"],
 .dialog-window input[type="number"],
 .dialog-window input[type="date"] {
 	box-sizing: border-box;
@@ -277,6 +278,14 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+}
+
+/* An encrypted archive's password (src/programs.js) */
+.archive-password {
+	width: 300px;
+}
+.archive-password p {
+	white-space: pre-line;
 }
 
 .status-bar {

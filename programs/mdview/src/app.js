@@ -18,21 +18,54 @@ function update_title() {
 }
 
 function show_markdown(text) {
-	var $document = document.getElementById("document");
-	$document.innerHTML = markdown.render(text);
+	// (made in a template, where nothing loads, so its pictures aren't looked for next to this page before they're pointed elsewhere)
+	var rendered = document.createElement("template");
+	rendered.innerHTML = markdown.render(text);
+	var $document = rendered.content;
 
-	// Relative links and pictures point next to the file, and links open in a new tab rather than in this window
+	// Relative links and pictures point next to the file, and links open in a new tab rather than in this window.
+	// Pictures on the drive are read from it (they may be only in this browser, or in a GitHub folder), and in a GitHub folder
+	// (on the desktop: src/github-folders.js), links to what's in it go to its page on GitHub.
 	var folder_url = new URL(drive_path_to_url(file_path.replace(/[^/]*$/, "")), location.href);
-	for (var img of $document.querySelectorAll("img[src]")) {
-		img.src = new URL(img.getAttribute("src"), folder_url);
-	}
+	var github_page_of = (filesystem_host || window).github_page_of;
+	$document.querySelectorAll("img[src]").forEach(function (img) {
+		var url = new URL(img.getAttribute("src"), folder_url);
+		var drive_path = drive_path_of_url(url);
+		if (!drive_path) {
+			img.src = url;
+			return;
+		}
+		img.removeAttribute("src");
+		file_path_to_viewable_url(drive_path, picture_extensions, function (error, viewable_url) {
+			if (!error) {
+				img.src = viewable_url;
+			}
+		});
+	});
 	for (var link of $document.querySelectorAll("a[href]")) {
 		if (link.getAttribute("href").startsWith("#")) {
 			continue;
 		}
-		link.href = new URL(link.getAttribute("href"), folder_url);
+		var url = new URL(link.getAttribute("href"), folder_url);
+		var drive_path = drive_path_of_url(url);
+		link.href = (drive_path && github_page_of && github_page_of(drive_path)) || url;
 		link.target = "_blank";
 		link.rel = "noopener noreferrer";
+	}
+	document.getElementById("document").replaceChildren($document);
+}
+
+var picture_extensions = ["png", "jpg", "jpeg", "gif", "bmp", "webp", "svg"];
+
+// "/C/My%20Documents/a.png" on this site => "/My Documents/a.png", or null for anything else
+function drive_path_of_url(url) {
+	if (url.origin !== location.origin || !url.pathname.startsWith(drive_url_root + "/")) {
+		return null;
+	}
+	try {
+		return decodeURIComponent(url.pathname.slice(drive_url_root.length));
+	} catch (error) {
+		return null; // (not a name a file could have)
 	}
 }
 

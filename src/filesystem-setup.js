@@ -108,6 +108,10 @@ function configure_filesystem() {
 	return configured.then(async () => {
 		const drive = ZenFS.mounts.get("/");
 		look_up_read_only(drive.writable);
+		// The desktop's projects from GitHub (src/github-folders.js); a program opened on its own only has the folders
+		if (typeof github_folders !== "undefined") {
+			show_github_folders(drive);
+		}
 		// The desktop shows the operating system's own files (src/os-files.js); a program opened on its own shows them all
 		if (typeof os_files_ready !== "undefined") {
 			await os_files_ready;
@@ -283,6 +287,7 @@ var mime_types_by_extension = {
 	jpg: "image/jpeg",
 	pdf: "application/pdf",
 	png: "image/png",
+	svg: "image/svg+xml",
 	webp: "image/webp",
 };
 

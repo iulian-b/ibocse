@@ -1,6 +1,6 @@
 # ![1728121822598](images/README/1728121822598.png)ibocse
 
-A web-OS  built on top of [98.js](https://github.com/1j01/98).
+A web-OS built on top of [98.js](https://github.com/1j01/98).
 
 This project was made with the intention of being my profile/presentation/cv on my website.
 
@@ -18,17 +18,19 @@ As far as features that were added by me:
 * ![1728122408057](images/README/1728122408057.png) [PicView](https://github.com/iulian-b/ibocse/tree/main/programs/picview): Used to view `.png`, `.jpg`, `.gif`, and `.bmp` files
 * [MDView](https://github.com/iulian-b/ibocse/tree/main/programs/mdview): Used to view `.md` (Markdown) files
 * ![1728122434872](images/README/1728122434872.png) [Run](https://github.com/iulian-b/ibocse/tree/main/programs/run): A recreation of the Windows 98 [Run dialog](https://perishablepress.com/wp/wp-content/images/2007/misc-chunks/run-command.png)
-* ![1728122449412](images/README/1728122449412.png) [VMware](https://github.com/iulian-b/ibocse/tree/main/programs/vmware): A fake virtualization software (!no affiliation with VMware LLC!). It is basically just a stripped-down 98.js Explorer that opens on the webiste itself
+* ![1728122449412](images/README/1728122449412.png) [VMware](https://github.com/iulian-b/ibocse/tree/main/programs/vmware): A fake virtualization software (!no affiliation with VMware/Broadcom)
 * ![1728123166667](images/README/1728123166667.png) Panic: a fake Kernel Panic screen Easter egg
 * ![1728123250378](images/README/1728123250378.png) [Bootloader](https://github.com/iulian-b/ibocse/blob/main/src/%24bootloader.js): A fake Linux-style bootstrap sequence which runs on the first visit
 * ![1728123166583.png](images/README/1728123166583.png) [BIOS](https://github.com/iulian-b/ibocse/tree/main/BIOS): ... BootMenu, and a POST screen too! Just please do not change the stored BIOS config, i am tired of prying the cr2302 out every time
 * ![1728123345562](images/README/1728123345562.png) [Icons](https://github.com/iulian-b/ibocse/tree/main/images/icons): Changed and added a bunch of W98 inspired icons. [win98icons]([https://](https://win98icons.alexmeub.com/)) and [React95](https://github.com/React95/React95/tree/master/packages/icons) were used whenever i had the chance, as they are both great repositories, while other were made manually.
 * ![1728123620289](images/README/1728123620289.png) [Start Menu](https://github.com/iulian-b/ibocse/blob/main/src/%24start-menu.js): Finished the start menu that was left unfinished in 98.js, adding an About dialog, shortcuts to various directories,  Log-Off and Shutdown features
+* [Settings]: An entry in the Start Menu which allows you to adjust some settings, such as the theme 
+* [Find]: Functions similarly to the original Windows 98 feature.
 * ![1728124031149](images/README/1728124031149.png) [Sounds](https://github.com/iulian-b/ibocse/tree/main/audio): Added some sounds (boot, desktop, shutdown)
-* ![1728123166567.png](images/README/1728123166567.png) [Games](https://emupedia.net/beta/emuos/): Got some games from EmuPedia. Enjoy playing quake at 15fps in a window in a browser in a window
-* Changes to the way the directory tree works
+* ![1728123166567.png](images/README/1728123166567.png) [Games](https://emupedia.net/beta/emuos/): Got some games from various online sources. Enjoy playing quake at 15fps in a window in a browser in a window of your browser
+* [Filesystem]: Migrated from BrowserFS to ZenFS, and made changes the directory tree
 * Now runs with _vite_ instead of _live-server_
-* Some other minor fixes and changes that i can't recall...
+* Some other minor fixes and changes
 
 ## Development
 
@@ -49,9 +51,9 @@ The desktop's C: drive is the [C/](C/) folder: `C/My Documents` is `C:\My Docume
 
 Nothing needs updating by hand: the list of files the desktop reads, `filesystem-index.json`, is made from `C/` by [scripts/filesystem-index.js](scripts/filesystem-index.js) (on every request with `npm start`, and into `dist/` by the build; `npm run make-fs-index` writes one next to `C/` for any other server). File names can't contain `#`, `?`, `%` or `\`, since the files are downloaded by their URL; the script leaves those out and says so. Hidden files (starting with `.`, like the `.gitkeep` files that keep empty folders in git), `desktop.ini` and `Thumbs.db` are left out too.
 
-Both operating systems (the hard disk's and the network's, see [src/operating-systems.js](src/operating-systems.js)) share the drive, but each shows only some of its files, and of the desktop's icons: what its `files.json` says (`images/os/hdd/files.json`, `images/os/network/files.json`). Each lists every icon on the desktop and every file and folder in `C/`, with `true` to show it or `false` not to; what's in a folder that isn't shown isn't either. A file added to `C/` needs a line in each (the tests say if one is missing). Files that aren't listed, like Windows' own and those visitors save, are shown.
+### ZenFSS
 
-The filesystem itself is [ZenFS](https://github.com/zen-fs/core): files are downloaded from `C/` only when they're opened, and anything a visitor saves, changes or deletes is kept in their browser (IndexedDB, plus a list of deleted files in localStorage). The desktop runs it, and the programs in its windows use it through a `MessagePort`, so they all see the same files (see [src/filesystem-setup.js](src/filesystem-setup.js)).
+The original 98.js repo used BrowserFS, which has long been deprecated (22 March 2024), and currently sits unmaintained, with tons of CVEs affecting it. I decided to port the project over to ZenFS, its spiritual successor: just like in the old BrowserFS, files are downloaded from `C/` only when they're opened, and anything a visitor saves, changes or deletes is kept in their browser (IndexedDB, plus a list of deleted files in localStorage). The desktop runs it, and the programs in its windows use it through a `MessagePort`, so they all see the same files s(see [src/filesystem-setup.js](src/filesystem-setup.js)).
 
 [//]: # (## Demo)
 
@@ -62,10 +64,7 @@ The filesystem itself is [ZenFS](https://github.com/zen-fs/core): files are down
 
 ## TODO
 
-* Add Desktop Login screen, with maybe a second "desktop" to choose from
-* Add some stuff if `/Favorites/`
-* StartMenu - Find
-* StartMenu - Settings
+* Add Desktop Login screen.
 * A Video Player: 98.js's README mentioned [win-95-media-player](https://benwiley4000.github.io/win95-media-player/), but i remain open to other options.
 * Extend Picview and PDFview with Filepicker dialogs (see notepad.exe filesystem thing)
 * Clean up all of the unused stuff from 98.js (as in not used by me)
@@ -81,7 +80,7 @@ As far as licensing goes, [98.js' licence](https://github.com/1j01/98/tree/maste
 
 So this project shall stay the same, as i do not want to infringe on the right of the original owner.
 
-The C: drive runs on [ZenFS](https://github.com/zen-fs/core) ([@zenfs/core](https://www.npmjs.com/package/@zenfs/core) and [@zenfs/dom](https://www.npmjs.com/package/@zenfs/dom), LGPL-3.0-or-later), bundled unmodified into `lib/zenfs.js` by `npm run pull-libs` (rebuild it from the versions in `package.json` to replace it).
+The filesystem runs on [ZenFS](https://github.com/zen-fs/core) ([@zenfs/core](https://www.npmjs.com/package/@zenfs/core) and [@zenfs/dom](https://www.npmjs.com/package/@zenfs/dom), LGPL-3.0-or-later), bundled unmodified into `lib/zenfs.js` by `npm run pull-libs` (rebuild it from the versions in `package.json` to replace it).
 
 Credits to [kristopolous](https://github.com/kristopolous) for the Bootstrap BIOS-esque theme https://github.com/kristopolous/BOOTSTRA.386 (Apache 2.0) used in my BIOS/BootMenu pages.
 
