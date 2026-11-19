@@ -80,6 +80,34 @@ test('Projects is on the desktop, with the websites, the archive and the GitHub 
 	await expect.poll(async () => (await tab).url()).toBe('https://github.com/iulian-b/caverna-pysqlcipher');
 });
 
+test("each of the projects has its own icon: the websites', and the GitHub folders' (src/FolderView.js)", async ({ page }) => {
+	await openDesktop(page);
+	const icons = {
+		'IndarTech.url': 'indartech',
+		'ISO-Certificazioni.url': 'iso-certificazioni',
+		'NFTB.url': 'ntfb',
+		'EuropaEmpire.zip': 'zip',
+		'caverna': 'key-padlock',
+		'fox-conky': 'fox-conky',
+		'ibocse': 'ibocse',
+		'old-homepage-v2': 'homepage',
+		'puzzlecraft-android15': 'puzzlecraft',
+		'sqlcipher_win64': 'file-gears',
+		'stegosaurus': 'stegosaurus',
+	};
+	await page.evaluate(() => (window as any).Explorer('/Desktop/Projects'));
+	const folder = page.frameLocator('iframe[src*="programs/explorer"]').frameLocator('iframe');
+	for (const [name, icon] of Object.entries(icons)) {
+		const picture = folder.locator('.desktop-icon', { hasText: name }).locator('img').first();
+		await expect(picture, name).toHaveAttribute('src', `/images/icons/${icon}-32x32.png`);
+		await expect.poll(() => picture.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth), name).toBe(32);
+		// (and small, as in Find's results and the List view)
+		expect((await page.request.get(`/images/icons/${icon}-16x16.png`)).ok(), `${icon}-16x16.png`).toBe(true);
+	}
+	// (the GitHub folders' shortcuts are Internet Explorer's, as other web links are)
+	expect(await page.evaluate(() => (window as any).icon_id_for_file('/Desktop/Projects/caverna/GitHub.url', false))).toBe('html');
+});
+
 test('the archive asks for its password, and no password opens it', async ({ page }) => {
 	// (really encrypted, so it's the same anywhere: its file's flags say so)
 	const zip = fs.readFileSync(path.resolve(__dirname, '../C/Desktop/Projects/EuropaEmpire.zip'));

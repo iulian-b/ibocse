@@ -174,11 +174,28 @@ var exe_extension_icon = {
 	cyberpunk: "cyberpunk"
 }
 
+// Particular files' and folders' own icons, by path (as a folder's desktop.ini can give it one in Windows):
+// my projects' (C:\Desktop\Projects), the websites' own icons, and the GitHub folders' (src/github-folders.js)
+var file_path_icons = {
+	"/Desktop/Projects/IndarTech.url": "indartech",
+	"/Desktop/Projects/ISO-Certificazioni.url": "iso-certificazioni",
+	"/Desktop/Projects/NFTB.url": "ntfb",
+	"/Desktop/Projects/caverna": "key-padlock", // (a password manager)
+	"/Desktop/Projects/fox-conky": "fox-conky",
+	"/Desktop/Projects/ibocse": "ibocse", // (this site's own)
+	"/Desktop/Projects/old-homepage-v2": "homepage",
+	"/Desktop/Projects/puzzlecraft-android15": "puzzlecraft",
+	"/Desktop/Projects/sqlcipher_win64": "file-gears", // (a library: Windows' icon for DLLs)
+	"/Desktop/Projects/stegosaurus": "stegosaurus",
+};
+
 // The icon of a file or folder (also for Find's results, src/find.js)
 function icon_id_for_file(file_path, is_directory) {
+	if (file_path_icons[file_path]) {
+		return file_path_icons[file_path];
+	}
 	if (is_directory) {
-		// if extending this to different folder icons,
-		// note that "folder" is relied on (for sorting)
+		// (folders are sorted first by what they are, not by their icon)
 		return "folder";
 	}
 	var file_extension = file_extension_from_path(file_path);
