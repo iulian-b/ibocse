@@ -181,7 +181,9 @@ var file_path_icons = {
 	"/Desktop/Projects/ISO-Certificazioni.url": "iso-certificazioni",
 	"/Desktop/Projects/NFTB.url": "ntfb",
 	"/Desktop/Projects/caverna": "key-padlock", // (a password manager)
-	"/Desktop/Projects/fox-conky": "fox-conky",
+	"/Desktop/Projects/fox-bspwm": "bspwm", // (bspwm's logo)
+	"/Desktop/Projects/fox-conky": "conky", // (conky's logo)
+	"/Desktop/Projects/fox-dots": "niri", // (niri's logo: the window manager they're for)
 	"/Desktop/Projects/ibocse": "ibocse", // (this site's own)
 	"/Desktop/Projects/old-homepage-v2": "homepage",
 	"/Desktop/Projects/puzzlecraft-android15": "puzzlecraft",
@@ -330,6 +332,7 @@ function FolderView(folder_path, { asDesktop = false, onStatus, openFolder, open
 	};
 
 	let waiting_on_stats = false;
+	let folder_read = false;
 	this.arrange_icons = () => {
 		if (waiting_on_stats) {
 			return;
@@ -361,8 +364,12 @@ function FolderView(folder_path, { asDesktop = false, onStatus, openFolder, open
 
 		const grid_size_x = large_icons ? grid_size_x_for_large_icons : grid_size_x_for_small_icons;
 		const grid_size_y = large_icons ? grid_size_y_for_large_icons : grid_size_y_for_small_icons;
-		var x = 0;
-		var y = 0;
+		// A little room at the top (and for small icons, at the left, where they'd otherwise touch the edge), as Windows leaves;
+		// the desktop's icons are as they've always been
+		const margin_top = this.config.view_mode === FolderView.VIEW_MODES.DESKTOP ? 0 : large_icons ? 4 : 2;
+		const margin_left = large_icons ? 0 : 2;
+		var x = margin_left;
+		var y = margin_top;
 		const dir_ness = (item) =>
 			// system folders always go first
 			// not all system folder shortcuts on the desktop have real paths (currently)
@@ -402,13 +409,13 @@ function FolderView(folder_path, { asDesktop = false, onStatus, openFolder, open
 				x += grid_size_x;
 				if (x + grid_size_x > $folder_view[0].clientWidth) {
 					y += grid_size_y;
-					x = 0;
+					x = margin_left;
 				}
 			} else {
 				y += grid_size_y;
 				if (y + grid_size_y > $folder_view[0].clientHeight) {
 					x += grid_size_x;
-					y = 0;
+					y = margin_top;
 				}
 			}
 
@@ -419,6 +426,9 @@ function FolderView(folder_path, { asDesktop = false, onStatus, openFolder, open
 			// this.element.appendChild(item.element);
 		}
 
+		if (!any_pending && folder_read) {
+			$folder_view.removeClass("reading");
+		}
 		if (!any_pending) {
 			// this.items[0].element.classList.add("focused");
 			this.items.forEach((item, index) => {
@@ -532,11 +542,15 @@ function FolderView(folder_path, { asDesktop = false, onStatus, openFolder, open
 		}
 	};
 
-	// Read the folder and create icon items
+	// Read the folder and create icon items (meanwhile, the pointer says it's working on it: a folder in a GitHub folder,
+	// src/github-folders.js, can take a moment the first time)
+	$folder_view.addClass("reading");
 	withFilesystem(function () {
 		var fs = ZenFS.fs;
 		fs.readdir(folder_path, function (error, contents) {
+			folder_read = true;
 			if (error) {
+				$folder_view.removeClass("reading");
 				alert("Failed to read contents of the directory " + folder_path);
 				throw error;
 			}

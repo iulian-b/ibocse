@@ -19,13 +19,17 @@ const lastPushed = 'Sat, 31 Jan 2026 18:31:51 GMT';
 // (a 1x1 picture)
 const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==', 'base64');
 
-/** GitHub, with these repositories' files ({ "iulian-b/fox-conky": { "README.md": "..." } }), or failing. The requests made of its API. */
-async function fakeGitHub(page: Page, repositories: Record<string, Record<string, string | Buffer>>, { failing = false } = {}) {
+/**
+ * GitHub, with these repositories' files ({ "iulian-b/fox-conky": { "README.md": "..." } }), or failing; its listing of a whole
+ * repository can be made to take a while (wholeDelay, in ms), as a big one's does. The requests made of its API.
+ */
+async function fakeGitHub(page: Page, repositories: Record<string, Record<string, string | Buffer>>, { failing = false, wholeDelay = 0 } = {}) {
 	const listed: string[] = [];
 	const cors = { 'Access-Control-Allow-Origin': '*' };
-	await page.route('https://api.github.com/**', (route) => {
-		listed.push(route.request().url());
-		const [, repository] = new URL(route.request().url()).pathname.match(/^\/repos\/([^/]+\/[^/]+)\/git\/trees\/HEAD$/) ?? [];
+	await page.route('https://api.github.com/**', async (route) => {
+		const url = new URL(route.request().url());
+		listed.push(url.pathname + url.search);
+		const [, repository] = url.pathname.match(/^\/repos\/([^/]+\/[^/]+)\/git\/trees\/HEAD$/) ?? [];
 		const files = repositories[repository];
 		if (failing || !files) {
 			return route.fulfill({ status: 403, headers: cors, json: { message: 'API rate limit exceeded' } });
@@ -35,7 +39,12 @@ async function fakeGitHub(page: Page, repositories: Record<string, Record<string
 			...[...folders].map((folder) => ({ path: folder, mode: '040000', type: 'tree' })),
 			...Object.entries(files).map(([file, content]) => ({ path: file, mode: '100644', type: 'blob', size: Buffer.byteLength(content) })),
 		].sort((a, b) => (a.path < b.path ? -1 : 1)); // (as git orders them)
-		return route.fulfill({ headers: { ...cors, 'Last-Modified': lastPushed }, json: { sha: 'f00', tree, truncated: false } });
+		const whole = url.searchParams.get('recursive') === '1';
+		if (whole) {
+			await new Promise((resolve) => setTimeout(resolve, wholeDelay));
+		}
+		// (without ?recursive=1, only what's in its top folder)
+		return route.fulfill({ headers: { ...cors, 'Last-Modified': lastPushed }, json: { sha: 'f00', tree: whole ? tree : tree.filter(({ path }) => !path.includes('/')), truncated: false } });
 	});
 	await page.route('https://raw.githubusercontent.com/**', (route) => {
 		const [, repository, file] = decodeURIComponent(new URL(route.request().url()).pathname).match(/^\/([^/]+\/[^/]+)\/HEAD\/(.+)$/) ?? [];
@@ -60,7 +69,7 @@ test('Projects is on the desktop, with the websites, the archive and the GitHub 
 	await openDesktop(page);
 	await expect(desktopIcon(page, 'Projects')).toBeVisible();
 	expect(((await fsCall(page, 'readdir', '/Desktop/Projects')) as string[]).sort()).toEqual([
-		'caverna', 'EuropaEmpire.zip', 'fox-conky', 'ibocse', 'IndarTech.url', 'ISO-Certificazioni.url',
+		'caverna', 'EuropaEmpire.zip', 'fox-bspwm', 'fox-conky', 'fox-dots', 'ibocse', 'IndarTech.url', 'ISO-Certificazioni.url',
 		'NFTB.url', 'old-homepage-v2', 'puzzlecraft-android15', 'sqlcipher_win64', 'stegosaurus',
 	].sort());
 	// (nothing asked of GitHub until a GitHub folder is looked in)
@@ -88,7 +97,9 @@ test("each of the projects has its own icon: the websites', and the GitHub folde
 		'NFTB.url': 'ntfb',
 		'EuropaEmpire.zip': 'zip',
 		'caverna': 'key-padlock',
-		'fox-conky': 'fox-conky',
+		'fox-bspwm': 'bspwm',
+		'fox-conky': 'conky',
+		'fox-dots': 'niri',
 		'ibocse': 'ibocse',
 		'old-homepage-v2': 'homepage',
 		'puzzlecraft-android15': 'puzzlecraft',
@@ -186,8 +197,38 @@ test('a GitHub folder has its repository, as GitHub has it, in every window, and
 	expect(await fsCall(page, 'rename', '/Desktop/Projects', '/Desktop/Old Projects')).toEqual({ code: 'EACCES' });
 	expect(await fsCall(explorer, 'writeFile', `${folder}/README.md`, 'mine')).toEqual({ code: 'EACCES' });
 	expect(((await fsCall(page, 'readdir', folder)) as string[]).sort()).toEqual(contents);
-	// (listed by GitHub's API once)
-	expect(listed).toHaveLength(1);
+	// (listed by GitHub's API once: its top folder, quickly, and the whole of it)
+	expect(listed.sort()).toEqual(['/repos/iulian-b/fox-conky/git/trees/HEAD', '/repos/iulian-b/fox-conky/git/trees/HEAD?recursive=1']);
+});
+
+test("a GitHub folder opens without waiting for its whole repository's listing", async ({ page }) => {
+	await openDesktop(page);
+	await fakeGitHub(page, foxConky, { wholeDelay: 4000 });
+	const folder = '/Desktop/Projects/fox-conky';
+	const timed = (method: string, ...args: unknown[]) => page.evaluate(async ([method, args]) => {
+		const start = performance.now();
+		const result = await (window as any).ZenFS.fs.promises[method](...args);
+		return { ms: performance.now() - start, result: method === 'stat' ? result.isDirectory() : result };
+	}, [method, args] as const);
+	// Its top folder, from the quick listing
+	const top = await timed('readdir', folder);
+	expect(top.ms).toBeLessThan(2000);
+	expect([...top.result].sort()).toEqual(['GitHub.url', 'LICENSE', 'README.md', 'assets', 'config.conf']);
+	expect((await timed('stat', `${folder}/assets`)).result).toBe(true);
+	// What's in its folders, once the whole repository is listed
+	expect((await timed('readdir', `${folder}/assets`)).result).toEqual(['logo.png']);
+});
+
+test("Explorer leaves room above the icons, and points out when it's reading a folder", async ({ page }) => {
+	await openDesktop(page);
+	await page.evaluate(() => (window as any).Explorer('/Desktop/Projects'));
+	const view = page.frameLocator('iframe[src*="programs/explorer"]').frameLocator('iframe').locator('.folder-view');
+	await expect(view.locator('.desktop-icon').first()).toBeVisible();
+	await expect(view).not.toHaveClass(/reading/);
+	const tops = await view.locator('.desktop-icon').evaluateAll((icons) => icons.map((icon) => parseFloat((icon as HTMLElement).style.top)));
+	expect(Math.min(...tops)).toBe(4);
+	// (and while Projects is open, the browser is told to get a connection to GitHub's API ready, for opening one of them)
+	expect(await page.locator('link[rel="preconnect"][href="https://api.github.com"]').count()).toBe(1);
 });
 
 test("a GitHub folder still has its shortcut when GitHub can't be reached", async ({ page }) => {

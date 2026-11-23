@@ -6,7 +6,9 @@
 // lets it connect to GitHub for them, index.html.) A folder added here needs to be on the drive, in C/, too.
 const github_folders = {
 	"/Desktop/Projects/caverna": "iulian-b/caverna",
+	"/Desktop/Projects/fox-bspwm": "iulian-b/fox-bspwm",
 	"/Desktop/Projects/fox-conky": "iulian-b/fox-conky",
+	"/Desktop/Projects/fox-dots": "iulian-b/fox-dots",
 	"/Desktop/Projects/ibocse": "iulian-b/ibocse",
 	"/Desktop/Projects/old-homepage-v2": "iulian-b/homepage-v2",
 	"/Desktop/Projects/puzzlecraft-android15": "iulian-b/puzzlecraft-android15",
@@ -30,6 +32,19 @@ function has_github_folders_in(folder_path) {
 	return Object.keys(github_folders).some((folder) => folder === folder_path || folder.startsWith(prefix));
 }
 
+// Whether a folder has GitHub folders right in it (C:\Desktop\Projects)
+function has_github_folders_right_in(folder_path) {
+	return Object.keys(github_folders).some((folder) => folder.slice(0, folder.lastIndexOf("/")) === folder_path);
+}
+
+// Gets a connection to GitHub ready, before it's needed: when the folders are looked at, for listing one when it's opened
+// (api.github.com), and when one is opened, for its files (raw.githubusercontent.com). It's only a hint to the browser,
+// no request, and the connection is closed again if it isn't used for a while.
+function preconnect_to_github(origin) {
+	document.head.querySelector(`link[rel="preconnect"][href="${origin}"]`)?.remove();
+	document.head.append(Object.assign(document.createElement("link"), { rel: "preconnect", href: origin, crossOrigin: "anonymous" }));
+}
+
 // Where a file or folder in a GitHub folder is on GitHub (for MDView's links, programs/mdview), or undefined
 function github_page_of(path) {
 	const at = github_folder_of(path);
@@ -39,16 +54,19 @@ function github_page_of(path) {
 	}
 }
 
-// Each repository's listing, from GitHub's API: { entries: Map(path in it => { is_folder, size, ino }),
-// names: Map(folder's path in it => names), mtimeMs }. Listed once (a failure is tried again a little later).
-const github_listings = new Map(); // repository => Promise of its listing
-const github_listings_listed = new Map(); // repository => its listing, once listed (for the synchronous methods)
+// Each repository's listings, from GitHub's API: { entries: Map(path in it => { is_folder, size, ino }),
+// names: Map(folder's path in it => names), mtimeMs }. There's the whole repository's ("whole"), and its top folder's ("top"),
+// which comes much quicker for a big one (puzzlecraft-android15's whole listing is 3 MB, and takes a second or two).
+// Each is listed once (a failure is tried again a little later).
+const github_listings = { whole: new Map(), top: new Map() }; // repository => Promise of its listing
+const github_listings_listed = new Map(); // repository => its whole listing, once listed (for the synchronous methods)
 let github_next_ino = 0x67680000;
 
-function list_github_repository(repository) {
-	let listing = github_listings.get(repository);
+function list_github_repository(repository, which = "whole") {
+	const listings = github_listings[which];
+	let listing = listings.get(repository);
 	if (!listing) {
-		listing = fetch(`https://api.github.com/repos/${repository}/git/trees/HEAD?recursive=1`).then(async (response) => {
+		listing = fetch(`https://api.github.com/repos/${repository}/git/trees/HEAD${which === "whole" ? "?recursive=1" : ""}`).then(async (response) => {
 			if (!response.ok) {
 				throw new Error(`${response.status} ${response.statusText}`);
 			}
@@ -60,7 +78,7 @@ function list_github_repository(repository) {
 				const is_folder = type !== "blob"; // (a submodule, "commit", is an empty folder)
 				const entry_path = "/" + path;
 				entries.set(entry_path, { is_folder, size: is_folder ? 4096 : size, ino: github_next_ino++ });
-				if (is_folder) {
+				if (is_folder && which === "whole") { // (the top folder's listing doesn't have what's in its folders)
 					names_in(entry_path);
 				}
 				names_in(entry_path.slice(0, entry_path.lastIndexOf("/")) || "/").push(path.slice(path.lastIndexOf("/") + 1));
@@ -70,14 +88,23 @@ function list_github_repository(repository) {
 			return { entries, names, mtimeMs };
 		});
 		listing.then((listed) => {
-			github_listings_listed.set(repository, listed);
+			if (which === "whole") {
+				github_listings_listed.set(repository, listed);
+			}
 		}, (error) => {
 			console.warn(`Couldn't list ${repository} on GitHub, so its folder only has what's on the drive:`, error);
-			setTimeout(() => github_listings.delete(repository), 30 * 1000);
+			setTimeout(() => listings.delete(repository), 30 * 1000);
 		});
-		github_listings.set(repository, listing);
+		listings.set(repository, listing);
 	}
 	return listing;
+}
+
+// The listing for what's in a repository's top folder: the whole repository's, once it's listed; until then, the top
+// folder's, so the folder opens without waiting for the whole of it (which is listed meanwhile, for the folders in it)
+function list_github_top_folder(repository) {
+	const whole = list_github_repository(repository);
+	return github_listings_listed.has(repository) ? whole : list_github_repository(repository, "top").catch(() => whole);
 }
 
 function github_stats(listing, entry) {
@@ -130,12 +157,14 @@ function download_from_github(repository, path) {
 function show_github_folders(drive) {
 	const fail = (code, syscall, path) => Object.assign(ZenFS.withErrno(code), { syscall, path });
 	// For a path in a GitHub folder (not the folder itself), its repository's listing and what's at the path in it
-	const look_up = async (path) => {
+	// (if it's in the top folder, the top folder's listing will do, unless what's in it is wanted too: whole)
+	const look_up = async (path, { whole = false } = {}) => {
 		const at = github_folder_of(path);
 		if (!at || at.path === "/") {
 			return null;
 		}
-		const listing = await list_github_repository(at.repository).catch(() => null);
+		const in_top_folder = !whole && at.path.lastIndexOf("/") === 0;
+		const listing = await (in_top_folder ? list_github_top_folder(at.repository) : list_github_repository(at.repository)).catch(() => null);
 		return listing && { ...at, listing, entry: listing.entries.get(at.path) };
 	};
 	const look_up_listed = (path) => {
@@ -168,11 +197,15 @@ function show_github_folders(drive) {
 	};
 	drive.readdir = async function (path) {
 		const at = github_folder_of(path);
-		if (at?.path === "/") {
-			const names = await original.readdir.call(this, path);
-			return with_repository(names, await list_github_repository(at.repository).catch(() => null));
+		if (!at && has_github_folders_right_in(path)) {
+			preconnect_to_github("https://api.github.com");
 		}
-		const found = await look_up(path);
+		if (at?.path === "/") {
+			preconnect_to_github("https://raw.githubusercontent.com");
+			const names = await original.readdir.call(this, path);
+			return with_repository(names, await list_github_top_folder(at.repository).catch(() => null));
+		}
+		const found = await look_up(path, { whole: true });
 		if (found?.entry) {
 			if (!found.entry.is_folder) {
 				throw fail("ENOTDIR", "readdir", path);
