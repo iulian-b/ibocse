@@ -52,7 +52,7 @@
 		"butterchurn-presets": "2.4.7",
 		"cspell-cli": "^10.4.0",
 		"file-saver": "2.0.5",
-		"jquery": "4.0.0",
+		"jquery": "4.1.0",
 		"jquery-ui": "1.14.2",
 		"markdown-it": "15.0.3",
 		"os-gui": "0.7.3",
